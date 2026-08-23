@@ -27,8 +27,8 @@
 (function () {
   'use strict';
 
-  var KEY = 'dcitc-theme';                 // localStorage key (shared with head.html inline script)
-  var root = document.documentElement;     // <html data-theme="…">
+  var KEY = 'dcitc-theme'; // localStorage key (shared with head.html inline script)
+  var root = document.documentElement; // <html data-theme="…">
   var sys = window.matchMedia('(prefers-color-scheme: light)');
 
   function current() {
@@ -43,7 +43,11 @@
   // toggle button handler: flip, persist, apply
   function toggle() {
     var next = current() === 'dark' ? 'light' : 'dark';
-    try { localStorage.setItem(KEY, next); } catch (e) { /* private mode */ }
+    try {
+      localStorage.setItem(KEY, next);
+    } catch (e) {
+      /* private mode */
+    }
     apply(next);
   }
 
@@ -56,7 +60,9 @@
     var onChange = function (ev) {
       try {
         if (!localStorage.getItem(KEY)) apply(ev.matches ? 'light' : 'dark');
-      } catch (e) { apply(ev.matches ? 'light' : 'dark'); }
+      } catch (e) {
+        apply(ev.matches ? 'light' : 'dark');
+      }
     };
     if (sys.addEventListener) sys.addEventListener('change', onChange);
     else if (sys.addListener) sys.addListener(onChange); // older Safari
@@ -83,11 +89,11 @@
        with overflow-x:auto; 06-horizontal.css adds drag cursors.
        The 900px breakpoint here MUST match --hx-break in 01-vars.css
        and the @media rules in the CSS files.
-     - Progress bar: .progress-fill (partials' .progress strip under
-       the nav) is filled from real scroll position, both modes.
-     - Parallax: any [data-plx="0.03"] element translates with scroll;
-       the fixed .bg-grid backdrop counter-moves slightly (04-layout.css).
-     - Boot: main.js calls DCITC.horizontal.init().
+      - Progress bar: .progress-fill (partials' .progress strip under
+        the nav) is filled from real scroll position, both modes.
+      - Backdrop drift: the fixed .bg-grid counter-moves slightly with
+        scroll (04-layout.css) for a touch of depth.
+      - Boot: main.js calls DCITC.horizontal.init().
 
    BEHAVIOUR:
      - Wheel: deltaY/deltaX mapped to horizontal goal; eased at 0.16
@@ -95,10 +101,11 @@
        REMOVED — pure smooth manual scroll only.
      - Keyboard: arrows/PageUp/PageUp/Home/End/Space (when not typing
        in a field). Space = page-right.
-      - Mouse drag: pointer capture on main, grabs unless the target is
-        interactive (a/button/input/.nav-links/[data-more]…) or inside a
-        [data-hx-nodrag] zone (e.g. the home hero's WebGL sphere — drags
-        there orbit the 3D view instead of panning the strip).
+       - Mouse drag: pointer capture on main, grabs unless the target is
+         interactive (a/button/input/.nav-links/[data-more]…) or inside a
+         [data-hx-nodrag] zone (on HOME the whole strip is nodrag — mouse
+         drags stir the ASCII fluid instead of panning; wheel/keys/touch
+         still pan).
      - Touch: untouched — native horizontal pan of the scroll container.
      - prefers-reduced-motion: easing disabled (instant jumps).
      - Below 900px everything unbinds (disable()) and CSS stacks
@@ -108,24 +115,26 @@
   'use strict';
 
   // public namespace — main.js calls DCITC.horizontal.init()
-  var HX = window.DCITC.horizontal = {};
+  var HX = (window.DCITC.horizontal = {});
 
-  var main = null;        // <main data-horizontal> (null on vertical pages)
-  var elProgress;         // .progress-fill bar under the nav
-  var enabled = false;    // listeners bound? (true only ≥900px)
+  var main = null; // <main data-horizontal> (null on vertical pages)
+  var elProgress; // .progress-fill bar under the nav
+  var enabled = false; // listeners bound? (true only ≥900px)
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var mq = window.matchMedia('(min-width: 900px)');  // keep in sync with CSS --hx-break
+  var mq = window.matchMedia('(min-width: 900px)'); // keep in sync with CSS --hx-break
 
-  var goal = null;      // desired scrollLeft (wheel / keys / drag)
-  var mode = null;      // 'drive' while easing toward goal, null when idle
-  var raf = null;       // active animation-frame handle
-  var lastMax = 0;      // cached max scroll for UI math
+  var goal = null; // desired scrollLeft (wheel / keys / drag)
+  var mode = null; // 'drive' while easing toward goal, null when idle
+  var raf = null; // active animation-frame handle
+  var lastMax = 0; // cached max scroll for UI math
 
   function getMax() {
     var m = main.scrollWidth - main.clientWidth;
     return m > 0 ? m : 0;
   }
-  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+  function clamp(v, lo, hi) {
+    return Math.max(lo, Math.min(hi, v));
+  }
 
   function measure() {
     lastMax = getMax();
@@ -154,12 +163,14 @@
 
     if (mode) {
       var delta = goal - cur;
-      var eased = delta * 0.16;          // smoothing factor — the "feel"
-      if (reduced) { eased = delta; }    // reduced motion: jump instantly
+      var eased = delta * 0.16; // smoothing factor — the "feel"
+      if (reduced) {
+        eased = delta;
+      } // reduced motion: jump instantly
       var next = Math.abs(eased) < 0.6 ? goal : cur + eased;
       main.scrollLeft = clamp(next, 0, max);
       if (Math.abs(goal - main.scrollLeft) < 0.6) {
-        mode = null;                     // arrived — stop driving
+        mode = null; // arrived — stop driving
         goal = null;
       }
       raf = requestAnimationFrame(loop);
@@ -182,8 +193,8 @@
     if (e.target.closest('[data-vzone]')) return;
     e.preventDefault();
     var d = e.deltaY + e.deltaX;
-    d = clamp(d, -140, 140);            // tame huge trackpad flings
-    var base = (mode === null) ? main.scrollLeft : goal;
+    d = clamp(d, -140, 140); // tame huge trackpad flings
+    var base = mode === null ? main.scrollLeft : goal;
     setGoal(base + d, 'drive');
   }
 
@@ -191,18 +202,38 @@
   function onKey(e) {
     if (!enabled) return;
     var t = e.target;
-    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
+    if (
+      t &&
+      (t.tagName === 'INPUT' ||
+        t.tagName === 'TEXTAREA' ||
+        t.tagName === 'SELECT' ||
+        t.isContentEditable)
+    )
+      return;
     var k = e.key;
-    if (k === ' ') { e.preventDefault(); k = 'ArrowRight'; } // space = page right
+    if (k === ' ') {
+      e.preventDefault();
+      k = 'ArrowRight';
+    } // space = page right
     var map = {
-      ArrowRight: 1, ArrowLeft: -1, ArrowDown: 1, ArrowUp: -1,
-      PageDown: 1, PageUp: -1, Home: 'home', End: 'end'
+      ArrowRight: 1,
+      ArrowLeft: -1,
+      ArrowDown: 1,
+      ArrowUp: -1,
+      PageDown: 1,
+      PageUp: -1,
+      Home: 'home',
+      End: 'end',
     };
     if (k in map) {
       e.preventDefault();
       if (map[k] === 'home') setGoal(0, 'drive');
       else if (map[k] === 'end') setGoal(getMax(), 'drive');
-      else setGoal(main.scrollLeft + Math.sign(map[k]) * Math.min(main.clientWidth * 0.85, 1000), 'drive');
+      else
+        setGoal(
+          main.scrollLeft + Math.sign(map[k]) * Math.min(main.clientWidth * 0.85, 1000),
+          'drive',
+        );
     }
   }
 
@@ -218,16 +249,27 @@
   function onPointerDown(e) {
     if (!enabled || e.button !== 0 || e.pointerType !== 'mouse') return;
     // never hijack presses on interactive elements or 3D/drag zones
-    if (e.target.closest('a, button, input, select, textarea, details, [data-more], .nav-links, [data-hx-nodrag]')) return;
+    if (
+      e.target.closest(
+        'a, button, input, select, textarea, details, [data-more], .nav-links, [data-hx-nodrag]',
+      )
+    )
+      return;
     drag = { x: e.clientX, start: main.scrollLeft, moved: false };
-    mode = null; goal = null;           // hand control to the pointer
+    mode = null;
+    goal = null; // hand control to the pointer
     main.classList.add('is-drag-ready');
-    try { main.setPointerCapture(e.pointerId); } catch (err) {}
+    try {
+      main.setPointerCapture(e.pointerId);
+    } catch (err) {}
   }
   function onPointerMove(e) {
     if (!drag) return;
     var dx = e.clientX - drag.x;
-    if (Math.abs(dx) > 4) { drag.moved = true; main.classList.add('is-dragging'); }
+    if (Math.abs(dx) > 4) {
+      drag.moved = true;
+      main.classList.add('is-dragging');
+    }
     if (drag.moved) {
       main.scrollLeft = clamp(drag.start - dx, 0, getMax()); // direct 1:1 drag
     }
@@ -238,17 +280,15 @@
     drag = null;
   }
 
-  function onResize() { measure(); if (enabled && mode === null) { updateUI(main.scrollLeft); } }
-
-  /* --- parallax ------------------------------------------------------ */
-
-  // shift [data-plx] layers proportionally to scroll; grid drifts back
-  function parallax(x) {
-    var els = main.querySelectorAll('[data-plx]');
-    for (var i = 0; i < els.length; i++) {
-      var f = parseFloat(els[i].getAttribute('data-plx') || '0');
-      if (!reduced) els[i].style.transform = 'translateX(' + (x * f).toFixed(1) + 'px)';
+  function onResize() {
+    measure();
+    if (enabled && mode === null) {
+      updateUI(main.scrollLeft);
     }
+  }
+
+  // backdrop drift: the fixed grid counter-moves with scroll for depth
+  function parallax(x) {
     var grid = document.querySelector('.bg-grid');
     if (grid && !reduced) grid.style.transform = 'translateX(' + (-x * 0.02).toFixed(1) + 'px)';
   }
@@ -283,8 +323,12 @@
     main.removeEventListener('pointerup', onPointerUp);
     main.removeEventListener('pointercancel', onPointerUp);
     window.removeEventListener('resize', onResize);
-    if (raf) { cancelAnimationFrame(raf); raf = null; }
-    mode = null; goal = null;
+    if (raf) {
+      cancelAnimationFrame(raf);
+      raf = null;
+    }
+    mode = null;
+    goal = null;
     if (elProgress) elProgress.style.width = '0%';
     parallax(0);
   }
@@ -309,9 +353,14 @@
     main = document.querySelector('main[data-horizontal]');
     elProgress = document.querySelector('.progress-fill');
 
-    if (!main) { initVertical(); return; }
+    if (!main) {
+      initVertical();
+      return;
+    }
 
-    var apply = function (e) { (e.matches) ? enable() : disable(); };
+    var apply = function (e) {
+      e.matches ? enable() : disable();
+    };
     if (mq.addEventListener) mq.addEventListener('change', apply);
     else if (mq.addListener) mq.addListener(apply);
     apply(mq);
@@ -322,32 +371,31 @@
    DCITC REVEAL SYSTEM  —  static/js/reveal.js
    ==================================================================
    WHAT THIS FILE CONTROLS:
-     Scroll-in animations: elements fade/slide in as they enter the
-     viewport, the hero headline lines rise out of a clip mask, and
-     decorative SVG paths draw themselves.
+      Scroll-in animations: elements fade/slide in as they enter the
+      viewport, and the hero headline lines rise out of a clip mask.
 
    HOW IT CONNECTS:
-     - CSS side (09-anim.css): [data-reveal] / [data-stagger] children
-       start hidden ONLY under html.js (the class is added by the
-       inline script in partials/head.html, so no-JS visitors see
-       everything). Adding .is-in — here or via the safety net —
-       triggers the CSS transition. Stagger delays are pure CSS
-       (:nth-child → --d custom property).
-     - Markup side: pages opt in with data-reveal[="fade|left|right|
-       scale|up"] or data-stagger on a parent; hero uses
-       .hero-line > .hl spans; decorative SVGs use class="draw-line".
-     - anime.js (vendored, loaded before app.js in partials/scripts.html)
-       animates the hero lines + stroke-dashoffset of .draw-line.
-     - Boot: main.js calls DCITC.reveal.init().
+      - CSS side (09-anim.css): [data-reveal] / [data-stagger] children
+        start hidden ONLY under html.js (the class is added by the
+        inline script in partials/head.html, so no-JS visitors see
+        everything). Adding .is-in — here or via the safety net —
+        triggers the CSS transition. Stagger delays are pure CSS
+        (:nth-child → --d custom property).
+      - Markup side: pages opt in with data-reveal[="fade|left|right|
+        scale|up"] or data-stagger on a parent; hero uses
+        .hero-line > .hl spans.
+      - anime.js (vendored, loaded before app.js in partials/scripts.html)
+        animates the hero lines.
+      - Boot: main.js calls DCITC.reveal.init().
 
    BEHAVIOUR:
-     - IntersectionObserver reveals at 12% visibility; unobserves after.
-     - Safety net: a rAF-throttled scroll/resize pass force-reveals
-       anything already in view or scrolled PAST — covers fast jumps
-       (Home/End keys, anchor links) that the observer can miss in a
-       horizontally-scrolling layout.
-     - prefers-reduced-motion: everything is revealed instantly, no
-       anime.js calls at all.
+      - IntersectionObserver reveals at 12% visibility; unobserves after.
+      - Safety net: a rAF-throttled scroll/resize pass force-reveals
+        anything already in view or scrolled PAST — covers fast jumps
+        (Home/End keys, anchor links) that the observer can miss in a
+        horizontally-scrolling layout.
+      - prefers-reduced-motion: everything is revealed instantly, no
+        anime.js calls at all.
    ================================================================== */
 (function () {
   'use strict';
@@ -359,29 +407,17 @@
     var lines = document.querySelectorAll('.hero-line .hl');
     if (!lines.length) return;
     if (reduced || !window.anime) {
-      lines.forEach(function (l) { l.classList.add('is-in'); });   // CSS fallback position
+      lines.forEach(function (l) {
+        l.classList.add('is-in');
+      }); // CSS fallback position
       return;
     }
     window.anime({
       targets: lines,
-      translateY: ['112%', '0%'],                    // from below the clip
+      translateY: ['112%', '0%'], // from below the clip
       easing: 'cubicBezier(0.16, 1, 0.3, 1)',
       duration: 950,
-      delay: window.anime.stagger(130, { start: 200 })
-    });
-  }
-
-  // decorative SVG strokes draw themselves (stroke-dasharray trick;
-  // dash values are set in 09-anim.css .draw-line)
-  function drawLines() {
-    var paths = document.querySelectorAll('.draw-line');
-    if (!paths.length || !window.anime || reduced) return;
-    window.anime({
-      targets: paths,
-      strokeDashoffset: [1, 0],
-      easing: 'easeInOutQuad',
-      duration: 1600,
-      delay: window.anime.stagger(140, { start: 400 })
+      delay: window.anime.stagger(130, { start: 200 }),
     });
   }
 
@@ -390,17 +426,24 @@
 
     if (reduced || !('IntersectionObserver' in window)) {
       // no motion / no observer: show everything immediately
-      els.forEach(function (el) { el.classList.add('is-in'); });
+      els.forEach(function (el) {
+        el.classList.add('is-in');
+      });
     } else {
-      var io = new IntersectionObserver(function (entries) {
-        entries.forEach(function (en) {
-          if (en.isIntersecting) {
-            en.target.classList.add('is-in');
-            io.unobserve(en.target);
-          }
-        });
-      }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
-      els.forEach(function (el) { io.observe(el); });
+      var io = new IntersectionObserver(
+        function (entries) {
+          entries.forEach(function (en) {
+            if (en.isIntersecting) {
+              en.target.classList.add('is-in');
+              io.unobserve(en.target);
+            }
+          });
+        },
+        { threshold: 0.12, rootMargin: '0px 0px -6% 0px' },
+      );
+      els.forEach(function (el) {
+        io.observe(el);
+      });
 
       // safety net: reveal anything in view after fast scrolls the
       // observer may have skipped (e.g. Home/End jumps on the
@@ -417,15 +460,21 @@
           }
         });
       }
-      window.addEventListener('scroll', function () {
-        if (!ticking) { ticking = true; requestAnimationFrame(revealVisible); }
-      }, { passive: true });
+      window.addEventListener(
+        'scroll',
+        function () {
+          if (!ticking) {
+            ticking = true;
+            requestAnimationFrame(revealVisible);
+          }
+        },
+        { passive: true },
+      );
       window.addEventListener('resize', revealVisible);
       revealVisible();
     }
 
     heroReveal();
-    drawLines();
   }
 
   // register on the shared namespace consumed by main.js
@@ -458,7 +507,7 @@
   'use strict';
 
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var DURATION = 180;   // ms to wait after adding .page-exit before navigating
+  var DURATION = 180; // ms to wait after adding .page-exit before navigating
 
   function isExternal(href) {
     var a = document.createElement('a');
@@ -468,9 +517,14 @@
 
   // play the exit transition, then really navigate
   function go(href) {
-    if (reduced) { window.location.href = href; return; }
+    if (reduced) {
+      window.location.href = href;
+      return;
+    }
     document.body.classList.add('page-exit');
-    setTimeout(function () { window.location.href = href; }, DURATION);
+    setTimeout(function () {
+      window.location.href = href;
+    }, DURATION);
   }
 
   function init() {
@@ -480,7 +534,8 @@
       if (!a) return;
       var href = a.getAttribute('href') || '';
       if (!href) return;
-      if (href.charAt(0) === '#' || href.indexOf('mailto:') === 0 || href.indexOf('tel:') === 0) return;
+      if (href.charAt(0) === '#' || href.indexOf('mailto:') === 0 || href.indexOf('tel:') === 0)
+        return;
       if (a.hasAttribute('download')) return;
       if (a.target && a.target !== '_self') return;
       if (isExternal(href)) return;
@@ -500,21 +555,21 @@
 })();
 
 // WHAT THIS FILE CONTROLS:
-    // All page-level UI widgets, in init order:
-    //   1. initMobileMenu — the ≤899px slide-in nav drawer
-    //   2. initMore       — the desktop "More" dropdown in the navbar
-    //   3. initFilters    — tag-button filtering (gallery masonry)
-    //   4. initSearch     — live text search (resources page)
-    //
-    // HOW IT CONNECTS:
-    //   - header.html renders [data-menu-toggle] + [data-mobile-menu]
-    //     (#1) and [data-more]/[data-more-btn] (#2).
-    //   - gallery.html: .gal-filters[data-filter-group=".masonry"] with
-    //     button[data-filter] controls figure[data-filter] items (#3).
-    //   - resources.html: input[data-search] in the shelf head against
-    //     article[data-searchable] items (#4). (Filter chips removed.)
-    //   - about.html: leadership cards rendered inline (no carousel).
-    //     Boot: main.js calls DCITC.pages.init().
+// All page-level UI widgets, in init order:
+//   1. initMobileMenu — the ≤899px slide-in nav drawer
+//   2. initMore       — the desktop "More" dropdown in the navbar
+//   3. initFilters    — tag-button filtering (gallery masonry)
+//   4. initSearch     — live text search (resources page)
+//
+// HOW IT CONNECTS:
+//   - header.html renders [data-menu-toggle] + [data-mobile-menu]
+//     (#1) and [data-more]/[data-more-btn] (#2).
+//   - gallery.html: .gal-filters[data-filter-group=".masonry"] with
+//     button[data-filter] controls figure[data-filter] items (#3).
+//   - resources.html: input[data-search] in the shelf head against
+//     article[data-searchable] items (#4). (Filter chips removed.)
+//   - about.html: leadership cards rendered inline (no carousel).
+//     Boot: main.js calls DCITC.pages.init().
 (function () {
   'use strict';
 
@@ -535,7 +590,7 @@
     function open() {
       menu.classList.add('is-open');
       scrim.classList.add('is-open');
-      btn.classList.add('is-open');               // animates hamburger → X
+      btn.classList.add('is-open'); // animates hamburger → X
       btn.setAttribute('aria-expanded', 'true');
       btn.setAttribute('aria-label', 'Close menu');
     }
@@ -551,8 +606,12 @@
       menu.classList.contains('is-open') ? close() : open();
     });
     scrim.addEventListener('click', close);
-    menu.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', close); });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+    menu.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', close);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') close();
+    });
   }
 
   /* 2 ─ desktop "More" dropdown -------------------------------------- */
@@ -590,7 +649,9 @@
       var buttons = group.querySelectorAll('[data-filter]');
       buttons.forEach(function (b) {
         b.addEventListener('click', function () {
-          buttons.forEach(function (x) { x.classList.remove('is-on'); });
+          buttons.forEach(function (x) {
+            x.classList.remove('is-on');
+          });
           b.classList.add('is-on');
           var f = b.getAttribute('data-filter');
           items.forEach(function (it) {
@@ -652,13 +713,21 @@
     }
 
     items.forEach(function (item, i) {
-      item.addEventListener('pointerenter', function () { activate(i); });
-      item.addEventListener('click', function () { activate(i); });
-      item.addEventListener('focusin', function () { activate(i); });
+      item.addEventListener('pointerenter', function () {
+        activate(i);
+      });
+      item.addEventListener('click', function () {
+        activate(i);
+      });
+      item.addEventListener('focusin', function () {
+        activate(i);
+      });
     });
 
     // initial state: honor the pre-rendered data-active, else first card
-    var start = items.findIndex(function (it) { return it.hasAttribute('data-active'); });
+    var start = items.findIndex(function (it) {
+      return it.hasAttribute('data-active');
+    });
     activate(start === -1 ? 0 : start);
   }
 
@@ -671,7 +740,7 @@
       initFilters();
       initSearch();
       initEventDeck();
-    }
+    },
   };
 })();
 
@@ -720,7 +789,7 @@
 (function () {
   'use strict';
 
-  var NS = window.DCITC = window.DCITC || {};
+  var NS = (window.DCITC = window.DCITC || {});
   var mounted = false;
 
   /* ------------------------------------------------------------------
@@ -731,20 +800,40 @@
   var CELL_CROP_Y = 2;
 
   var BASE = [
-    ["~", 12198],
-    [":", 6921],
-    ["-", 5589],
-    ["·", 3267],
-    [" ", 0],
-    [" ", 0],
+    ['~', 12198],
+    [':', 6921],
+    ['-', 5589],
+    ['·', 3267],
+    [' ', 0],
+    [' ', 0],
   ];
 
   var RENDER_CHARS = [
-    [["F", 26574], ["F", 26574], ["f", 17490]].concat(BASE),
-    [["L", 21327], ["L", 21327], ["l", 14019]].concat(BASE),
-    [["U", 32973], ["U", 32973], ["u", 24093]].concat(BASE),
-    [["I", 14883], ["I", 14883], ["i", 13638]].concat(BASE),
-    [["D", 36198], ["D", 36198], ["d", 30762]].concat(BASE),
+    [
+      ['F', 26574],
+      ['F', 26574],
+      ['f', 17490],
+    ].concat(BASE),
+    [
+      ['L', 21327],
+      ['L', 21327],
+      ['l', 14019],
+    ].concat(BASE),
+    [
+      ['U', 32973],
+      ['U', 32973],
+      ['u', 24093],
+    ].concat(BASE),
+    [
+      ['I', 14883],
+      ['I', 14883],
+      ['i', 13638],
+    ].concat(BASE),
+    [
+      ['D', 36198],
+      ['D', 36198],
+      ['d', 30762],
+    ].concat(BASE),
   ];
 
   var SPEED_1 = 1.0 / 60.0 / 16;
@@ -913,8 +1002,14 @@
       // triangle obstacle vertices from centre + radius (upstream)
       var trianglePoints = [
         { x: obstacleX, y: obstacleY + obstacleRadius },
-        { x: obstacleX - obstacleRadius * Math.cos(Math.PI / 6), y: obstacleY - obstacleRadius * Math.sin(Math.PI / 6) },
-        { x: obstacleX + obstacleRadius * Math.cos(Math.PI / 6), y: obstacleY - obstacleRadius * Math.sin(Math.PI / 6) },
+        {
+          x: obstacleX - obstacleRadius * Math.cos(Math.PI / 6),
+          y: obstacleY - obstacleRadius * Math.sin(Math.PI / 6),
+        },
+        {
+          x: obstacleX + obstacleRadius * Math.cos(Math.PI / 6),
+          y: obstacleY - obstacleRadius * Math.sin(Math.PI / 6),
+        },
       ];
 
       function pointInTriangle(px, py, v1, v2, v3) {
@@ -942,21 +1037,39 @@
           var t = Math.max(0, Math.min(1, (point.x * edge.x + point.y * edge.y) / len));
           var proj = { x: p1.x + t * edge.x, y: p1.y + t * edge.y };
           var dist = Math.sqrt((x - proj.x) * (x - proj.x) + (y - proj.y) * (y - proj.y));
-          if (dist < minDist) { minDist = dist; closestPoint = proj; }
+          if (dist < minDist) {
+            minDist = dist;
+            closestPoint = proj;
+          }
         }
         var dx = x - closestPoint.x;
         var dy = y - closestPoint.y;
         var dd = Math.sqrt(dx * dx + dy * dy);
-        if (dd > 0) { x = closestPoint.x; y = closestPoint.y; }
+        if (dd > 0) {
+          x = closestPoint.x;
+          y = closestPoint.y;
+        }
         this.particleVel[2 * i] = 0;
         this.particleVel[2 * i + 1] = 0;
       }
 
       // wall collisions
-      if (x < minX) { x = minX; this.particleVel[2 * i] = 0.0; }
-      if (x > maxX) { x = maxX; this.particleVel[2 * i] = 0.0; }
-      if (y < minY) { y = minY; this.particleVel[2 * i + 1] = 0.0; }
-      if (y > maxY) { y = maxY; this.particleVel[2 * i + 1] = 0.0; }
+      if (x < minX) {
+        x = minX;
+        this.particleVel[2 * i] = 0.0;
+      }
+      if (x > maxX) {
+        x = maxX;
+        this.particleVel[2 * i] = 0.0;
+      }
+      if (y < minY) {
+        y = minY;
+        this.particleVel[2 * i + 1] = 0.0;
+      }
+      if (y > maxY) {
+        y = maxY;
+        this.particleVel[2 * i + 1] = 0.0;
+      }
       this.particlePos[2 * i] = x;
       this.particlePos[2 * i + 1] = y;
     }
@@ -991,7 +1104,10 @@
       var sum = 0.0;
       var numFluidCells = 0;
       for (var c = 0; c < this.fNumCells; c++) {
-        if (this.cellType[c] === FLUID_CELL) { sum += d[c]; numFluidCells++; }
+        if (this.cellType[c] === FLUID_CELL) {
+          sum += d[c];
+          numFluidCells++;
+        }
       }
       if (numFluidCells > 0) this.particleRestDensity = sum / numFluidCells;
     }
@@ -1049,23 +1165,39 @@
 
         if (toGrid) {
           var pv = this.particleVel[2 * i + component];
-          f[nr0] += pv * d0; d[nr0] += d0;
-          f[nr1] += pv * d1; d[nr1] += d1;
-          f[nr2] += pv * d2; d[nr2] += d2;
-          f[nr3] += pv * d3; d[nr3] += d3;
+          f[nr0] += pv * d0;
+          d[nr0] += d0;
+          f[nr1] += pv * d1;
+          d[nr1] += d1;
+          f[nr2] += pv * d2;
+          d[nr2] += d2;
+          f[nr3] += pv * d3;
+          d[nr3] += d3;
         } else {
           var offset = component === 0 ? n : 1;
-          var valid0 = this.cellType[nr0] !== AIR_CELL || this.cellType[nr0 - offset] !== AIR_CELL ? 1.0 : 0.0;
-          var valid1 = this.cellType[nr1] !== AIR_CELL || this.cellType[nr1 - offset] !== AIR_CELL ? 1.0 : 0.0;
-          var valid2 = this.cellType[nr2] !== AIR_CELL || this.cellType[nr2 - offset] !== AIR_CELL ? 1.0 : 0.0;
-          var valid3 = this.cellType[nr3] !== AIR_CELL || this.cellType[nr3 - offset] !== AIR_CELL ? 1.0 : 0.0;
+          var valid0 =
+            this.cellType[nr0] !== AIR_CELL || this.cellType[nr0 - offset] !== AIR_CELL ? 1.0 : 0.0;
+          var valid1 =
+            this.cellType[nr1] !== AIR_CELL || this.cellType[nr1 - offset] !== AIR_CELL ? 1.0 : 0.0;
+          var valid2 =
+            this.cellType[nr2] !== AIR_CELL || this.cellType[nr2 - offset] !== AIR_CELL ? 1.0 : 0.0;
+          var valid3 =
+            this.cellType[nr3] !== AIR_CELL || this.cellType[nr3 - offset] !== AIR_CELL ? 1.0 : 0.0;
           var v = this.particleVel[2 * i + component];
           var dv = valid0 * d0 + valid1 * d1 + valid2 * d2 + valid3 * d3;
           if (dv > 0.0) {
-            var picV = (valid0 * d0 * f[nr0] + valid1 * d1 * f[nr1] +
-                        valid2 * d2 * f[nr2] + valid3 * d3 * f[nr3]) / dv;
-            var corr = (valid0 * d0 * (f[nr0] - prevF[nr0]) + valid1 * d1 * (f[nr1] - prevF[nr1]) +
-                        valid2 * d2 * (f[nr2] - prevF[nr2]) + valid3 * d3 * (f[nr3] - prevF[nr3])) / dv;
+            var picV =
+              (valid0 * d0 * f[nr0] +
+                valid1 * d1 * f[nr1] +
+                valid2 * d2 * f[nr2] +
+                valid3 * d3 * f[nr3]) /
+              dv;
+            var corr =
+              (valid0 * d0 * (f[nr0] - prevF[nr0]) +
+                valid1 * d1 * (f[nr1] - prevF[nr1]) +
+                valid2 * d2 * (f[nr2] - prevF[nr2]) +
+                valid3 * d3 * (f[nr3] - prevF[nr3])) /
+              dv;
             var flipV = v + corr;
             this.particleVel[2 * i + component] = (1.0 - flipRatio) * picV + flipRatio * flipV;
           }
@@ -1088,7 +1220,12 @@
     }
   };
 
-  FlipFluid.prototype.solveIncompressibility = function (numIters, dt, overRelaxation, compensateDrift) {
+  FlipFluid.prototype.solveIncompressibility = function (
+    numIters,
+    dt,
+    overRelaxation,
+    compensateDrift,
+  ) {
     this.p.fill(0.0);
     this.prevU.set(this.u);
     this.prevV.set(this.v);
@@ -1140,7 +1277,7 @@
         var m = 0.25;
         var num = Math.floor(val / m);
         var s = (val - num * m) / m;
-        var g = (num % 2 === 0) ? s : 1.0 - s;   // upstream saw-band, condensed
+        var g = num % 2 === 0 ? s : 1.0 - s; // upstream saw-band, condensed
         this.cellColor[3 * i] = g;
         this.cellColor[3 * i + 1] = g;
         this.cellColor[3 * i + 2] = g;
@@ -1148,7 +1285,19 @@
     }
   };
 
-  FlipFluid.prototype.simulate = function (dt, gravity, flipRatio, numPressureIters, numParticleIters, overRelaxation, compensateDrift, separateParticles, obstacleX, obstacleY, obstacleRadius) {
+  FlipFluid.prototype.simulate = function (
+    dt,
+    gravity,
+    flipRatio,
+    numPressureIters,
+    numParticleIters,
+    overRelaxation,
+    compensateDrift,
+    separateParticles,
+    obstacleX,
+    obstacleY,
+    obstacleRadius,
+  ) {
     var numSubSteps = 1;
     var sdt = dt / numSubSteps;
     for (var step = 0; step < numSubSteps; step++) {
@@ -1176,7 +1325,6 @@
     flipRatio: 0.9,
     numPressureIters: 30,
     numParticleIters: 2,
-    frameNr: 0,
     overRelaxation: 1.9,
     compensateDrift: true,
     separateParticles: true,
@@ -1193,7 +1341,7 @@
   function computeGrid() {
     GRID_SIZE = Math.max(
       Math.round(Math.sqrt((window.innerWidth * window.innerHeight) / TARGET_LONG_SIDE)),
-      MIN_GRID_SIZE
+      MIN_GRID_SIZE,
     );
   }
 
@@ -1205,7 +1353,6 @@
   }
 
   var Y_RESOLUTION = 0;
-  var X_RESOLUTION = 0;
   var RESOLUTION = 0;
   var simHeight = 2.0;
   var cScale = 1;
@@ -1217,7 +1364,6 @@
     var rw = realWidth();
     var rh = realHeight();
     Y_RESOLUTION = rh / GRID_SIZE;
-    X_RESOLUTION = rw / GRID_SIZE;
     RESOLUTION = Y_RESOLUTION;
 
     cScale = rh / simHeight;
@@ -1330,7 +1476,9 @@
     scene.dt = SPEED_1;
     startDrag(e.clientX, e.clientY);
   }
-  function onMouseMove(e) { drag(e.clientX, e.clientY); }
+  function onMouseMove(e) {
+    drag(e.clientX, e.clientY);
+  }
   function onMouseUp() {
     scene.dt = SPEED_2;
     endDrag();
@@ -1352,13 +1500,17 @@
 
   /* --- device motion (upstream, permission only inside a gesture) ---- */
   function requestDeviceMotion() {
-    if (typeof window.DeviceMotionEvent !== 'undefined' &&
-        typeof DeviceMotionEvent.requestPermission === 'function') {
+    if (
+      typeof window.DeviceMotionEvent !== 'undefined' &&
+      typeof DeviceMotionEvent.requestPermission === 'function'
+    ) {
       DeviceMotionEvent.requestPermission()
         .then(function (permission) {
           if (permission === 'granted') setupDeviceMotion();
         })
-        .catch(function () { /* denied → default gravity */ });
+        .catch(function () {
+          /* denied → default gravity */
+        });
     } else if (typeof window.DeviceMotionEvent !== 'undefined') {
       setupDeviceMotion();
     }
@@ -1373,11 +1525,21 @@
       if (!x && !y) return;
       // screen-orientation compensation (modern API + legacy fallback)
       var angle = 0;
-      if (window.screen && screen.orientation && typeof screen.orientation.angle === 'number') angle = screen.orientation.angle;
+      if (window.screen && screen.orientation && typeof screen.orientation.angle === 'number')
+        angle = screen.orientation.angle;
       else if (typeof window.orientation === 'number') angle = window.orientation;
-      if (angle === 90) { var t = x; x = -y; y = t; }
-      else if (angle === -90 || angle === 270) { var t2 = x; x = y; y = -t2; }
-      else if (angle === 180 || angle === -180) { x = -x; y = -y; }
+      if (angle === 90) {
+        var t = x;
+        x = -y;
+        y = t;
+      } else if (angle === -90 || angle === 270) {
+        var t2 = x;
+        x = y;
+        y = -t2;
+      } else if (angle === 180 || angle === -180) {
+        x = -x;
+        y = -y;
+      }
       gravityVector = { x: x, y: y };
       scene.gravity = 0;
     });
@@ -1394,13 +1556,18 @@
 
     if (!scene.paused) {
       scene.fluid.simulate(
-        scene.dt, scene.gravity, scene.flipRatio,
-        scene.numPressureIters, scene.numParticleIters,
-        scene.overRelaxation, scene.compensateDrift,
-        scene.separateParticles, scene.obstacleX, scene.obstacleY,
-        scene.obstacleRadius
+        scene.dt,
+        scene.gravity,
+        scene.flipRatio,
+        scene.numPressureIters,
+        scene.numParticleIters,
+        scene.overRelaxation,
+        scene.compensateDrift,
+        scene.separateParticles,
+        scene.obstacleX,
+        scene.obstacleY,
+        scene.obstacleRadius,
       );
-      scene.frameNr++;
     }
 
     // ASCII render into the layer's <pre> (upstream innerHTML path;
@@ -1420,19 +1587,29 @@
     if (!pausedForever) {
       if (settleFrames > 0) {
         // reduced-motion settle: count down, then halt the loop
-        if (--settleFrames === 0) { pausedForever = true; scene.paused = true; }
+        if (--settleFrames === 0) {
+          pausedForever = true;
+          scene.paused = true;
+        }
       }
       if (!pausedForever) rafId = requestAnimationFrame(update);
     }
   }
 
   var RENDER_DICTS = RENDER_CHARS.map(function (ramp) {
-    return ramp.slice().sort(function (a, b) { return a[1] - b[1]; })
-      .map(function (pair) { return pair[0]; }).join('');
+    return ramp
+      .slice()
+      .sort(function (a, b) {
+        return a[1] - b[1];
+      })
+      .map(function (pair) {
+        return pair[0];
+      })
+      .join('');
   });
 
-  var pausedForever = false;   // set once the loop must stop for good
-  var settleFrames = 0;        // >0 while reduced-motion settling
+  var pausedForever = false; // set once the loop must stop for good
+  var settleFrames = 0; // >0 while reduced-motion settling
 
   function init() {
     var mount = document.querySelector('[data-fluid-triangle]');
@@ -1509,7 +1686,7 @@
         reveal.js          → DCITC.reveal         (scroll-in animations)
         transitions.js     → DCITC.transitions    (page-exit fade)
         pages.js           → DCITC.pages          (menu, filters, search)
-        fluid-triangle.js  → DCITC.fluidTriangle  (hero ASCII fluid)
+        fluid-triangle.js  → DCITC.fluidTriangle  (page ASCII fluid)
         main.js            → calls each .init() in the order above
 
       Init order matters: theme first (no flash), then layout-critical

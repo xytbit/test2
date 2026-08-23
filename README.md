@@ -64,8 +64,8 @@ To swap the logo: put a file in `static/img/` and set `site.logo.path`.
 - `{{ if and (eq .a "x") (ne .b "y") }}` — logical helpers: `and`, `or`, `not`,
   `eq`, `ne`, `gt`, `lt`
 - `{{ include "partials/head.html" }}` — partial include
-- Helpers (single-argument only): `fmtDate`, `fmtDateLong`, `pad2`, `len`,
-  `sumLen`, `totalMembers`, `upper`, `join`, `readingTime`
+- Helpers (single-argument only): `fmtDate`, `fmtDateLong`, `fmtYear`,
+  `upper`, `len`, `sumLen`, `totalMembers`, `readingTime`
 
 Precompute values in `build.js` if a field needs more than one helper call.
 

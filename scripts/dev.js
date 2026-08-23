@@ -60,7 +60,10 @@ function serve() {
   for (const dir of WATCH) {
     fs.watch(dir, { recursive: true }, onChange);
   }
-  const shutdown = () => { server.kill(); process.exit(0); };
+  const shutdown = () => {
+    server.kill();
+    process.exit(0);
+  };
   process.on('SIGINT', shutdown);
   process.on('SIGTERM', shutdown);
 })();

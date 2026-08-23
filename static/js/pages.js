@@ -1,19 +1,19 @@
 // WHAT THIS FILE CONTROLS:
-    // All page-level UI widgets, in init order:
-    //   1. initMobileMenu — the ≤899px slide-in nav drawer
-    //   2. initMore       — the desktop "More" dropdown in the navbar
-    //   3. initFilters    — tag-button filtering (gallery masonry)
-    //   4. initSearch     — live text search (resources page)
-    //
-    // HOW IT CONNECTS:
-    //   - header.html renders [data-menu-toggle] + [data-mobile-menu]
-    //     (#1) and [data-more]/[data-more-btn] (#2).
-    //   - gallery.html: .gal-filters[data-filter-group=".masonry"] with
-    //     button[data-filter] controls figure[data-filter] items (#3).
-    //   - resources.html: input[data-search] in the shelf head against
-    //     article[data-searchable] items (#4). (Filter chips removed.)
-    //   - about.html: leadership cards rendered inline (no carousel).
-    //     Boot: main.js calls DCITC.pages.init().
+// All page-level UI widgets, in init order:
+//   1. initMobileMenu — the ≤899px slide-in nav drawer
+//   2. initMore       — the desktop "More" dropdown in the navbar
+//   3. initFilters    — tag-button filtering (gallery masonry)
+//   4. initSearch     — live text search (resources page)
+//
+// HOW IT CONNECTS:
+//   - header.html renders [data-menu-toggle] + [data-mobile-menu]
+//     (#1) and [data-more]/[data-more-btn] (#2).
+//   - gallery.html: .gal-filters[data-filter-group=".masonry"] with
+//     button[data-filter] controls figure[data-filter] items (#3).
+//   - resources.html: input[data-search] in the shelf head against
+//     article[data-searchable] items (#4). (Filter chips removed.)
+//   - about.html: leadership cards rendered inline (no carousel).
+//     Boot: main.js calls DCITC.pages.init().
 (function () {
   'use strict';
 
@@ -34,7 +34,7 @@
     function open() {
       menu.classList.add('is-open');
       scrim.classList.add('is-open');
-      btn.classList.add('is-open');               // animates hamburger → X
+      btn.classList.add('is-open'); // animates hamburger → X
       btn.setAttribute('aria-expanded', 'true');
       btn.setAttribute('aria-label', 'Close menu');
     }
@@ -50,8 +50,12 @@
       menu.classList.contains('is-open') ? close() : open();
     });
     scrim.addEventListener('click', close);
-    menu.querySelectorAll('a').forEach(function (a) { a.addEventListener('click', close); });
-    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+    menu.querySelectorAll('a').forEach(function (a) {
+      a.addEventListener('click', close);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') close();
+    });
   }
 
   /* 2 ─ desktop "More" dropdown -------------------------------------- */
@@ -89,7 +93,9 @@
       var buttons = group.querySelectorAll('[data-filter]');
       buttons.forEach(function (b) {
         b.addEventListener('click', function () {
-          buttons.forEach(function (x) { x.classList.remove('is-on'); });
+          buttons.forEach(function (x) {
+            x.classList.remove('is-on');
+          });
           b.classList.add('is-on');
           var f = b.getAttribute('data-filter');
           items.forEach(function (it) {
@@ -151,13 +157,21 @@
     }
 
     items.forEach(function (item, i) {
-      item.addEventListener('pointerenter', function () { activate(i); });
-      item.addEventListener('click', function () { activate(i); });
-      item.addEventListener('focusin', function () { activate(i); });
+      item.addEventListener('pointerenter', function () {
+        activate(i);
+      });
+      item.addEventListener('click', function () {
+        activate(i);
+      });
+      item.addEventListener('focusin', function () {
+        activate(i);
+      });
     });
 
     // initial state: honor the pre-rendered data-active, else first card
-    var start = items.findIndex(function (it) { return it.hasAttribute('data-active'); });
+    var start = items.findIndex(function (it) {
+      return it.hasAttribute('data-active');
+    });
     activate(start === -1 ? 0 : start);
   }
 
@@ -170,6 +184,6 @@
       initFilters();
       initSearch();
       initEventDeck();
-    }
+    },
   };
 })();

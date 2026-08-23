@@ -23,7 +23,7 @@
   'use strict';
 
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var DURATION = 180;   // ms to wait after adding .page-exit before navigating
+  var DURATION = 180; // ms to wait after adding .page-exit before navigating
 
   function isExternal(href) {
     var a = document.createElement('a');
@@ -33,9 +33,14 @@
 
   // play the exit transition, then really navigate
   function go(href) {
-    if (reduced) { window.location.href = href; return; }
+    if (reduced) {
+      window.location.href = href;
+      return;
+    }
     document.body.classList.add('page-exit');
-    setTimeout(function () { window.location.href = href; }, DURATION);
+    setTimeout(function () {
+      window.location.href = href;
+    }, DURATION);
   }
 
   function init() {
@@ -45,7 +50,8 @@
       if (!a) return;
       var href = a.getAttribute('href') || '';
       if (!href) return;
-      if (href.charAt(0) === '#' || href.indexOf('mailto:') === 0 || href.indexOf('tel:') === 0) return;
+      if (href.charAt(0) === '#' || href.indexOf('mailto:') === 0 || href.indexOf('tel:') === 0)
+        return;
       if (a.hasAttribute('download')) return;
       if (a.target && a.target !== '_self') return;
       if (isExternal(href)) return;

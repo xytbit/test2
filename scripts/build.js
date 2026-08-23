@@ -70,18 +70,28 @@ const OUT = path.join(ROOT, 'public');
 /* ------------------------------------------------------------------ */
 
 // read a file as utf-8 text
-function read(p) { return fs.readFileSync(p, 'utf8'); }
+function read(p) {
+  return fs.readFileSync(p, 'utf8');
+}
 // write text, creating parent directories on demand (used everywhere)
-function write(p, c) { fs.mkdirSync(path.dirname(p), { recursive: true }); fs.writeFileSync(p, c); }
+function write(p, c) {
+  fs.mkdirSync(path.dirname(p), { recursive: true });
+  fs.writeFileSync(p, c);
+}
 // read + parse a JSON data file from src/data/
-function readJSON(p) { return JSON.parse(read(p)); }
+function readJSON(p) {
+  return JSON.parse(read(p));
+}
 
 // FNV-1a string hash → uint32. Turns any seed string ("nodhini",
 // "tanvir", …) into a number we can feed the PRNG below. Deterministic:
 // same seed → same artwork, every build.
 function hashStr(s) {
   let h = 2166136261 >>> 0;
-  for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); }
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
   return h >>> 0;
 }
 
@@ -89,7 +99,8 @@ function hashStr(s) {
 // generated SVG reproducible "randomness" without storing anything.
 function mulberry32(a) {
   return function () {
-    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    a |= 0;
+    a = (a + 0x6d2b79f5) | 0;
     let t = Math.imul(a ^ (a >>> 15), 1 | a);
     t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
@@ -97,12 +108,27 @@ function mulberry32(a) {
 }
 
 const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-const MONTHS_L = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const MONTHS_L = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
+];
 
 // "2026-09-18" → { y: 2026, m: 9, d: 18 } or null if malformed.
 // Used by the date helpers; deliberately avoids Date() timezone issues.
 function parseISO(s) {
-  const [y, m, d] = String(s || '').split('-').map(Number);
+  const [y, m, d] = String(s || '')
+    .split('-')
+    .map(Number);
   if (!y || !m || !d) return null;
   return { y, m, d };
 }
@@ -113,37 +139,44 @@ function parseISO(s) {
 
 // One-argument output helpers callable from templates as {{ name path }}.
 // Each receives the resolved value of the path (see renderTokens' helper
-// branch). `plural`, `join`, `readingTime` etc. take extra literal args.
+// branch). Only helpers actually referenced by templates live here.
 const helpers = {
-  fmtDate(s) {                 // "2026-09-18" → "18 Sep 2026"
-    const dt = parseISO(s); if (!dt) return s;
+  fmtDate(s) {
+    // "2026-09-18" → "18 Sep 2026"
+    const dt = parseISO(s);
+    if (!dt) return s;
     return `${dt.d} ${MONTHS[dt.m - 1]} ${dt.y}`;
   },
-  fmtDateLong(s) {             // "2026-09-18" → "September 18, 2026"
-    const dt = parseISO(s); if (!dt) return s;
+  fmtDateLong(s) {
+    // "2026-09-18" → "September 18, 2026"
+    const dt = parseISO(s);
+    if (!dt) return s;
     return `${MONTHS_L[dt.m - 1]} ${dt.d}, ${dt.y}`;
   },
-  fmtYear(s) {                 // "2026-01-01" → "2026" (footer © year)
-    const dt = parseISO(s); if (!dt) return s;
+  fmtYear(s) {
+    // "2026-01-01" → "2026" (footer © year)
+    const dt = parseISO(s);
+    if (!dt) return s;
     return String(dt.y);
   },
-  upper(v) { return String(v == null ? '' : v).toUpperCase(); },
-  lower(v) { return String(v == null ? '' : v).toLowerCase(); },
-  pad2(n) { return String(n == null ? '' : n).padStart(2, '0'); },
-  join(v, sep) { return Array.isArray(v) ? v.join(sep || ', ') : (v == null ? '' : String(v)); },
-  plural(n, one, many) { return `${n} ${n === 1 ? (one || 'item') : (many || one + 's')}`; },
-  readingTime(words) {         // word count → "N min read" (~200 wpm)
+  upper(v) {
+    return String(v == null ? '' : v).toUpperCase();
+  },
+  readingTime(words) {
+    // word count → "N min read" (~200 wpm)
     const n = Number(words) || 0;
     return `${Math.max(1, Math.round(n / 200))} min read`;
   },
-  len(v) { return Array.isArray(v) ? v.length : (typeof v === 'string' ? v.length : 0); },
-  cap(v) { const s = String(v == null ? '' : v); return s.charAt(0).toUpperCase() + s.slice(1); },
-  add(a, b) { return Number(a) + Number(b); },
-  sumLen(arr) {                // total items across sub-arrays (achievements)
+  len(v) {
+    return Array.isArray(v) ? v.length : typeof v === 'string' ? v.length : 0;
+  },
+  sumLen(arr) {
+    // total items across sub-arrays (achievements)
     if (!Array.isArray(arr)) return 0;
     return arr.reduce((n, it) => n + (Array.isArray(it.items) ? it.items.length : 0), 0);
   },
-  totalMembers(groups) {       // total members across team groups
+  totalMembers(groups) {
+    // total members across team groups (team page "LISTED" count)
     if (!Array.isArray(groups)) return 0;
     return groups.reduce((n, g) => n + (Array.isArray(g.members) ? g.members.length : 0), 0);
   },
@@ -169,9 +202,14 @@ function resolve(expr, scope, root) {
   let p = expr.trim();
   if (!p) return '';
   if (p === '.') return scope;
-  if (p.startsWith('$.')) { scope = root; p = p.slice(1); }
-  else if (p.startsWith('.')) p = p.slice(1);
-  else if (p.startsWith('$')) { scope = root; p = p.slice(1); }
+  if (p.startsWith('$.')) {
+    scope = root;
+    p = p.slice(1);
+  } else if (p.startsWith('.')) p = p.slice(1);
+  else if (p.startsWith('$')) {
+    scope = root;
+    p = p.slice(1);
+  }
   let val = scope;
   const parts = p.split('.');
   for (const part of parts) {
@@ -189,28 +227,58 @@ function resolve(expr, scope, root) {
 // REGRESSION GUARDS in the header.
 function splitArgs(s) {
   const out = [];
-  let cur = '', inQ = false, started = false, depth = 0;
+  let cur = '',
+    inQ = false,
+    started = false,
+    depth = 0;
   for (let i = 0; i < s.length; i++) {
     const ch = s[i];
     if (inQ) {
       if (ch === '"') {
-        if (depth > 0) { cur += ch; } else { inQ = false; }
-      }
-      else cur += ch;
+        if (depth > 0) {
+          cur += ch;
+        } else {
+          inQ = false;
+        }
+      } else cur += ch;
       continue;
     }
     if (ch === '"') {
-      if (depth > 0) { cur += ch; started = true; } else { inQ = true; started = true; }
+      if (depth > 0) {
+        cur += ch;
+        started = true;
+      } else {
+        inQ = true;
+        started = true;
+      }
       continue;
     }
-    if (ch === '(') { depth++; cur += ch; started = true; continue; }
-    if (ch === ')') { depth--; cur += ch; started = true; continue; }
+    if (ch === '(') {
+      depth++;
+      cur += ch;
+      started = true;
+      continue;
+    }
+    if (ch === ')') {
+      depth--;
+      cur += ch;
+      started = true;
+      continue;
+    }
     if (/\s/.test(ch)) {
-      if (depth === 0) { if (started) { out.push(cur); cur = ''; started = false; } continue; }
+      if (depth === 0) {
+        if (started) {
+          out.push(cur);
+          cur = '';
+          started = false;
+        }
+        continue;
+      }
       cur += ch;
       continue;
     }
-    cur += ch; started = true;
+    cur += ch;
+    started = true;
   }
   if (started) out.push(cur);
   return out;
@@ -229,9 +297,13 @@ function compare(op, a, b) {
   return false;
 }
 
-function isVarPath(x) { return x.startsWith('.') || x.startsWith('$'); }
+function isVarPath(x) {
+  return x.startsWith('.') || x.startsWith('$');
+}
 // An argument is either a variable path (resolve it) or a literal string.
-function evalVal(x, scope, root) { return isVarPath(x) ? resolve(x, scope, root) : x; }
+function evalVal(x, scope, root) {
+  return isVarPath(x) ? resolve(x, scope, root) : x;
+}
 
 // Evaluate one full condition expression, e.g:
 //   eq .status "active"          not .featured
@@ -242,10 +314,10 @@ function evalCond(expr, scope, root) {
   if (expr.startsWith('not ')) return !evalCond(expr.slice(4).trim(), scope, root);
   if (expr.startsWith('or ')) {
     // every arg must be evaluated AS A CONDITION (condVal), not as a value
-    return splitArgs(expr.slice(3).trim()).some(a => condVal(a, scope, root));
+    return splitArgs(expr.slice(3).trim()).some((a) => condVal(a, scope, root));
   }
   if (expr.startsWith('and ')) {
-    return splitArgs(expr.slice(4).trim()).every(a => condVal(a, scope, root));
+    return splitArgs(expr.slice(4).trim()).every((a) => condVal(a, scope, root));
   }
   const cmp = expr.match(/^(eq|ne|lt|gt|le|ge)\s+(.+)$/);
   if (cmp) {
@@ -275,7 +347,8 @@ function condVal(a, scope, root) {
 function tokenize(tpl) {
   const tokens = [];
   const re = /\{\{([\s\S]*?)\}\}/g;
-  let last = 0, m;
+  let last = 0,
+    m;
   while ((m = re.exec(tpl))) {
     if (m.index > last) tokens.push({ t: 'text', v: tpl.slice(last, m.index) });
     tokens.push({ t: 'x', v: m[1].trim() });
@@ -290,14 +363,18 @@ function tokenize(tpl) {
 // (nesting-aware), plus any `else` body at depth 0.
 //   { body: tokens[], elseBody: tokens[], next: indexAfterEnd }
 function findBlock(tokens, start) {
-  let depth = 0, endIdx = -1;
+  let depth = 0,
+    endIdx = -1;
   for (let i = start; i < tokens.length; i++) {
     const t = tokens[i];
     if (t.t === 'x') {
       const e = t.v;
       if (e.startsWith('each ') || e.startsWith('if ')) depth++;
       else if (e === 'end') {
-        if (depth === 0) { endIdx = i; break; }
+        if (depth === 0) {
+          endIdx = i;
+          break;
+        }
         depth--;
       }
     }
@@ -305,14 +382,18 @@ function findBlock(tokens, start) {
   if (endIdx === -1) return { body: [], elseBody: [], next: tokens.length };
 
   // second scan: locate an `else` that belongs to THIS block (depth 0)
-  let elseIdx = -1, d2 = 0;
+  let elseIdx = -1,
+    d2 = 0;
   for (let j = start; j < endIdx; j++) {
     const t = tokens[j];
     if (t.t === 'x') {
       const e = t.v;
       if (e.startsWith('each ') || e.startsWith('if ')) d2++;
       else if (e === 'end') d2--;
-      else if (e.startsWith('else') && d2 === 0) { elseIdx = j; break; }
+      else if (e.startsWith('else') && d2 === 0) {
+        elseIdx = j;
+        break;
+      }
     }
   }
   const body = tokens.slice(start, elseIdx === -1 ? endIdx : elseIdx);
@@ -333,7 +414,11 @@ function renderTokens(tokens, scope, root, depth = 0) {
     if (++guard > 1000000) throw new Error('template iteration guard exceeded');
     const t = tokens[i];
     // plain text: pass through untouched
-    if (t.t === 'text') { out += t.v; i++; continue; }
+    if (t.t === 'text') {
+      out += t.v;
+      i++;
+      continue;
+    }
     const e = t.v;
 
     // {{ each .arr }}BODY{{ end }} — render BODY once per item with the
@@ -360,7 +445,10 @@ function renderTokens(tokens, scope, root, depth = 0) {
     // {{ include "partials/x.html" }} — splice another template in,
     // rendered with the CURRENT scope (partials see .page/.site/.nav…)
     if (e.startsWith('include ')) {
-      let p = e.slice(8).trim().replace(/^"(.*)"$/, '$1');
+      let p = e
+        .slice(8)
+        .trim()
+        .replace(/^"(.*)"$/, '$1');
       const inc = path.join(SRC, p);
       out += renderTokens(tokenize(read(inc)), scope, root, depth + 1);
       i++;
@@ -372,7 +460,9 @@ function renderTokens(tokens, scope, root, depth = 0) {
     if (hm && helpers[hm[1]]) {
       const arg = hm[2].trim();
       const val = resolve(arg, scope, root);
-      out += String(helpers[hm[1]](val, scope, root) == null ? '' : helpers[hm[1]](val, scope, root));
+      out += String(
+        helpers[hm[1]](val, scope, root) == null ? '' : helpers[hm[1]](val, scope, root),
+      );
       i++;
       continue;
     }
@@ -399,8 +489,8 @@ function renderTemplate(tpl, scope, root) {
 //   thumb/src — generated SVG artwork path (see SVG section)
 // plus per-type extras (status booleans, formatted dates, reading time).
 
-const site = readJSON(path.join(SRC, 'data', 'site.json'));        // global identity: name, socials, facts…
-const navDef = readJSON(path.join(SRC, 'data', 'nav.json'));       // nav items + active-match rules
+const site = readJSON(path.join(SRC, 'data', 'site.json')); // global identity: name, socials, facts…
+const navDef = readJSON(path.join(SRC, 'data', 'nav.json')); // nav items + active-match rules
 let projects = readJSON(path.join(SRC, 'data', 'projects.json'));
 let events = readJSON(path.join(SRC, 'data', 'events.json'));
 let achievements = readJSON(path.join(SRC, 'data', 'achievements.json'));
@@ -411,15 +501,26 @@ let gallery = readJSON(path.join(SRC, 'data', 'gallery.json'));
 
 // Resource filter chips (resources page "Browse" section). Order here
 // is the order the buttons render in.
-const CATEGORIES = ['Programming', 'Linux', 'Systems', 'Web', 'AI / ML', 'Security', 'Algorithms', 'Electronics', 'Open Source', 'Dev Tools'];
+const CATEGORIES = [
+  'Programming',
+  'Linux',
+  'Systems',
+  'Web',
+  'AI / ML',
+  'Security',
+  'Algorithms',
+  'Electronics',
+  'Open Source',
+  'Dev Tools',
+];
 
 projects = projects.map((p, i) => ({
   ...p,
   code: `PROJ.${String(i + 1).padStart(2, '0')}`,
   url: `/projects/${p.slug}/`,
   stackList: p.stack ? p.stack.join(' · ') : '',
-  teamList: p.team ? p.team.map(m => m.name).join(', ') : '',
-  thumb: p.thumb || `/img/gen/${p.slug}.svg`,   // falls back to generated art
+  teamList: p.team ? p.team.map((m) => m.name).join(', ') : '',
+  thumb: p.thumb || `/img/gen/${p.slug}.svg`, // falls back to generated art
   approach: (p.approach || []).map((a, j) => ({ ...a, n: String(j + 1).padStart(2, '0') })),
 }));
 
@@ -430,14 +531,16 @@ events = events.map((ev, i) => {
     ...ev,
     code: `EVENT.${String(i + 1).padStart(2, '0')}`,
     url: `/events/${ev.slug}/`,
-    past, ongoing, upcoming: !past && !ongoing,   // booleans drive status badges
+    past,
+    ongoing,
+    upcoming: !past && !ongoing, // booleans drive status badges
     dateFmt: helpers.fmtDate(ev.date),
-    cover: `/img/gen/${ev.slug}.svg`,             // generated cover plate
+    cover: `/img/gen/${ev.slug}.svg`, // generated cover plate
   };
 });
 // Flag the FIRST upcoming event so the collapsing deck on the events
 // page can ship with data-active="true" pre-rendered (no-JS default).
-const firstUpcoming = events.find(ev => ev.upcoming);
+const firstUpcoming = events.find((ev) => ev.upcoming);
 if (firstUpcoming) firstUpcoming.first = true;
 
 achievements = achievements.map((a, i) => ({
@@ -454,7 +557,7 @@ posts = posts.map((p, i) => {
     url: `/blog/${p.slug}/`,
     readingTime: helpers.readingTime(words),
     dateFmt: helpers.fmtDate(p.date),
-    cover: `/img/gen/${p.slug}.svg`,              // generated cover plate
+    cover: `/img/gen/${p.slug}.svg`, // generated cover plate
   };
 });
 
@@ -471,18 +574,18 @@ team = team.map((g, i) => ({
 gallery = gallery.map((g, i) => ({
   ...g,
   code: `GAL.${String(i + 1).padStart(2, '0')}`,
-  src: `/img/gen/${g.seed}.svg`,                  // generated photo-plate
+  src: `/img/gen/${g.seed}.svg`, // generated photo-plate
 }));
 
 // Pre-computed subsets & counts consumed by page templates:
-const upcomingEvents = events.filter(e => e.upcoming);            // home + events page
-const pastEvents = events.filter(e => e.past || e.ongoing);       // events page archive/series
-const featuredProjects = projects.filter(p => p.featured).slice(0, 3);   // home + projects-page deck cards
-if (featuredProjects[0]) featuredProjects[0].first = true;               // ships data-active pre-rendered
-const featuredPosts = posts.filter(p => p.featured).slice(0, 3);         // home + blog
-const resourceCats = CATEGORIES;                                  // filter buttons
-const featuredResources = resources.filter(r => r.featured).slice(0, 4); // home picks
-const activeProjectsCount = projects.filter(p => p.status === 'active').length; // projects intro
+const upcomingEvents = events.filter((e) => e.upcoming); // home + events page
+const pastEvents = events.filter((e) => e.past || e.ongoing); // events page archive/series
+const featuredProjects = projects.filter((p) => p.featured).slice(0, 3); // home + projects-page deck cards
+if (featuredProjects[0]) featuredProjects[0].first = true; // ships data-active pre-rendered
+const featuredPosts = posts.filter((p) => p.featured).slice(0, 3); // home + blog
+const resourceCats = CATEGORIES; // filter buttons
+const featuredResources = resources.filter((r) => r.featured).slice(0, 4); // home picks
+const activeProjectsCount = projects.filter((p) => p.status === 'active').length; // projects intro
 
 /* ------------------------------------------------------------------ */
 /* SVG asset generation                                                */
@@ -492,7 +595,9 @@ const activeProjectsCount = projects.filter(p => p.status === 'active').length; 
 // seed string. Same seed → same image on every build/machine.
 
 // XML-escape text going into SVG <text> nodes.
-function esc(x) { return String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;'); }
+function esc(x) {
+  return String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;');
+}
 
 // Shared palette for every generated plate (matches the dark theme).
 const PLATE_COLORS = {
@@ -510,13 +615,18 @@ const PLATE_COLORS = {
 // output is stable. Variants are assigned per-seed in main() below.
 function genPlate(seed, variant) {
   const rnd = mulberry32(hashStr(seed));
-  const W = 1200, H = 800;
+  const W = 1200,
+    H = 800;
   const C = PLATE_COLORS;
   const el = [];
-  const rect = (x, y, w, h, fill, stroke, sw) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${stroke}" stroke-width="${sw || 1}"/>`;
-  const line = (x1, y1, x2, y2, stroke, sw) => `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${sw || 1}"/>`;
-  const circle = (cx, cy, r, fill, stroke, sw) => `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill || 'none'}" stroke="${stroke || 'none'}" stroke-width="${sw || 1}"/>`;
-  const text = (x, y, s, size, fill, anchor, ff) => `<text x="${x}" y="${y}" font-family="${ff || 'monospace'}" font-size="${size}" fill="${fill}" text-anchor="${anchor || 'start'}" letter-spacing="1">${esc(s)}</text>`;
+  const rect = (x, y, w, h, fill, stroke, sw) =>
+    `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${fill}" stroke="${stroke}" stroke-width="${sw || 1}"/>`;
+  const line = (x1, y1, x2, y2, stroke, sw) =>
+    `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${stroke}" stroke-width="${sw || 1}"/>`;
+  const circle = (cx, cy, r, fill, stroke, sw) =>
+    `<circle cx="${cx}" cy="${cy}" r="${r}" fill="${fill || 'none'}" stroke="${stroke || 'none'}" stroke-width="${sw || 1}"/>`;
+  const text = (x, y, s, size, fill, anchor, ff) =>
+    `<text x="${x}" y="${y}" font-family="${ff || 'monospace'}" font-size="${size}" fill="${fill}" text-anchor="${anchor || 'start'}" letter-spacing="1">${esc(s)}</text>`;
 
   const baseGrid = () => {
     let g = '';
@@ -541,11 +651,21 @@ function genPlate(seed, variant) {
       el.push(text(x + 36, y - hh + 4, `t+${i}`, 14, C.faint2));
     }
     el.push(text(80, 60, 'FIELD PLOT // 001', 15, C.faint2));
-    el.push(text(W - 80, H - 40, `x=${String(rnd()).slice(2, 5)} y=${String(rnd()).slice(2, 5)}`, 14, C.faint2, 'end'));
+    el.push(
+      text(
+        W - 80,
+        H - 40,
+        `x=${String(rnd()).slice(2, 5)} y=${String(rnd()).slice(2, 5)}`,
+        14,
+        C.faint2,
+        'end',
+      ),
+    );
   } else if (variant === 'rings') {
     el.push(rect(0, 0, W, H, C.bg));
     el.push(baseGrid());
-    const cx = W / 2 + (rnd() - 0.5) * 200, cy = H / 2 + (rnd() - 0.5) * 100;
+    const cx = W / 2 + (rnd() - 0.5) * 200,
+      cy = H / 2 + (rnd() - 0.5) * 100;
     const rings = [60, 120, 200, 300];
     rings.forEach((r, i) => {
       el.push(circle(cx, cy, r, 'none', i === 0 ? C.accent : C.faint2, i === 0 ? 2 : 1));
@@ -555,7 +675,8 @@ function genPlate(seed, variant) {
     el.push(line(cx, cy - 340, cx, cy + 340, C.faint, 0.5));
     el.push(circle(cx, cy, 5, C.accent, 'none'));
     const ang = rnd() * Math.PI * 2;
-    const px = cx + Math.cos(ang) * 300, py = cy + Math.sin(ang) * 300;
+    const px = cx + Math.cos(ang) * 300,
+      py = cy + Math.sin(ang) * 300;
     el.push(line(cx, cy, px, py, C.accent, 1.5));
     el.push(circle(px, py, 5, C.line, 'none'));
     el.push(text(cx + 320, cy - 12, 'φ 0.62 rad', 14, C.faint2, 'end'));
@@ -569,8 +690,16 @@ function genPlate(seed, variant) {
     let bars = '';
     for (let i = 0; i < n; i++) {
       const hh = 30 + rnd() * (H - 260);
-      const c = i % 5 === 0 ? C.accent : (i % 7 === 0 ? C.accent2 : C.faint2);
-      bars += rect(80 + i * bw + 3, baseline - hh, bw - 6, hh, c === C.faint2 ? '#141a22' : 'none', c, 1.5);
+      const c = i % 5 === 0 ? C.accent : i % 7 === 0 ? C.accent2 : C.faint2;
+      bars += rect(
+        80 + i * bw + 3,
+        baseline - hh,
+        bw - 6,
+        hh,
+        c === C.faint2 ? '#141a22' : 'none',
+        c,
+        1.5,
+      );
     }
     el.push(bars);
     el.push(line(80, baseline, W - 80, baseline, C.line, 1.5));
@@ -595,12 +724,24 @@ function genPlate(seed, variant) {
     for (let i = 0; i < 9; i++) {
       nodes.push({ x: 120 + rnd() * (W - 240), y: 120 + rnd() * (H - 240), r: 5 + rnd() * 6 });
     }
-    const edges = [[0, 1], [1, 2], [1, 4], [2, 5], [3, 4], [4, 5], [5, 8], [6, 7], [7, 4]];
+    const edges = [
+      [0, 1],
+      [1, 2],
+      [1, 4],
+      [2, 5],
+      [3, 4],
+      [4, 5],
+      [5, 8],
+      [6, 7],
+      [7, 4],
+    ];
     edges.forEach(([a, b]) => {
       el.push(line(nodes[a].x, nodes[a].y, nodes[b].x, nodes[b].y, C.faint2, 1));
     });
     nodes.forEach((n, i) => {
-      el.push(circle(n.x, n.y, n.r, i === 4 ? C.accent : '#141a22', i === 4 ? C.accent : C.faint2, 1.5));
+      el.push(
+        circle(n.x, n.y, n.r, i === 4 ? C.accent : '#141a22', i === 4 ? C.accent : C.faint2, 1.5),
+      );
     });
     el.push(text(nodes[4].x + 14, nodes[4].y - 10, 'core', 14, C.accent));
     el.push(text(80, 60, 'NODE GRAPH // 005', 15, C.faint2));
@@ -609,7 +750,11 @@ function genPlate(seed, variant) {
     el.push(baseGrid());
     const seg = (x1, y1, x2, y2) => {
       const mx = x1 + (x2 - x1) / 2;
-      return line(x1, y1, mx, y1, C.faint2, 1.5) + line(mx, y1, mx, y2, C.faint2, 1.5) + line(mx, y2, x2, y2, C.faint2, 1.5);
+      return (
+        line(x1, y1, mx, y1, C.faint2, 1.5) +
+        line(mx, y1, mx, y2, C.faint2, 1.5) +
+        line(mx, y2, x2, y2, C.faint2, 1.5)
+      );
     };
     el.push(seg(120, 600, 360, 200));
     el.push(seg(360, 200, 640, 520));
@@ -643,7 +788,9 @@ function genPlate(seed, variant) {
     el.push(`<path d="${d}" fill="none" stroke="${C.accent}" stroke-width="2"/>`);
     const area = `${d} L ${pts[pts.length - 1][0]} ${H - 120} L ${pts[0][0]} ${H - 120} Z`;
     el.push(`<path d="${area}" fill="${C.accent}" opacity="0.08"/>`);
-    pts.forEach((p, i) => { if (i % 3 === 0) el.push(circle(p[0], p[1], 3, '#141a22', C.line, 1)); });
+    pts.forEach((p, i) => {
+      if (i % 3 === 0) el.push(circle(p[0], p[1], 3, '#141a22', C.line, 1));
+    });
     el.push(line(120, H - 120, W - 80, H - 120, C.line, 1.5));
     el.push(line(120, 60, 120, H - 120, C.line, 1.5));
     el.push(text(80, 60, 'GROWTH CURVE // 007', 15, C.faint2));
@@ -664,8 +811,13 @@ function genAvatar(seed, name) {
   const tints = ['#17332b', '#2b2a1c', '#1f2a3a'];
   const bg = tints[Math.floor(rnd() * tints.length)];
   const initials = String(name || 'DC')
-    .split(/\s+/).slice(0, 2).map(w => w[0]).join('').toUpperCase();
-  const W = 480, H = 480;
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join('')
+    .toUpperCase();
+  const W = 480,
+    H = 480;
   const C = PLATE_COLORS;
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}">
   <rect width="${W}" height="${H}" fill="${bg}"/>
@@ -709,17 +861,29 @@ function genLogo() {
 //        Each file registers itself on window.DCITC.*; main.js (last)
 //        calls every .init() in that same order.
 const CSS_FILES = [
-  '01-vars.css', '02-reset.css', '03-type.css', '04-layout.css',
-  '05-nav.css', '06-horizontal.css', '07-components.css', '08-pages.css', '09-anim.css',
+  '01-vars.css',
+  '02-reset.css',
+  '03-type.css',
+  '04-layout.css',
+  '05-nav.css',
+  '06-horizontal.css',
+  '07-components.css',
+  '08-pages.css',
+  '09-anim.css',
 ];
 
 const JS_FILES = [
-  'theme.js', 'horizontal.js', 'reveal.js', 'transitions.js', 'pages.js',
-  'fluid-triangle.js', 'main.js',
+  'theme.js',
+  'horizontal.js',
+  'reveal.js',
+  'transitions.js',
+  'pages.js',
+  'fluid-triangle.js',
+  'main.js',
 ];
 
 function concat(dir, files) {
-  return files.map(f => read(path.join(dir, f))).join('\n');
+  return files.map((f) => read(path.join(dir, f))).join('\n');
 }
 
 /* ------------------------------------------------------------------ */
@@ -733,7 +897,7 @@ const NAV = navDef.items;
 // exact-or-subpage ("/events" matches "/events/<slug>/"). The header
 // partial uses .isActive to set the accent + aria-current.
 function navFor(page) {
-  return NAV.map(item => {
+  return NAV.map((item) => {
     let active = false;
     if (item.match === '/') active = page.url === '/';
     else if (item.match.endsWith('*')) active = page.url.startsWith(item.match.slice(0, -1));
@@ -747,12 +911,24 @@ function navFor(page) {
 // featured subsets, counts. `root` == scope so $.field works anywhere.
 function buildPage(page) {
   const scope = {
-    site, page,
+    site,
+    page,
     nav: navFor(page),
-    projects, events, upcomingEvents, pastEvents,
-    featuredProjects, featuredPosts, featuredResources,
-    achievements, resources, resourceCats, posts, team, gallery,
-    CATEGORIES, activeProjectsCount,
+    projects,
+    events,
+    upcomingEvents,
+    pastEvents,
+    featuredProjects,
+    featuredPosts,
+    featuredResources,
+    achievements,
+    resources,
+    resourceCats,
+    posts,
+    team,
+    gallery,
+    CATEGORIES,
+    activeProjectsCount,
   };
   const tpl = read(path.join(SRC, 'pages', page.template || page.file));
   const html = renderTemplate(tpl, scope, scope);
@@ -780,19 +956,21 @@ function main() {
   fs.mkdirSync(genDir, { recursive: true });
   const variants = ['grid', 'rings', 'bars', 'lines', 'dots', 'circuit', 'plot'];
   const seeds = new Set();
-  gallery.forEach(g => seeds.add(g.seed));
-  projects.forEach(p => seeds.add(p.slug));
-  posts.forEach(p => seeds.add(p.slug));
-  events.forEach(e => seeds.add(e.slug));   // event cover plates (collapsing deck)
+  gallery.forEach((g) => seeds.add(g.seed));
+  projects.forEach((p) => seeds.add(p.slug));
+  posts.forEach((p) => seeds.add(p.slug));
+  events.forEach((e) => seeds.add(e.slug)); // event cover plates (collapsing deck)
   seeds.forEach((s, i) => {
     const v = variants[hashStr(s) % variants.length];
     write(path.join(genDir, `${s}.svg`), genPlate(s, v));
   });
   write(path.join(OUT, 'img', 'logo.svg'), genLogo());
   write(path.join(OUT, 'img', 'favicon.svg'), genLogo().replace('<svg ', '<svg role="img" '));
-  team.forEach(g => g.members.forEach(m => {
-    write(path.join(genDir, `av-${m.seed}.svg`), genAvatar(m.seed, m.name));
-  }));
+  team.forEach((g) =>
+    g.members.forEach((m) => {
+      write(path.join(genDir, `av-${m.seed}.svg`), genAvatar(m.seed, m.name));
+    }),
+  );
 
   // 2. CSS / JS bundles (see CSS_FILES/JS_FILES for order rules) ----
   console.log('bundles');
@@ -823,9 +1001,13 @@ function main() {
       const prev = coll[(idx - 1 + coll.length) % coll.length];
       const next = coll[(idx + 1) % coll.length];
       const scope = {
-        site, item, prev, next,
+        site,
+        item,
+        prev,
+        next,
         page: {
-          code: item.code, section: item.section || 'item',
+          code: item.code,
+          section: item.section || 'item',
           horizontal: item.horizontal !== false,
           isSingle: true,
           title: item.title,
@@ -833,18 +1015,47 @@ function main() {
           path: item.url,
         },
         nav: navFor({ url: item.url }),
-        projects, events, upcomingEvents, pastEvents,
-        featuredProjects, featuredPosts, featuredResources,
-        achievements, resources, resourceCats, posts, team, gallery,
-        CATEGORIES, activeProjectsCount,
+        projects,
+        events,
+        upcomingEvents,
+        pastEvents,
+        featuredProjects,
+        featuredPosts,
+        featuredResources,
+        achievements,
+        resources,
+        resourceCats,
+        posts,
+        team,
+        gallery,
+        CATEGORIES,
+        activeProjectsCount,
       };
-      write(path.join(OUT, outFn(item)), renderTemplate(read(path.join(SRC, 'pages', template)), scope, scope));
+      write(
+        path.join(OUT, outFn(item)),
+        renderTemplate(read(path.join(SRC, 'pages', template)), scope, scope),
+      );
       console.log(`  ✓ ${outFn(item)}`);
     }
   };
-  makeItem('project.html', p => `projects/${p.slug}/index.html`, projects, p => p);
-  makeItem('event.html', e => `events/${e.slug}/index.html`, events, e => e);
-  makeItem('article.html', p => `blog/${p.slug}/index.html`, posts, p => p);
+  makeItem(
+    'project.html',
+    (p) => `projects/${p.slug}/index.html`,
+    projects,
+    (p) => p,
+  );
+  makeItem(
+    'event.html',
+    (e) => `events/${e.slug}/index.html`,
+    events,
+    (e) => e,
+  );
+  makeItem(
+    'article.html',
+    (p) => `blog/${p.slug}/index.html`,
+    posts,
+    (p) => p,
+  );
 
   // 5. site extras ---------------------------------------------------
   write(path.join(OUT, 'robots.txt'), 'User-agent: *\nAllow: /\n');

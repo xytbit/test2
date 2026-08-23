@@ -11,7 +11,7 @@
         reveal.js          → DCITC.reveal         (scroll-in animations)
         transitions.js     → DCITC.transitions    (page-exit fade)
         pages.js           → DCITC.pages          (menu, filters, search)
-        fluid-triangle.js  → DCITC.fluidTriangle  (hero ASCII fluid)
+        fluid-triangle.js  → DCITC.fluidTriangle  (page ASCII fluid)
         main.js            → calls each .init() in the order above
 
       Init order matters: theme first (no flash), then layout-critical

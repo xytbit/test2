@@ -10,8 +10,6 @@
        [data-stagger]          per-child delays via --d (:nth-child)
        .hero-line .hl          hero clip reveal (anime.js moves it;
                                .is-in is the no-JS/reduced fallback)
-       .amb--float/.amb--glow  ambient idle loops
-       .draw-line              stroke-dash setup for anime.js drawing
        .u-link                 animated link underline
        reduced-motion block    final safety net (02-reset has the
                                global one; this re-asserts the pieces
@@ -27,65 +25,108 @@
 
 /* load-in: html.js is set by the inline head script, so pages without
    JS are simply fully visible (no animation, no hiding) */
-html.js body { animation: page-in 0.45s var(--ease-out) 0.05s both; }
-@keyframes page-in { from { opacity: 0; } to { opacity: 1; } }
+html.js body {
+  animation: page-in 0.45s var(--ease-out) 0.05s both;
+}
+@keyframes page-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 
-body.page-exit { opacity: 0; transform: translateY(8px); transition: opacity 0.16s ease, transform 0.16s ease; }
+body.page-exit {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 0.16s ease,
+    transform 0.16s ease;
+}
 
 /* element reveal (IntersectionObserver adds .is-in) */
 html.js [data-reveal] {
   opacity: 0;
   transform: translateY(22px);
-  transition: opacity 0.7s var(--ease-out) var(--d, 0ms), transform 0.7s var(--ease-out) var(--d, 0ms);
+  transition:
+    opacity 0.7s var(--ease-out) var(--d, 0ms),
+    transform 0.7s var(--ease-out) var(--d, 0ms);
   will-change: opacity, transform;
 }
-html.js [data-reveal].is-in { opacity: 1; transform: none; }
-html.js [data-reveal="fade"] { transform: none; }
-html.js [data-reveal="left"] { transform: translateX(-26px); }
-html.js [data-reveal="right"] { transform: translateX(26px); }
-html.js [data-reveal="scale"] { transform: scale(0.985); }
-html.js [data-reveal="up"] { transform: translateY(26px); }
+html.js [data-reveal].is-in {
+  opacity: 1;
+  transform: none;
+}
+html.js [data-reveal='fade'] {
+  transform: none;
+}
+html.js [data-reveal='left'] {
+  transform: translateX(-26px);
+}
+html.js [data-reveal='right'] {
+  transform: translateX(26px);
+}
+html.js [data-reveal='scale'] {
+  transform: scale(0.985);
+}
+html.js [data-reveal='up'] {
+  transform: translateY(26px);
+}
 
 /* staggered children (pure CSS delays — robust without JS) */
 html.js [data-stagger] > * {
   opacity: 0;
   transform: translateY(18px);
-  transition: opacity 0.6s var(--ease-out) var(--d, 0ms), transform 0.6s var(--ease-out) var(--d, 0ms);
+  transition:
+    opacity 0.6s var(--ease-out) var(--d, 0ms),
+    transform 0.6s var(--ease-out) var(--d, 0ms);
 }
-html.js [data-stagger].is-in > * { opacity: 1; transform: none; }
-[data-stagger] > *:nth-child(1) { --d: 0ms; }
-[data-stagger] > *:nth-child(2) { --d: 60ms; }
-[data-stagger] > *:nth-child(3) { --d: 120ms; }
-[data-stagger] > *:nth-child(4) { --d: 180ms; }
-[data-stagger] > *:nth-child(5) { --d: 240ms; }
-[data-stagger] > *:nth-child(6) { --d: 300ms; }
-[data-stagger] > *:nth-child(7) { --d: 360ms; }
-[data-stagger] > *:nth-child(8) { --d: 420ms; }
-[data-stagger] > *:nth-child(n+9) { --d: 480ms; }
+html.js [data-stagger].is-in > * {
+  opacity: 1;
+  transform: none;
+}
+[data-stagger] > *:nth-child(1) {
+  --d: 0ms;
+}
+[data-stagger] > *:nth-child(2) {
+  --d: 60ms;
+}
+[data-stagger] > *:nth-child(3) {
+  --d: 120ms;
+}
+[data-stagger] > *:nth-child(4) {
+  --d: 180ms;
+}
+[data-stagger] > *:nth-child(5) {
+  --d: 240ms;
+}
+[data-stagger] > *:nth-child(6) {
+  --d: 300ms;
+}
+[data-stagger] > *:nth-child(7) {
+  --d: 360ms;
+}
+[data-stagger] > *:nth-child(8) {
+  --d: 420ms;
+}
+[data-stagger] > *:nth-child(n + 9) {
+  --d: 480ms;
+}
 
 /* hero text lines (clip reveal driven by anime.js) */
-html.js .hero-line .hl { transform: translateY(112%); will-change: transform; }
-.hero-line .hl.is-in { transform: translateY(0); }
-
-/* ambient */
-.amb { will-change: transform; }
-@keyframes floaty {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+html.js .hero-line .hl {
+  transform: translateY(112%);
+  will-change: transform;
 }
-.amb--float { animation: floaty 7s ease-in-out infinite; }
-
-@keyframes glow-pulse {
-  0%, 100% { opacity: 0.5; }
-  50% { opacity: 0.85; }
+.hero-line .hl.is-in {
+  transform: translateY(0);
 }
-.amb--glow { animation: glow-pulse 6s ease-in-out infinite; }
-
-/* decorative line drawing (anime.js drives stroke-dashoffset) */
-.draw-line { stroke-dasharray: 1; stroke-dashoffset: 1; }
 
 /* link underlines */
-.u-link { position: relative; }
+.u-link {
+  position: relative;
+}
 .u-link::after {
   content: '';
   position: absolute;
@@ -98,16 +139,26 @@ html.js .hero-line .hl { transform: translateY(112%); will-change: transform; }
   transform-origin: left;
   transition: transform var(--t-med) var(--ease);
 }
-.u-link:hover::after { transform: scaleX(1); }
+.u-link:hover::after {
+  transform: scaleX(1);
+}
 
 @media (prefers-reduced-motion: reduce) {
-  html.js [data-reveal], html.js [data-stagger] > * {
+  html.js [data-reveal],
+  html.js [data-stagger] > * {
     opacity: 1 !important;
     transform: none !important;
     transition: none !important;
   }
-  .hero-line .hl { transform: none !important; }
-  .amb--float, .amb--glow { animation: none !important; }
-  html.js body { animation: none !important; }
-  body.page-exit { opacity: 1; transform: none; transition: none; }
+  .hero-line .hl {
+    transform: none !important;
+  }
+  html.js body {
+    animation: none !important;
+  }
+  body.page-exit {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
 }

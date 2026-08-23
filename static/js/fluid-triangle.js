@@ -43,7 +43,7 @@
 (function () {
   'use strict';
 
-  var NS = window.DCITC = window.DCITC || {};
+  var NS = (window.DCITC = window.DCITC || {});
   var mounted = false;
 
   /* ------------------------------------------------------------------
@@ -54,20 +54,40 @@
   var CELL_CROP_Y = 2;
 
   var BASE = [
-    ["~", 12198],
-    [":", 6921],
-    ["-", 5589],
-    ["·", 3267],
-    [" ", 0],
-    [" ", 0],
+    ['~', 12198],
+    [':', 6921],
+    ['-', 5589],
+    ['·', 3267],
+    [' ', 0],
+    [' ', 0],
   ];
 
   var RENDER_CHARS = [
-    [["F", 26574], ["F", 26574], ["f", 17490]].concat(BASE),
-    [["L", 21327], ["L", 21327], ["l", 14019]].concat(BASE),
-    [["U", 32973], ["U", 32973], ["u", 24093]].concat(BASE),
-    [["I", 14883], ["I", 14883], ["i", 13638]].concat(BASE),
-    [["D", 36198], ["D", 36198], ["d", 30762]].concat(BASE),
+    [
+      ['F', 26574],
+      ['F', 26574],
+      ['f', 17490],
+    ].concat(BASE),
+    [
+      ['L', 21327],
+      ['L', 21327],
+      ['l', 14019],
+    ].concat(BASE),
+    [
+      ['U', 32973],
+      ['U', 32973],
+      ['u', 24093],
+    ].concat(BASE),
+    [
+      ['I', 14883],
+      ['I', 14883],
+      ['i', 13638],
+    ].concat(BASE),
+    [
+      ['D', 36198],
+      ['D', 36198],
+      ['d', 30762],
+    ].concat(BASE),
   ];
 
   var SPEED_1 = 1.0 / 60.0 / 16;
@@ -236,8 +256,14 @@
       // triangle obstacle vertices from centre + radius (upstream)
       var trianglePoints = [
         { x: obstacleX, y: obstacleY + obstacleRadius },
-        { x: obstacleX - obstacleRadius * Math.cos(Math.PI / 6), y: obstacleY - obstacleRadius * Math.sin(Math.PI / 6) },
-        { x: obstacleX + obstacleRadius * Math.cos(Math.PI / 6), y: obstacleY - obstacleRadius * Math.sin(Math.PI / 6) },
+        {
+          x: obstacleX - obstacleRadius * Math.cos(Math.PI / 6),
+          y: obstacleY - obstacleRadius * Math.sin(Math.PI / 6),
+        },
+        {
+          x: obstacleX + obstacleRadius * Math.cos(Math.PI / 6),
+          y: obstacleY - obstacleRadius * Math.sin(Math.PI / 6),
+        },
       ];
 
       function pointInTriangle(px, py, v1, v2, v3) {
@@ -265,21 +291,39 @@
           var t = Math.max(0, Math.min(1, (point.x * edge.x + point.y * edge.y) / len));
           var proj = { x: p1.x + t * edge.x, y: p1.y + t * edge.y };
           var dist = Math.sqrt((x - proj.x) * (x - proj.x) + (y - proj.y) * (y - proj.y));
-          if (dist < minDist) { minDist = dist; closestPoint = proj; }
+          if (dist < minDist) {
+            minDist = dist;
+            closestPoint = proj;
+          }
         }
         var dx = x - closestPoint.x;
         var dy = y - closestPoint.y;
         var dd = Math.sqrt(dx * dx + dy * dy);
-        if (dd > 0) { x = closestPoint.x; y = closestPoint.y; }
+        if (dd > 0) {
+          x = closestPoint.x;
+          y = closestPoint.y;
+        }
         this.particleVel[2 * i] = 0;
         this.particleVel[2 * i + 1] = 0;
       }
 
       // wall collisions
-      if (x < minX) { x = minX; this.particleVel[2 * i] = 0.0; }
-      if (x > maxX) { x = maxX; this.particleVel[2 * i] = 0.0; }
-      if (y < minY) { y = minY; this.particleVel[2 * i + 1] = 0.0; }
-      if (y > maxY) { y = maxY; this.particleVel[2 * i + 1] = 0.0; }
+      if (x < minX) {
+        x = minX;
+        this.particleVel[2 * i] = 0.0;
+      }
+      if (x > maxX) {
+        x = maxX;
+        this.particleVel[2 * i] = 0.0;
+      }
+      if (y < minY) {
+        y = minY;
+        this.particleVel[2 * i + 1] = 0.0;
+      }
+      if (y > maxY) {
+        y = maxY;
+        this.particleVel[2 * i + 1] = 0.0;
+      }
       this.particlePos[2 * i] = x;
       this.particlePos[2 * i + 1] = y;
     }
@@ -314,7 +358,10 @@
       var sum = 0.0;
       var numFluidCells = 0;
       for (var c = 0; c < this.fNumCells; c++) {
-        if (this.cellType[c] === FLUID_CELL) { sum += d[c]; numFluidCells++; }
+        if (this.cellType[c] === FLUID_CELL) {
+          sum += d[c];
+          numFluidCells++;
+        }
       }
       if (numFluidCells > 0) this.particleRestDensity = sum / numFluidCells;
     }
@@ -372,23 +419,39 @@
 
         if (toGrid) {
           var pv = this.particleVel[2 * i + component];
-          f[nr0] += pv * d0; d[nr0] += d0;
-          f[nr1] += pv * d1; d[nr1] += d1;
-          f[nr2] += pv * d2; d[nr2] += d2;
-          f[nr3] += pv * d3; d[nr3] += d3;
+          f[nr0] += pv * d0;
+          d[nr0] += d0;
+          f[nr1] += pv * d1;
+          d[nr1] += d1;
+          f[nr2] += pv * d2;
+          d[nr2] += d2;
+          f[nr3] += pv * d3;
+          d[nr3] += d3;
         } else {
           var offset = component === 0 ? n : 1;
-          var valid0 = this.cellType[nr0] !== AIR_CELL || this.cellType[nr0 - offset] !== AIR_CELL ? 1.0 : 0.0;
-          var valid1 = this.cellType[nr1] !== AIR_CELL || this.cellType[nr1 - offset] !== AIR_CELL ? 1.0 : 0.0;
-          var valid2 = this.cellType[nr2] !== AIR_CELL || this.cellType[nr2 - offset] !== AIR_CELL ? 1.0 : 0.0;
-          var valid3 = this.cellType[nr3] !== AIR_CELL || this.cellType[nr3 - offset] !== AIR_CELL ? 1.0 : 0.0;
+          var valid0 =
+            this.cellType[nr0] !== AIR_CELL || this.cellType[nr0 - offset] !== AIR_CELL ? 1.0 : 0.0;
+          var valid1 =
+            this.cellType[nr1] !== AIR_CELL || this.cellType[nr1 - offset] !== AIR_CELL ? 1.0 : 0.0;
+          var valid2 =
+            this.cellType[nr2] !== AIR_CELL || this.cellType[nr2 - offset] !== AIR_CELL ? 1.0 : 0.0;
+          var valid3 =
+            this.cellType[nr3] !== AIR_CELL || this.cellType[nr3 - offset] !== AIR_CELL ? 1.0 : 0.0;
           var v = this.particleVel[2 * i + component];
           var dv = valid0 * d0 + valid1 * d1 + valid2 * d2 + valid3 * d3;
           if (dv > 0.0) {
-            var picV = (valid0 * d0 * f[nr0] + valid1 * d1 * f[nr1] +
-                        valid2 * d2 * f[nr2] + valid3 * d3 * f[nr3]) / dv;
-            var corr = (valid0 * d0 * (f[nr0] - prevF[nr0]) + valid1 * d1 * (f[nr1] - prevF[nr1]) +
-                        valid2 * d2 * (f[nr2] - prevF[nr2]) + valid3 * d3 * (f[nr3] - prevF[nr3])) / dv;
+            var picV =
+              (valid0 * d0 * f[nr0] +
+                valid1 * d1 * f[nr1] +
+                valid2 * d2 * f[nr2] +
+                valid3 * d3 * f[nr3]) /
+              dv;
+            var corr =
+              (valid0 * d0 * (f[nr0] - prevF[nr0]) +
+                valid1 * d1 * (f[nr1] - prevF[nr1]) +
+                valid2 * d2 * (f[nr2] - prevF[nr2]) +
+                valid3 * d3 * (f[nr3] - prevF[nr3])) /
+              dv;
             var flipV = v + corr;
             this.particleVel[2 * i + component] = (1.0 - flipRatio) * picV + flipRatio * flipV;
           }
@@ -411,7 +474,12 @@
     }
   };
 
-  FlipFluid.prototype.solveIncompressibility = function (numIters, dt, overRelaxation, compensateDrift) {
+  FlipFluid.prototype.solveIncompressibility = function (
+    numIters,
+    dt,
+    overRelaxation,
+    compensateDrift,
+  ) {
     this.p.fill(0.0);
     this.prevU.set(this.u);
     this.prevV.set(this.v);
@@ -463,7 +531,7 @@
         var m = 0.25;
         var num = Math.floor(val / m);
         var s = (val - num * m) / m;
-        var g = (num % 2 === 0) ? s : 1.0 - s;   // upstream saw-band, condensed
+        var g = num % 2 === 0 ? s : 1.0 - s; // upstream saw-band, condensed
         this.cellColor[3 * i] = g;
         this.cellColor[3 * i + 1] = g;
         this.cellColor[3 * i + 2] = g;
@@ -471,7 +539,19 @@
     }
   };
 
-  FlipFluid.prototype.simulate = function (dt, gravity, flipRatio, numPressureIters, numParticleIters, overRelaxation, compensateDrift, separateParticles, obstacleX, obstacleY, obstacleRadius) {
+  FlipFluid.prototype.simulate = function (
+    dt,
+    gravity,
+    flipRatio,
+    numPressureIters,
+    numParticleIters,
+    overRelaxation,
+    compensateDrift,
+    separateParticles,
+    obstacleX,
+    obstacleY,
+    obstacleRadius,
+  ) {
     var numSubSteps = 1;
     var sdt = dt / numSubSteps;
     for (var step = 0; step < numSubSteps; step++) {
@@ -499,7 +579,6 @@
     flipRatio: 0.9,
     numPressureIters: 30,
     numParticleIters: 2,
-    frameNr: 0,
     overRelaxation: 1.9,
     compensateDrift: true,
     separateParticles: true,
@@ -516,7 +595,7 @@
   function computeGrid() {
     GRID_SIZE = Math.max(
       Math.round(Math.sqrt((window.innerWidth * window.innerHeight) / TARGET_LONG_SIDE)),
-      MIN_GRID_SIZE
+      MIN_GRID_SIZE,
     );
   }
 
@@ -528,7 +607,6 @@
   }
 
   var Y_RESOLUTION = 0;
-  var X_RESOLUTION = 0;
   var RESOLUTION = 0;
   var simHeight = 2.0;
   var cScale = 1;
@@ -540,7 +618,6 @@
     var rw = realWidth();
     var rh = realHeight();
     Y_RESOLUTION = rh / GRID_SIZE;
-    X_RESOLUTION = rw / GRID_SIZE;
     RESOLUTION = Y_RESOLUTION;
 
     cScale = rh / simHeight;
@@ -653,7 +730,9 @@
     scene.dt = SPEED_1;
     startDrag(e.clientX, e.clientY);
   }
-  function onMouseMove(e) { drag(e.clientX, e.clientY); }
+  function onMouseMove(e) {
+    drag(e.clientX, e.clientY);
+  }
   function onMouseUp() {
     scene.dt = SPEED_2;
     endDrag();
@@ -675,13 +754,17 @@
 
   /* --- device motion (upstream, permission only inside a gesture) ---- */
   function requestDeviceMotion() {
-    if (typeof window.DeviceMotionEvent !== 'undefined' &&
-        typeof DeviceMotionEvent.requestPermission === 'function') {
+    if (
+      typeof window.DeviceMotionEvent !== 'undefined' &&
+      typeof DeviceMotionEvent.requestPermission === 'function'
+    ) {
       DeviceMotionEvent.requestPermission()
         .then(function (permission) {
           if (permission === 'granted') setupDeviceMotion();
         })
-        .catch(function () { /* denied → default gravity */ });
+        .catch(function () {
+          /* denied → default gravity */
+        });
     } else if (typeof window.DeviceMotionEvent !== 'undefined') {
       setupDeviceMotion();
     }
@@ -696,11 +779,21 @@
       if (!x && !y) return;
       // screen-orientation compensation (modern API + legacy fallback)
       var angle = 0;
-      if (window.screen && screen.orientation && typeof screen.orientation.angle === 'number') angle = screen.orientation.angle;
+      if (window.screen && screen.orientation && typeof screen.orientation.angle === 'number')
+        angle = screen.orientation.angle;
       else if (typeof window.orientation === 'number') angle = window.orientation;
-      if (angle === 90) { var t = x; x = -y; y = t; }
-      else if (angle === -90 || angle === 270) { var t2 = x; x = y; y = -t2; }
-      else if (angle === 180 || angle === -180) { x = -x; y = -y; }
+      if (angle === 90) {
+        var t = x;
+        x = -y;
+        y = t;
+      } else if (angle === -90 || angle === 270) {
+        var t2 = x;
+        x = y;
+        y = -t2;
+      } else if (angle === 180 || angle === -180) {
+        x = -x;
+        y = -y;
+      }
       gravityVector = { x: x, y: y };
       scene.gravity = 0;
     });
@@ -717,13 +810,18 @@
 
     if (!scene.paused) {
       scene.fluid.simulate(
-        scene.dt, scene.gravity, scene.flipRatio,
-        scene.numPressureIters, scene.numParticleIters,
-        scene.overRelaxation, scene.compensateDrift,
-        scene.separateParticles, scene.obstacleX, scene.obstacleY,
-        scene.obstacleRadius
+        scene.dt,
+        scene.gravity,
+        scene.flipRatio,
+        scene.numPressureIters,
+        scene.numParticleIters,
+        scene.overRelaxation,
+        scene.compensateDrift,
+        scene.separateParticles,
+        scene.obstacleX,
+        scene.obstacleY,
+        scene.obstacleRadius,
       );
-      scene.frameNr++;
     }
 
     // ASCII render into the layer's <pre> (upstream innerHTML path;
@@ -743,19 +841,29 @@
     if (!pausedForever) {
       if (settleFrames > 0) {
         // reduced-motion settle: count down, then halt the loop
-        if (--settleFrames === 0) { pausedForever = true; scene.paused = true; }
+        if (--settleFrames === 0) {
+          pausedForever = true;
+          scene.paused = true;
+        }
       }
       if (!pausedForever) rafId = requestAnimationFrame(update);
     }
   }
 
   var RENDER_DICTS = RENDER_CHARS.map(function (ramp) {
-    return ramp.slice().sort(function (a, b) { return a[1] - b[1]; })
-      .map(function (pair) { return pair[0]; }).join('');
+    return ramp
+      .slice()
+      .sort(function (a, b) {
+        return a[1] - b[1];
+      })
+      .map(function (pair) {
+        return pair[0];
+      })
+      .join('');
   });
 
-  var pausedForever = false;   // set once the loop must stop for good
-  var settleFrames = 0;        // >0 while reduced-motion settling
+  var pausedForever = false; // set once the loop must stop for good
+  var settleFrames = 0; // >0 while reduced-motion settling
 
   function init() {
     var mount = document.querySelector('[data-fluid-triangle]');

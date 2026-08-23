@@ -14,11 +14,11 @@
        with overflow-x:auto; 06-horizontal.css adds drag cursors.
        The 900px breakpoint here MUST match --hx-break in 01-vars.css
        and the @media rules in the CSS files.
-     - Progress bar: .progress-fill (partials' .progress strip under
-       the nav) is filled from real scroll position, both modes.
-     - Parallax: any [data-plx="0.03"] element translates with scroll;
-       the fixed .bg-grid backdrop counter-moves slightly (04-layout.css).
-     - Boot: main.js calls DCITC.horizontal.init().
+      - Progress bar: .progress-fill (partials' .progress strip under
+        the nav) is filled from real scroll position, both modes.
+      - Backdrop drift: the fixed .bg-grid counter-moves slightly with
+        scroll (04-layout.css) for a touch of depth.
+      - Boot: main.js calls DCITC.horizontal.init().
 
    BEHAVIOUR:
      - Wheel: deltaY/deltaX mapped to horizontal goal; eased at 0.16
@@ -26,10 +26,11 @@
        REMOVED — pure smooth manual scroll only.
      - Keyboard: arrows/PageUp/PageUp/Home/End/Space (when not typing
        in a field). Space = page-right.
-      - Mouse drag: pointer capture on main, grabs unless the target is
-        interactive (a/button/input/.nav-links/[data-more]…) or inside a
-        [data-hx-nodrag] zone (e.g. the home hero's WebGL sphere — drags
-        there orbit the 3D view instead of panning the strip).
+       - Mouse drag: pointer capture on main, grabs unless the target is
+         interactive (a/button/input/.nav-links/[data-more]…) or inside a
+         [data-hx-nodrag] zone (on HOME the whole strip is nodrag — mouse
+         drags stir the ASCII fluid instead of panning; wheel/keys/touch
+         still pan).
      - Touch: untouched — native horizontal pan of the scroll container.
      - prefers-reduced-motion: easing disabled (instant jumps).
      - Below 900px everything unbinds (disable()) and CSS stacks
@@ -39,24 +40,26 @@
   'use strict';
 
   // public namespace — main.js calls DCITC.horizontal.init()
-  var HX = window.DCITC.horizontal = {};
+  var HX = (window.DCITC.horizontal = {});
 
-  var main = null;        // <main data-horizontal> (null on vertical pages)
-  var elProgress;         // .progress-fill bar under the nav
-  var enabled = false;    // listeners bound? (true only ≥900px)
+  var main = null; // <main data-horizontal> (null on vertical pages)
+  var elProgress; // .progress-fill bar under the nav
+  var enabled = false; // listeners bound? (true only ≥900px)
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var mq = window.matchMedia('(min-width: 900px)');  // keep in sync with CSS --hx-break
+  var mq = window.matchMedia('(min-width: 900px)'); // keep in sync with CSS --hx-break
 
-  var goal = null;      // desired scrollLeft (wheel / keys / drag)
-  var mode = null;      // 'drive' while easing toward goal, null when idle
-  var raf = null;       // active animation-frame handle
-  var lastMax = 0;      // cached max scroll for UI math
+  var goal = null; // desired scrollLeft (wheel / keys / drag)
+  var mode = null; // 'drive' while easing toward goal, null when idle
+  var raf = null; // active animation-frame handle
+  var lastMax = 0; // cached max scroll for UI math
 
   function getMax() {
     var m = main.scrollWidth - main.clientWidth;
     return m > 0 ? m : 0;
   }
-  function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+  function clamp(v, lo, hi) {
+    return Math.max(lo, Math.min(hi, v));
+  }
 
   function measure() {
     lastMax = getMax();
@@ -85,12 +88,14 @@
 
     if (mode) {
       var delta = goal - cur;
-      var eased = delta * 0.16;          // smoothing factor — the "feel"
-      if (reduced) { eased = delta; }    // reduced motion: jump instantly
+      var eased = delta * 0.16; // smoothing factor — the "feel"
+      if (reduced) {
+        eased = delta;
+      } // reduced motion: jump instantly
       var next = Math.abs(eased) < 0.6 ? goal : cur + eased;
       main.scrollLeft = clamp(next, 0, max);
       if (Math.abs(goal - main.scrollLeft) < 0.6) {
-        mode = null;                     // arrived — stop driving
+        mode = null; // arrived — stop driving
         goal = null;
       }
       raf = requestAnimationFrame(loop);
@@ -113,8 +118,8 @@
     if (e.target.closest('[data-vzone]')) return;
     e.preventDefault();
     var d = e.deltaY + e.deltaX;
-    d = clamp(d, -140, 140);            // tame huge trackpad flings
-    var base = (mode === null) ? main.scrollLeft : goal;
+    d = clamp(d, -140, 140); // tame huge trackpad flings
+    var base = mode === null ? main.scrollLeft : goal;
     setGoal(base + d, 'drive');
   }
 
@@ -122,18 +127,38 @@
   function onKey(e) {
     if (!enabled) return;
     var t = e.target;
-    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)) return;
+    if (
+      t &&
+      (t.tagName === 'INPUT' ||
+        t.tagName === 'TEXTAREA' ||
+        t.tagName === 'SELECT' ||
+        t.isContentEditable)
+    )
+      return;
     var k = e.key;
-    if (k === ' ') { e.preventDefault(); k = 'ArrowRight'; } // space = page right
+    if (k === ' ') {
+      e.preventDefault();
+      k = 'ArrowRight';
+    } // space = page right
     var map = {
-      ArrowRight: 1, ArrowLeft: -1, ArrowDown: 1, ArrowUp: -1,
-      PageDown: 1, PageUp: -1, Home: 'home', End: 'end'
+      ArrowRight: 1,
+      ArrowLeft: -1,
+      ArrowDown: 1,
+      ArrowUp: -1,
+      PageDown: 1,
+      PageUp: -1,
+      Home: 'home',
+      End: 'end',
     };
     if (k in map) {
       e.preventDefault();
       if (map[k] === 'home') setGoal(0, 'drive');
       else if (map[k] === 'end') setGoal(getMax(), 'drive');
-      else setGoal(main.scrollLeft + Math.sign(map[k]) * Math.min(main.clientWidth * 0.85, 1000), 'drive');
+      else
+        setGoal(
+          main.scrollLeft + Math.sign(map[k]) * Math.min(main.clientWidth * 0.85, 1000),
+          'drive',
+        );
     }
   }
 
@@ -149,16 +174,27 @@
   function onPointerDown(e) {
     if (!enabled || e.button !== 0 || e.pointerType !== 'mouse') return;
     // never hijack presses on interactive elements or 3D/drag zones
-    if (e.target.closest('a, button, input, select, textarea, details, [data-more], .nav-links, [data-hx-nodrag]')) return;
+    if (
+      e.target.closest(
+        'a, button, input, select, textarea, details, [data-more], .nav-links, [data-hx-nodrag]',
+      )
+    )
+      return;
     drag = { x: e.clientX, start: main.scrollLeft, moved: false };
-    mode = null; goal = null;           // hand control to the pointer
+    mode = null;
+    goal = null; // hand control to the pointer
     main.classList.add('is-drag-ready');
-    try { main.setPointerCapture(e.pointerId); } catch (err) {}
+    try {
+      main.setPointerCapture(e.pointerId);
+    } catch (err) {}
   }
   function onPointerMove(e) {
     if (!drag) return;
     var dx = e.clientX - drag.x;
-    if (Math.abs(dx) > 4) { drag.moved = true; main.classList.add('is-dragging'); }
+    if (Math.abs(dx) > 4) {
+      drag.moved = true;
+      main.classList.add('is-dragging');
+    }
     if (drag.moved) {
       main.scrollLeft = clamp(drag.start - dx, 0, getMax()); // direct 1:1 drag
     }
@@ -169,17 +205,15 @@
     drag = null;
   }
 
-  function onResize() { measure(); if (enabled && mode === null) { updateUI(main.scrollLeft); } }
-
-  /* --- parallax ------------------------------------------------------ */
-
-  // shift [data-plx] layers proportionally to scroll; grid drifts back
-  function parallax(x) {
-    var els = main.querySelectorAll('[data-plx]');
-    for (var i = 0; i < els.length; i++) {
-      var f = parseFloat(els[i].getAttribute('data-plx') || '0');
-      if (!reduced) els[i].style.transform = 'translateX(' + (x * f).toFixed(1) + 'px)';
+  function onResize() {
+    measure();
+    if (enabled && mode === null) {
+      updateUI(main.scrollLeft);
     }
+  }
+
+  // backdrop drift: the fixed grid counter-moves with scroll for depth
+  function parallax(x) {
     var grid = document.querySelector('.bg-grid');
     if (grid && !reduced) grid.style.transform = 'translateX(' + (-x * 0.02).toFixed(1) + 'px)';
   }
@@ -214,8 +248,12 @@
     main.removeEventListener('pointerup', onPointerUp);
     main.removeEventListener('pointercancel', onPointerUp);
     window.removeEventListener('resize', onResize);
-    if (raf) { cancelAnimationFrame(raf); raf = null; }
-    mode = null; goal = null;
+    if (raf) {
+      cancelAnimationFrame(raf);
+      raf = null;
+    }
+    mode = null;
+    goal = null;
     if (elProgress) elProgress.style.width = '0%';
     parallax(0);
   }
@@ -240,9 +278,14 @@
     main = document.querySelector('main[data-horizontal]');
     elProgress = document.querySelector('.progress-fill');
 
-    if (!main) { initVertical(); return; }
+    if (!main) {
+      initVertical();
+      return;
+    }
 
-    var apply = function (e) { (e.matches) ? enable() : disable(); };
+    var apply = function (e) {
+      e.matches ? enable() : disable();
+    };
     if (mq.addEventListener) mq.addEventListener('change', apply);
     else if (mq.addListener) mq.addListener(apply);
     apply(mq);

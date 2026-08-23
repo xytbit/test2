@@ -27,7 +27,7 @@ const fs = require('fs');
 const path = require('path');
 
 const ROOT = path.resolve(__dirname, '..');
-const OUT = path.join(ROOT, 'public');          // served directory
+const OUT = path.join(ROOT, 'public'); // served directory
 const PORT = process.env.PORT || 8080;
 
 // extension → Content-Type for anything the site ships
@@ -59,7 +59,14 @@ const server = http.createServer((req, res) => {
   let chosen = null;
   for (const c of candidates) {
     if (!c.startsWith(OUT)) continue; // traversal guard: stay inside public/
-    try { if (fs.statSync(c).isFile()) { chosen = c; break; } } catch (e) { /* keep trying */ }
+    try {
+      if (fs.statSync(c).isFile()) {
+        chosen = c;
+        break;
+      }
+    } catch (e) {
+      /* keep trying */
+    }
   }
   if (chosen) {
     res.writeHead(200, {

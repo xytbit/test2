@@ -27,8 +27,8 @@
 (function () {
   'use strict';
 
-  var KEY = 'dcitc-theme';                 // localStorage key (shared with head.html inline script)
-  var root = document.documentElement;     // <html data-theme="…">
+  var KEY = 'dcitc-theme'; // localStorage key (shared with head.html inline script)
+  var root = document.documentElement; // <html data-theme="…">
   var sys = window.matchMedia('(prefers-color-scheme: light)');
 
   function current() {
@@ -43,7 +43,11 @@
   // toggle button handler: flip, persist, apply
   function toggle() {
     var next = current() === 'dark' ? 'light' : 'dark';
-    try { localStorage.setItem(KEY, next); } catch (e) { /* private mode */ }
+    try {
+      localStorage.setItem(KEY, next);
+    } catch (e) {
+      /* private mode */
+    }
     apply(next);
   }
 
@@ -56,7 +60,9 @@
     var onChange = function (ev) {
       try {
         if (!localStorage.getItem(KEY)) apply(ev.matches ? 'light' : 'dark');
-      } catch (e) { apply(ev.matches ? 'light' : 'dark'); }
+      } catch (e) {
+        apply(ev.matches ? 'light' : 'dark');
+      }
     };
     if (sys.addEventListener) sys.addEventListener('change', onChange);
     else if (sys.addListener) sys.addListener(onChange); // older Safari
