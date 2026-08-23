@@ -1,0 +1,15 @@
+{
+  "name": "dcitc-website",
+  "version": "0.1.0",
+  "description": "Dhaka College IT Club — static website with horizontal browsing. Zero-dependency build, Hugo-ready structure.",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "serve": "node scripts/serve.js",
+    "dev": "node scripts/dev.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

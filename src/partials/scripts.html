@@ -1,0 +1,17 @@
+<!-- ==================================================================
+     DCITC SCRIPTS PARTIAL  —  src/partials/scripts.html
+     ==================================================================
+     WHAT THIS FILE CONTROLS:
+       The two <script> tags included at the end of every page body.
+
+     LOAD ORDER (matters):
+       1. /js/vendor/anime.min.js — vendored animation library; must
+          exist before app.js runs because reveal.js checks
+          window.anime for the hero + line-draw animations.
+       2. /js/app.js — the build-time concat of static/js/* in this
+          order: theme → horizontal → reveal → transitions → pages →
+          main (main.js calls every module's .init()).
+       Both use `defer`, so execution happens after parsing, in order.
+     ================================================================== -->
+<script src="/js/vendor/anime.min.js" defer></script>
+<script src="/js/app.js" defer></script>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<!-- ==================================================================
+     PROJECTS INDEX  —  src/pages/projects.html  →  public/projects/index.html
+     ==================================================================
+     WHAT THIS FILE CONTROLS:
+       The project portfolio landing page:
+
+       00 Overview        intro + counts (len of projects +
+                          activeProjectsCount computed at build)
+       01 Projects        collapsing card deck (.evx — same design as
+                          the events Upcoming deck) showing the 3
+                          FEATURED projects; hover/click/keyboard
+                          expands a card, CTA links to its single
+                          page (/projects/<slug>/). Status shown in
+                          the kicker; year + category as meta tags.
+       02 How we build    .flow Problem→Approach→Result strip
+
+     Data source: src/data/projects.json (enriched with code/url/thumb
+     in scripts/build.js).
+     ================================================================== -->
+<html lang="{{ .site.meta.language }}">
+{{ include "partials/head.html" }}
+<body class="hx-body" data-page="projects">
+{{ include "partials/header.html" }}
+<div class="progress" aria-hidden="true"><span class="progress-fill"></span></div>
+
+<main id="main" class="hx" data-horizontal>
+  <!-- SECTION 00 — INTRO -->
+  <section class="sec sec--full sec--intro scan" data-section="Overview" data-code="00" data-label="Overview">
+    <div class="intro-in">
+      <p class="kicker" data-reveal="fade">00 — Projects</p>
+      <h1 class="h-display intro-title" data-reveal="up">BUILT IN THE OPEN, DOCUMENTED FOR THE NEXT PERSON.</h1>
+      <p class="lead mt-3" data-reveal style="--d:180ms">Every project here started as a question from a study group. These are the ones that became real systems — with source, measurements, and honest write-ups.</p>
+      <div class="intro-meta mono" data-reveal style="--d:280ms">
+        <span>REPOS <span class="accent">{{ len .projects }}</span></span>
+        <span>ACTIVE <span class="accent">{{ .activeProjectsCount }}</span></span>
+        <span>MOSTLY <span class="accent">OPEN SOURCE</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 01 — PROJECTS -->
+  <section class="sec sec--wide" data-section="Projects" data-code="01" data-label="Projects">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">01 — Projects</p>
+        <h2 class="h-section">Fresh off the bench.</h2>
+      </div>
+      <ul class="evx" data-evx>
+        {{ each .featuredProjects }}
+        <li class="evx-item"{{ if .first }} data-active="true"{{ end }}>
+          <article>
+            <span class="evx-strip mono">{{ .title }}</span>
+            <div class="evx-body">
+              <p class="evx-kicker mono">{{ .code }} · {{ .status }}</p>
+              <h3>{{ .title }}</h3>
+              <p class="evx-desc">{{ .tagline }}</p>
+              <div class="evx-meta">
+                <span class="tag">{{ .year }}</span>
+                <span class="tag">{{ .category }}</span>
+              </div>
+              <a class="evx-cta" href="{{ .url }}"><span>Open project</span><span aria-hidden="true">→</span></a>
+            </div>
+            <img src="{{ .thumb }}" alt="" loading="lazy">
+          </article>
+        </li>
+        {{ end }}
+      </ul>
+    </div>
+  </section>
+
+  <!-- SECTION 02 — HOW WE BUILD -->
+  <section class="sec sec--fit" data-section="How we build" data-code="02" data-label="How we build">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">02 — How we build</p>
+        <h2 class="h-section">The same discipline, every time.</h2>
+      </div>
+      <div class="flow" data-stagger>
+        <div class="flow-step" data-n="01">
+          <h3>Problem</h3>
+          <p>Named from a real situation — a lab that needs data, a network that goes down, a language model that ignores Bangla.</p>
+        </div>
+        <div class="flow-step" data-n="02">
+          <h3>Approach</h3>
+          <p>Smallest thing that works, built to be read. Design decisions documented in the repo, not just in someone's head.</p>
+        </div>
+        <div class="flow-step" data-n="03">
+          <h3>Result</h3>
+          <p>Shipped, measured, and written up. A project that isn't documented is a demo, not a deliverable.</p>
+        </div>
+      </div>
+      <p class="mono mt-4" style="color:var(--ink-faint)" data-reveal>→ every repo ships with a README that explains the architecture, not just the buttons.</p>
+    </div>
+  </section>
+
+  {{ include "partials/footer.html" }}
+</main>
+
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-glow" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+{{ include "partials/scripts.html" }}
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<!-- ==================================================================
+     GALLERY PAGE  —  src/pages/gallery.html  →  public/gallery/index.html
+     ==================================================================
+     WHAT THIS FILE CONTROLS:
+       The photo gallery (images are generated SVG plates keyed by
+       each item's seed — see genPlate in scripts/build.js):
+
+       00 Overview        intro + frame count
+       01 Reel            .strip horizontal snap carousel of gallery
+                          items where featured is true
+       02 Grid            filter chips (data-filter-group=".masonry",
+                          one per category) + .masonry of ALL items;
+                          both the buttons and figures carry
+                          data-filter so pages.js initFilters works
+
+     Data source: src/data/gallery.json.
+     ================================================================== -->
+<html lang="{{ .site.meta.language }}">
+{{ include "partials/head.html" }}
+<body class="hx-body" data-page="gallery">
+{{ include "partials/header.html" }}
+<div class="progress" aria-hidden="true"><span class="progress-fill"></span></div>
+
+<main id="main" class="hx" data-horizontal>
+  <!-- SECTION 00 — INTRO -->
+  <section class="sec sec--full sec--intro scan" data-section="Overview" data-code="00" data-label="Overview">
+    <div class="intro-in">
+      <p class="kicker" data-reveal="fade">00 — Gallery</p>
+      <h1 class="h-display intro-title" data-reveal="up">THE ROOM, THE WORK, THE PEOPLE.</h1>
+      <p class="lead mt-3" data-reveal style="--d:180ms">Photographs from workshops, study groups, Build Week, and the lab. No staging, no stock photos — just the place where it happens.</p>
+      <div class="intro-meta mono" data-reveal style="--d:280ms">
+        <span>FRAMES <span class="accent">{{ len .gallery }}</span></span>
+        <span>SUBJECTS <span class="accent">WORKSHOPS · LABS · PEOPLE</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 01 — CINEMATIC STRIP -->
+  <section class="sec sec--wide" data-section="Reel" data-code="01" data-label="Reel">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">01 — Reel</p>
+        <h2 class="h-section">A horizontal pass through the club.</h2>
+      </div>
+      <div class="strip" data-reveal>
+        {{ each .gallery }}
+          {{ if .featured }}
+          <figure class="strip-fig">
+            <img src="{{ .src }}" alt="{{ .caption }}" loading="lazy">
+            <figcaption class="strip-cap">
+              <span class="mono">{{ .code }} / {{ .category }}</span><br>
+              {{ .caption }}
+            </figcaption>
+          </figure>
+          {{ end }}
+        {{ end }}
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 02 — GRID -->
+  <section class="sec sec--wide" data-section="Grid" data-code="02" data-label="Grid">
+    <div class="sec-in">
+      <div class="sec-head sec-head-grid" data-reveal>
+        <div>
+          <p class="kicker">02 — Grid</p>
+          <h2 class="h-section">Everything, filterable.</h2>
+        </div>
+      </div>
+      <div class="gal-filters" data-filter-group=".masonry" data-reveal>
+        <button type="button" class="tag is-on" data-filter="*">All</button>
+        {{ each .gallery }}
+          <button type="button" class="tag" data-filter="{{ .category }}">{{ .category }}</button>
+        {{ end }}
+      </div>
+      <div class="masonry mt-4" data-stagger>
+        {{ each .gallery }}
+        <figure class="masonry-item" data-filter="{{ .category }}">
+          <img src="{{ .src }}" alt="{{ .caption }}" loading="lazy">
+          <figcaption class="masonry-cap">
+            <span class="mono">{{ .code }} / {{ .category }}</span><br>
+            {{ .caption }}
+          </figcaption>
+        </figure>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+
+  {{ include "partials/footer.html" }}
+</main>
+
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-glow" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+{{ include "partials/scripts.html" }}
+</body>
+</html>

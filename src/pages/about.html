@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<!-- ==================================================================
+     ABOUT PAGE  —  src/pages/about.html  →  public/about/index.html
+     ==================================================================
+     WHAT THIS FILE CONTROLS:
+       The club's story in seven horizontal sections:
+
+       00 Introduction    display headline + site.facts meta row
+       01 History         .htl horizontal mini-timeline (2019→2026)
+       02 Mission         prose + .blueprint READ/BUILD/TEACH diagram
+       03 Philosophy      three .prin principle cards
+       04 How we work     .flow Study→Build→Publish loop
+       05 Activities      .do-list rows
+       06 Leadership      four profile cards in an inline row
+
+     LEADERSHIP (section 06):
+       .sec-leadership holds the cards. Two filtered loops over the
+       team collection build exactly 4 cards: first the President
+       (eq), then VP / General Secretary / Technical Lead via an `or`
+       group. Cards render as a plain inline row — no carousel, no
+       arrows, no dots, no JS. Styling lives in 08-pages.css.
+     ================================================================== -->
+<html lang="{{ .site.meta.language }}">
+{{ include "partials/head.html" }}
+<body class="hx-body" data-page="about">
+{{ include "partials/header.html" }}
+<div class="progress" aria-hidden="true"><span class="progress-fill"></span></div>
+
+<main id="main" class="hx" data-horizontal>
+  <!-- SECTION 00 — INTRO -->
+  <section class="sec sec--full sec--intro scan" data-section="Introduction" data-code="00" data-label="Introduction">
+    <div class="intro-in">
+      <p class="kicker" data-reveal="fade">00 — Introduction</p>
+      <h1 class="h-display intro-title" data-reveal="up">Shaping Tomorrow <br>today</h1>
+      <p class="lead mt-3" data-reveal style="--d:180ms">DCITC is the technology club of Dhaka College — a student-run organization built around study groups, real projects, and the discipline of understanding systems before shipping them.</p>
+      <div class="intro-meta mono" data-reveal style="--d:280ms">
+        {{ each .site.facts }}
+        <span>{{ .k }} <span class="accent">{{ .v }}</span></span>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 01 — HISTORY -->
+  <section class="sec sec--wide" data-section="History" data-code="01" data-label="History">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">01 — History</p>
+        <h2 class="h-section">From a classroom to a Community.</h2>
+      </div>
+      <div class="htl" data-stagger>
+        <div class="htl-item">
+          <span class="htl-year mono">2024</span>
+          <h3 class="htl-title">The biggining</h3>
+          <p class="htl-detail">A group of students starts meeting weekly to share what they are learning in programming.</p>
+        </div>
+        <div class="htl-item">
+          <span class="htl-year mono">2025</span>
+          <h3 class="htl-title">Founded</h3>
+          <p class="htl-detail">Workshops become structured; the first lab machines arrive; the club grows past fifty members.</p>
+        </div>
+        <div class="htl-item">
+          <span class="htl-year mono">2026</span>
+          <h3 class="htl-title">Rebuilt as a study org</h3>
+          <p class="htl-detail">Study groups are founded; the club re-centers on fundamentals and public notes.</p>
+        </div>
+        <div class="htl-item">
+          <span class="htl-year mono">2025</span>
+          <h3 class="htl-title">First software ships</h3>
+          <p class="htl-detail">PadChat enters the lab, VoltLab is adopted by physics, CampusMesh covers two halls.</p>
+        </div>
+        <div class="htl-item">
+          <span class="htl-year mono">2026</span>
+          <h3 class="htl-title">Open source</h3>
+          <p class="htl-detail">Nodhini releases under MIT; 120+ members; the club runs its own infrastructure.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 02 — MISSION -->
+  <section class="sec sec--fit" data-section="Mission" data-code="02" data-label="Mission">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">02 — Mission</p>
+        <h2 class="h-section">Make fundamentals a habit.</h2>
+      </div>
+      <div class="split">
+        <div data-reveal>
+          <p class="prose" style="font-size:var(--fs-3);color:var(--ink);line-height:var(--lh-snug)">Our mission is to give every member the ability to understand technology deeply enough to build with it — and the documentation skills to keep learning after they leave.</p>
+        </div>
+        <div class="blueprint" data-stagger>
+          <div class="bp-node">01 / READ <small>study groups</small></div>
+          <div class="bp-links">
+            <span class="bp-line"><b>▸</b> fundamentals first</span>
+            <span class="bp-line"><b>▸</b> public notes</span>
+            <span class="bp-line"><b>▸</b> verified resources</span>
+          </div>
+          <div class="bp-node">02 / BUILD <small>project teams</small></div>
+          <div class="bp-links">
+            <span class="bp-line"><b>▸</b> real problems</span>
+            <span class="bp-line"><b>▸</b> documented code</span>
+          </div>
+          <div class="bp-node">03 / TEACH <small>everyone</small></div>
+          <div class="bp-links">
+            <span class="bp-line"><b>▸</b> journal posts</span>
+            <span class="bp-line"><b>▸</b> workshops</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 03 — PHILOSOPHY -->
+  <section class="sec sec--wide" data-section="Philosophy" data-code="03" data-label="Philosophy">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">03 — Philosophy</p>
+        <h2 class="h-section">What we believe about technology.</h2>
+      </div>
+      <div class="prin-grid" data-stagger>
+        <div class="prin">
+          <span class="mono term" style="color:var(--ink-faint)">A / SURFACE</span>
+          <h3>Trends are noise</h3>
+          <p>Frameworks expire. Fundamentals don't. We study the layer beneath the thing that's popular this month.</p>
+        </div>
+        <div class="prin">
+          <span class="mono term" style="color:var(--ink-faint)">B / DEPTH</span>
+          <h3>Documentation beats guessing</h3>
+          <p>If a claim can't be checked against a manual, a trace, or a measurement, it isn't knowledge yet.</p>
+        </div>
+        <div class="prin">
+          <span class="mono term" style="color:var(--ink-faint)">C / SHIP</span>
+          <h3>Understanding requires building</h3>
+          <p>You don't know a system until you've made it do something. Every idea here ends in a build.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 04 — HOW WE WORK -->
+  <section class="sec sec--fit" data-section="How we work" data-code="04" data-label="How we work">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">04 — How we work</p>
+        <h2 class="h-section">A loop, not an event.</h2>
+      </div>
+      <div class="flow" data-stagger>
+        <div class="flow-step" data-n="01">
+          <h3>Study</h3>
+          <p>A reading group picks one topic and works through it with public notes.</p>
+        </div>
+        <div class="flow-step" data-n="02">
+          <h3>Build</h3>
+          <p>The group proposes a small project that tests what it read.</p>
+        </div>
+        <div class="flow-step" data-n="03">
+          <h3>Publish</h3>
+          <p>Code, measurements and a write-up go to the repo and the journal.</p>
+        </div>
+      </div>
+      <p class="mono mt-4" style="color:var(--ink-faint)" data-reveal>→ the output of one loop becomes the reading of the next.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 05 — ACTIVITIES -->
+  <section class="sec sec--fit" data-section="Activities" data-code="05" data-label="Activities">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">05 — Activities</p>
+        <h2 class="h-section">What actually happens here.</h2>
+      </div>
+      <div class="do-list" data-stagger>
+        <div class="do-row">
+          <span class="do-code mono">ACT.01</span>
+          <span class="do-title">Weekly study groups</span>
+          <span class="do-desc">Six groups, one hour, zero slides. Notes are published after every session.</span>
+        </div>
+        <div class="do-row">
+          <span class="do-code mono">ACT.02</span>
+          <span class="do-title">Project nights</span>
+          <span class="do-desc">Quiet, scheduled work time in the lab with mentors available.</span>
+        </div>
+        <div class="do-row">
+          <span class="do-code mono">ACT.03</span>
+          <span class="do-title">Workshops & talks</span>
+          <span class="do-desc">Short, hands-on, and repeatable — the same material that made us, passed on.</span>
+        </div>
+        <div class="do-row">
+          <span class="do-code mono">ACT.04</span>
+          <span class="do-title">Infra duty</span>
+          <span class="do-desc">Members rotate keeping the club's mirrors, journal and lab machines alive.</span>
+        </div>
+        <div class="do-row">
+          <span class="do-code mono">ACT.05</span>
+          <span class="do-title">Build Week</span>
+          <span class="do-desc">Twice a year, 48 hours, real constraints. The closest thing we have to a tradition.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 06 — TEAM PREVIEW -->
+  <section class="sec sec--wide" data-section="Leadership" data-code="06" data-label="Leadership">
+    <div class="sec-in">
+      <div class="sec-head sec-head-grid" data-reveal>
+        <div>
+          <p class="kicker">06 — Leadership</p>
+          <h2 class="h-section">Run by members, not by title.</h2>
+        </div>
+        <a class="u-link mono" href="/team/">FULL TEAM →</a>
+      </div>
+      <div class="sec-leadership">
+        {{ each .team }}
+          {{ if .members }}
+            {{ each .members }}
+              {{ if eq .role "President" }}
+              <div class="car-slide" data-leadership-slide>
+                <div class="car-card">
+                  <div class="profile">
+                    <div class="avatar"><img src="/img/gen/av-{{ .seed }}.svg" alt="Portrait of {{ .name }}" loading="lazy"></div>
+                    <div class="profile-body">
+                      <h3 class="profile-name">{{ .name }}</h3>
+                      <span class="profile-role">{{ .role }}</span>
+                      <p class="profile-note">{{ .note }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {{ end }}
+            {{ end }}
+          {{ end }}
+        {{ end }}
+        {{ each .team }}
+          {{ if .members }}
+            {{ each .members }}
+              {{ if or (eq .role "Vice President") (eq .role "General Secretary") (eq .role "Technical Lead") }}
+              <div class="car-slide" data-leadership-slide>
+                <div class="car-card">
+                  <div class="profile">
+                    <div class="avatar"><img src="/img/gen/av-{{ .seed }}.svg" alt="Portrait of {{ .name }}" loading="lazy"></div>
+                    <div class="profile-body">
+                      <h3 class="profile-name">{{ .name }}</h3>
+                      <span class="profile-role">{{ .role }}</span>
+                      <p class="profile-note">{{ .note }}</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              {{ end }}
+            {{ end }}
+          {{ end }}
+        {{ end }}
+      </div>
+    </div>
+  </section>
+
+  {{ include "partials/footer.html" }}
+</main>
+
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-glow" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+{{ include "partials/scripts.html" }}
+</body>
+</html>

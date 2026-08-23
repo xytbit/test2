@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<!-- ==================================================================
+     RESOURCES PAGE  —  src/pages/resources.html  →  public/resources/index.html
+     ==================================================================
+     WHAT THIS FILE CONTROLS:
+       The curated knowledge base with client-side filtering:
+
+       00 Overview        intro + entry/category counts
+       01 Knowledge base  .res-list of every resource ("the shelf");
+                          the search input lives in the section head,
+                          right-aligned beside the title. Each card
+                          carries data-searchable (title+desc+
+                          category+kind+tag haystack) so pages.js
+                          initSearch can show/hide cards.
+                          (The old 01 Browse filter-chip section was
+                          removed; initFilters now only serves the
+                          gallery page.)
+
+     Data source: src/data/resources.json.
+     ================================================================== -->
+<html lang="{{ .site.meta.language }}">
+{{ include "partials/head.html" }}
+<body class="hx-body" data-page="resources">
+{{ include "partials/header.html" }}
+<div class="progress" aria-hidden="true"><span class="progress-fill"></span></div>
+
+<main id="main" class="hx" data-horizontal>
+  <!-- SECTION 00 — INTRO -->
+  <section class="sec sec--full sec--intro scan" data-section="Overview" data-code="00" data-label="Overview">
+    <div class="intro-in">
+      <p class="kicker" data-reveal="fade">00 — Resources</p>
+      <h1 class="h-display intro-title" data-reveal="up">A CURATED KNOWLEDGE BASE, NOT A LINK FARM.</h1>
+      <p class="lead mt-3" data-reveal style="--d:180ms">These are the books, manuals, tutorials and tools the club actually uses and recommends — every one checked by a study group before it lands here.</p>
+      <div class="intro-meta mono" data-reveal style="--d:280ms">
+        <span>ENTRIES <span class="accent">{{ len .resources }}</span></span>
+        <span>CATEGORIES <span class="accent">{{ len .resourceCats }}</span></span>
+        <span>RULE <span class="accent">READ BEFORE SHARE</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 01 — THE LIST -->
+  <section class="sec sec--wide" data-section="Knowledge base" data-code="01" data-label="Knowledge base">
+    <div class="sec-in" data-vscroll>
+      <div class="sec-head sec-head-grid res-head" data-reveal>
+        <div>
+          <p class="kicker">01 — Knowledge base</p>
+          <h2 class="h-section">The shelf.</h2>
+        </div>
+        <label class="search-field">
+          <span class="mono" style="color:var(--ink-faint)" aria-hidden="true">/</span>
+          <input type="search" placeholder="Search resources…" data-search aria-label="Search resources">
+        </label>
+      </div>
+      <div class="res-list" data-stagger data-vzone>
+        {{ each .resources }}
+        <article class="res-card" data-filter="{{ .category }}" data-searchable="{{ .title }} {{ .description }} {{ .category }} {{ .kind }} {{ .tag }}">
+          <span class="res-kind">{{ .kind }}</span>
+          <h3 class="res-title">{{ .title }}</h3>
+          <p class="res-desc">{{ .description }}</p>
+          <div class="res-foot">
+            <span class="res-cat">{{ .category }} · {{ .level }}</span>
+            <a class="card-arrow" href="{{ .link }}" rel="noopener" aria-label="Open {{ .title }}">↗</a>
+          </div>
+        </article>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+
+  {{ include "partials/footer.html" }}
+</main>
+
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-glow" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+{{ include "partials/scripts.html" }}
+</body>
+</html>

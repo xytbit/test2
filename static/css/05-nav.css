@@ -1,0 +1,272 @@
+/* ==================================================================
+   NAVIGATION  —  static/css/05-nav.css  (bundle file 5/9)
+   ==================================================================
+   WHAT THIS FILE CONTROLS:
+     Everything rendered by partials/header.html:
+       .site-nav      sticky top bar (blur + hairline)
+       .brand         logo mark + DCITC wordmark
+       .nav-links     primary links + codes ("01 About"…)
+       .nav-more      "More" dropdown (pages.js initMore toggles it)
+       .nav-cta       the accent "Join" button
+       .nav-tools     theme toggle icons (sun/moon swap via data-theme)
+       .menu-toggle   hamburger (≤899px only)
+       .mobile-menu   slide-in drawer + .menu-scrim backdrop
+       .skip-link     a11y jump-to-content
+
+   WHAT CHANGES WHAT:
+     - flex: 0 0 auto on .site-nav is LOAD-BEARING: as a direct child
+       of body.hx-body's column flex it must never shrink (it once
+       squashed to ~35px without it).
+     - Active state (.is-active) is computed at BUILD time by
+       navFor() in scripts/build.js — no JS involved.
+     - Mobile menu visibility is class-toggled (.is-open) by
+       pages.js initMobileMenu; do NOT reintroduce a `hidden`
+       attribute — it breaks the CSS transition.
+     - ≤899px: .nav-links hides, hamburger shows, drawer takes over.
+   ================================================================== */
+
+.site-nav {
+  position: sticky;
+  top: 0;
+  height: var(--nav-h);
+  flex: 0 0 auto;
+  z-index: var(--z-nav);
+  border-bottom: 1px solid var(--line);
+  background: color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.nav-in {
+  height: 100%;
+  max-width: var(--maxw-wide);
+  margin-inline: auto;
+  padding-inline: var(--sec-pad);
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  margin-right: auto;
+  min-width: 0;
+}
+.brand-mark { width: 26px; height: 26px; flex: 0 0 auto; }
+.brand-text { display: flex; flex-direction: column; line-height: 1.1; min-width: 0; }
+.brand-name {
+  font-family: var(--font-disp);
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.04em;
+}
+.brand-sub {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: var(--trk-mono);
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+.nav-links ul { display: flex; align-items: center; gap: 0.35rem; }
+
+.nav-link, .nav-more-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  padding: 0.45em 0.7em;
+  font-family: var(--font-mono);
+  font-size: var(--fs-0);
+  letter-spacing: var(--trk-mono);
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  border-radius: var(--r-sm);
+  transition: color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.nav-code { color: var(--ink-faint); font-size: 0.85em; }
+.nav-link:hover, .nav-more-btn:hover, .nav-link.is-active {
+  color: var(--ink);
+  background: var(--bg-tint);
+}
+.nav-link.is-active { color: var(--accent); }
+.nav-link.is-active .nav-code { color: var(--accent); }
+.nav-link.is-active::after {
+  content: '';
+  position: absolute;
+  left: 0.7em;
+  right: 0.7em;
+  bottom: 0.1em;
+  height: 1px;
+  background: var(--accent);
+}
+
+.nav-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-left: 0.6rem;
+  padding: 0.5em 0.9em;
+  font-family: var(--font-mono);
+  font-size: var(--fs-0);
+  letter-spacing: var(--trk-mono);
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid var(--accent-line);
+  border-radius: var(--r-sm);
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease);
+}
+.nav-cta:hover { background: var(--accent); color: var(--accent-ink); box-shadow: var(--glow); }
+
+/* "more" dropdown */
+.nav-more { position: relative; }
+.nav-more-btn .nav-more-chev { transition: transform var(--t-med) var(--ease); }
+.nav-more.is-open .nav-more-chev { transform: rotate(180deg); }
+.nav-more-menu {
+  position: absolute;
+  top: calc(100% + 0.6rem);
+  right: 0;
+  min-width: 220px;
+  padding: 0.4rem;
+  background: var(--bg-elev);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: opacity var(--t-med) var(--ease), transform var(--t-med) var(--ease), visibility var(--t-med);
+}
+.nav-more.is-open .nav-more-menu,
+.nav-more:focus-within .nav-more-menu,
+.nav-more:hover .nav-more-menu { opacity: 1; visibility: visible; transform: translateY(0); }
+.nav-more-menu a {
+  display: flex;
+  align-items: center;
+  gap: 0.6em;
+  padding: 0.55em 0.7em;
+  font-family: var(--font-mono);
+  font-size: var(--fs-1);
+  letter-spacing: var(--trk-mono);
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  border-radius: var(--r-sm);
+}
+.nav-more-menu a:hover { color: var(--ink); background: var(--bg-tint); }
+.nav-more-menu a.is-active { color: var(--accent); }
+
+/* tools */
+.nav-tools { display: flex; align-items: center; gap: 0.5rem; }
+
+.theme-toggle {
+  position: relative;
+  width: 2.1rem;
+  height: 2.1rem;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-sm);
+  color: var(--ink-dim);
+  transition: color var(--t-fast) var(--ease), background var(--t-fast) var(--ease);
+}
+.theme-toggle:hover { color: var(--ink); background: var(--bg-tint); }
+.theme-toggle .ico-sun { display: none; }
+.theme-toggle .ico-moon { display: block; }
+html[data-theme="light"] .theme-toggle .ico-sun { display: block; }
+html[data-theme="light"] .theme-toggle .ico-moon { display: none; }
+
+.menu-toggle { display: none; }
+
+/* mobile menu */
+.mobile-menu {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(84vw, 360px);
+  z-index: var(--z-menu);
+  background: var(--bg-elev);
+  border-left: 1px solid var(--line-strong);
+  padding: calc(var(--nav-h) + 1rem) 1.5rem 2rem;
+  overflow-y: auto;
+  transform: translateX(102%);
+  transition: transform var(--t-med) var(--ease);
+  visibility: hidden;
+}
+.mobile-menu.is-open { transform: translateX(0); visibility: visible; }
+.mobile-menu nav ul { display: flex; flex-direction: column; }
+.mobile-menu a {
+  display: flex;
+  align-items: center;
+  gap: 0.9em;
+  padding: 0.9em 0.2em;
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  letter-spacing: var(--trk-mono);
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  border-bottom: 1px solid var(--line);
+}
+.mobile-menu a:hover { color: var(--ink); }
+.mobile-menu a.is-active { color: var(--accent); }
+.mobile-menu-foot { margin-top: 2rem; font-family: var(--font-mono); font-size: var(--fs-0); letter-spacing: var(--trk-mono); color: var(--ink-faint); text-transform: uppercase; }
+
+.menu-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-menu) - 1);
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--t-med) var(--ease), visibility var(--t-med);
+}
+.menu-scrim.is-open { opacity: 1; visibility: visible; }
+
+.skip-link {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 200;
+  padding: 0.5em 0.9em;
+  background: var(--accent);
+  color: var(--accent-ink);
+  font-family: var(--font-mono);
+  font-size: var(--fs-1);
+  border-radius: var(--r-sm);
+  transform: translateY(-200%);
+  transition: transform var(--t-fast) var(--ease);
+}
+.skip-link:focus-visible { transform: translateY(0); }
+
+@media (max-width: 899px) {
+  .nav-links { display: none; }
+  .menu-toggle {
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 5px;
+    width: 2.1rem;
+    height: 2.1rem;
+    padding: 0.4rem;
+    border-radius: var(--r-sm);
+  }
+  .menu-toggle span {
+    display: block;
+    height: 1.5px;
+    background: var(--ink-dim);
+    transition: transform var(--t-med) var(--ease), background var(--t-med) var(--ease);
+  }
+  .menu-toggle:hover span { background: var(--ink); }
+  .menu-toggle.is-open span:first-child { transform: translateY(3.25px) rotate(45deg); }
+  .menu-toggle.is-open span:last-child { transform: translateY(-3.25px) rotate(-45deg); }
+  .brand-sub { display: none; }
+}

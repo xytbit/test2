@@ -1,0 +1,203 @@
+/* ==================================================================
+   LAYOUT SYSTEM  —  static/css/04-layout.css  (bundle file 4/9)
+   ==================================================================
+   WHAT THIS FILE CONTROLS:
+     The structural skeleton of the whole site:
+       - body.hx-body / main.hx : the horizontal filmstrip container
+         (flex row, overflow-x auto) used by every page except articles
+       - .sec + width variants  : the scroll "slides" (full/wide/fit/
+         narrow/auto) and their padding
+       - vertical fallback      : body:not(.hx-body) rules for article
+         pages and sub-900px viewports
+       - .sec-head/.sec-head-grid, generic .grid-*, .split, .stack,
+         .row, margin utilities
+       - fixed backdrop layers: .bg-grid (parallax grid), .bg-glow,
+         .grain (noise), plus .scan and .ticks-x details
+       - .progress/.progress-fill: the reading bar under the nav that
+         horizontal.js fills
+
+   WHAT CHANGES WHAT:
+     - CRITICAL RULE: every DIRECT flex child of main.hx needs
+       flex: 0 0 auto or it gets flex-shrunk. .sec has it; .site-nav
+       and .sec-footer carry their own copies (05/07). Removing one
+       historically squashed the nav to ~35px and crushed the footer.
+     - Sections grow beyond viewport height if content demands, but
+       main.hx clips vertically (overflow-y hidden) — keep section
+       content ≤ ~viewport height on short screens.
+     - The ≤899px block switches everything to stacked vertical —
+       breakpoint must stay in sync with --hx-break and horizontal.js.
+     - body.hx-body is toggled in markup per page (class on <body>),
+       NOT by JS; JS only binds/unbinds scroll behaviour at 900px.
+   ================================================================== */
+
+/* horizontal scroll container (desktop) */
+body.hx-body {
+  display: flex;
+  flex-direction: column;
+  height: 100svh;
+  overflow: hidden;
+}
+
+main.hx {
+  position: relative;
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: row;
+  align-items: stretch;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scrollbar-width: none;
+  overscroll-behavior: none;
+}
+main.hx::-webkit-scrollbar { display: none; }
+
+/* a horizontal section */
+.sec {
+  position: relative;
+  flex: 0 0 auto;
+  min-height: 100%;
+  padding: calc(var(--sec-pad-y)) var(--sec-pad);
+  display: flex;
+  align-items: center;
+}
+
+/* section widths — variable, rhythm-driven */
+.sec--full { width: 100vw; }
+.sec--wide { width: min(96vw, 1600px); }
+.sec--fit  { width: min(82vw, 1280px); }
+.sec--narrow { width: min(66vw, 1024px); }
+.sec--auto { width: max-content; max-width: 100vw; }
+
+.sec--flush { padding-inline: 0; }
+
+.sec-in {
+  width: 100%;
+  max-width: var(--maxw-wide);
+  margin-inline: auto;
+}
+
+/* vertical pages (articles) */
+body:not(.hx-body) .sec {
+  min-height: 0;
+  width: 100%;
+  padding-block: clamp(4rem, 10vh, 7rem);
+}
+
+body:not(.hx-body) main { display: block; }
+
+/* section header block */
+.sec-head { margin-bottom: clamp(1.5rem, 4vh, 3rem); }
+.sec-head .kicker { margin-bottom: 1rem; }
+.sec-head-grid {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 2rem;
+}
+.sec-head-grid .lead { margin-top: 0.9rem; }
+
+/* generic grids */
+.grid { display: grid; gap: 1rem; }
+.grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+
+.split {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+  gap: clamp(2rem, 6vw, 5rem);
+  align-items: center;
+}
+.split--rev { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); }
+.split--rev > :first-child { order: 2; }
+
+.stack { display: flex; flex-direction: column; gap: 1rem; }
+.stack--lg { gap: 2rem; }
+
+.row { display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+
+.mt-1 { margin-top: 0.5rem; } .mt-2 { margin-top: 1rem; } .mt-3 { margin-top: 1.5rem; } .mt-4 { margin-top: 2rem; } .mt-5 { margin-top: 3rem; }
+
+/* background layers */
+.bg-grid {
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background-image:
+    linear-gradient(var(--grid-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+  background-size: clamp(44px, 6vw, 72px) clamp(44px, 6vw, 72px);
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,0.8), rgba(0,0,0,0.35));
+}
+
+.bg-glow {
+  position: fixed;
+  width: 60vw;
+  height: 60vw;
+  right: -18vw;
+  top: -20vw;
+  z-index: -1;
+  pointer-events: none;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--accent-soft), transparent 72%);
+  opacity: 0.55;
+}
+
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-grain);
+  pointer-events: none;
+  opacity: var(--noise-opacity);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* scanline detail — used in selected areas only */
+.scan::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(to bottom, transparent 0 2px, rgba(255,255,255,0.016) 2px 3px);
+  opacity: 0.6;
+}
+
+/* measurement ticks */
+.ticks-x {
+  background-image: repeating-linear-gradient(90deg, var(--line-strong) 0 1px, transparent 1px clamp(28px, 4vw, 52px));
+  height: 6px;
+}
+
+/* progress indicator */
+.progress {
+  position: fixed;
+  top: var(--nav-h);
+  left: 0;
+  right: 0;
+  height: 2px;
+  z-index: var(--z-nav);
+  pointer-events: none;
+}
+.progress-fill {
+  display: block;
+  height: 100%;
+  width: 0%;
+  background: var(--accent);
+  opacity: 0.8;
+}
+
+@media (max-width: 899px) {
+  body.hx-body { display: block; height: auto; overflow: visible; }
+  main.hx { display: block; overflow: visible; scroll-snap-type: none; }
+  .sec { width: 100% !important; min-height: 0; }
+  .split, .split--rev { grid-template-columns: 1fr; }
+  .grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .grid-3 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sec--auto { max-width: 100%; }
+}
+
+@media (max-width: 560px) {
+  .grid-4, .grid-3 { grid-template-columns: 1fr; }
+}

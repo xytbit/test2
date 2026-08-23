@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<!-- ==================================================================
+     PROJECT SINGLE (template)  —  src/pages/project.html
+     →  public/projects/<slug>/index.html  (one per project)
+     ==================================================================
+     WHAT THIS FILE CONTROLS:
+       The detail page rendered once per item of projects.json by
+       makeItem() in scripts/build.js. Template scope:
+         item  — the enriched project (code, url, thumb,
+                 approach[].n numbering added at build)
+         prev / next — neighbouring projects for the pager
+         page  — synthesized page meta (title/desc/nav state)
+
+     SECTION MAP:
+       00 Overview        code/category/year kicker, title, tagline,
+                          status + stack chips + GitHub/demo links
+       01 Context         summary + inline SVG input→output diagram
+       02 Problem         problem statement plate
+       03 Approach        numbered approach cards from item.approach
+       04 Technology      metrics block + stack chips + ADR note
+       05 Result          result plate + optional field note
+       06 Team & links    builder names/roles + capability tags
+       07 More            prev / all-projects / next pager
+     ================================================================== -->
+<html lang="{{ .site.meta.language }}">
+{{ include "partials/head.html" }}
+<body class="hx-body" data-page="project">
+{{ include "partials/header.html" }}
+<div class="progress" aria-hidden="true"><span class="progress-fill"></span></div>
+
+<main id="main" class="hx" data-horizontal>
+  <!-- SECTION 00 — OVERVIEW -->
+  <section class="sec sec--full sec--intro scan" data-section="Overview" data-code="00" data-label="Overview">
+    <div class="single-in">
+      <p class="kicker" data-reveal="fade">{{ .item.code }} — {{ .item.category }} / {{ .item.year }}</p>
+      <h1 class="single-title mt-2" data-reveal="up">{{ .item.title }}</h1>
+      <p class="lead mt-3" data-reveal style="--d:160ms">{{ .item.tagline }}</p>
+      <div class="single-meta mt-4" data-reveal style="--d:240ms">
+        <div class="datum">
+          <span class="datum-k">Status</span>
+          <span class="term accent">{{ .item.status }}</span>
+        </div>
+        <div class="datum">
+          <span class="datum-k">Stack</span>
+          <div class="stack-chips mt-1">
+            {{ each .item.stack }}
+            <span class="tag">{{ . }}</span>
+            {{ end }}
+          </div>
+        </div>
+        <div class="datum">
+          <span class="datum-k">Links</span>
+          <div class="stack-chips mt-1">
+            {{ if .item.links.github }}<a class="tag tag--accent" href="{{ .item.links.github }}" rel="noopener">GitHub ↗</a>{{ end }}
+            {{ if .item.links.demo }}<a class="tag tag--accent" href="{{ .item.links.demo }}" rel="noopener">Demo ↗</a>{{ end }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 01 — CONTEXT -->
+  <section class="sec sec--fit" data-section="Context" data-code="01" data-label="Context">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">01 — Context</p>
+        <h2 class="h-section">Why this exists.</h2>
+      </div>
+      <div class="split">
+        <p class="lead" data-reveal>{{ .item.summary }}</p>
+        <div class="blueprint-fig" data-reveal="scale">
+          <p class="mono term" style="color:var(--ink-faint);margin-bottom:0.8rem">DIAGRAM // {{ .item.code }}</p>
+          <svg viewBox="0 0 460 240" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:auto" aria-hidden="true">
+            <rect x="1" y="1" width="458" height="238" rx="6" fill="none" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+            <g font-family="monospace" font-size="11" letter-spacing="1" fill="#8b95a5">
+              <text x="20" y="30">INPUT</text><text x="360" y="30">OUTPUT</text>
+              <circle cx="60" cy="60" r="4" fill="#4fd1a5"/>
+              <text x="74" y="64">source / problem</text>
+              <circle cx="230" cy="120" r="4" fill="#d8e0e8"/>
+              <text x="244" y="124">build</text>
+              <circle cx="400" cy="180" r="4" fill="#4fd1a5"/>
+              <text x="352" y="184" text-anchor="end">shipped + measured</text>
+              <path d="M66 64 C 140 90, 170 104, 222 116" fill="none" stroke="#4fd1a5" stroke-width="1.4"/>
+              <path d="M238 124 C 300 152, 330 164, 392 176" fill="none" stroke="#7ba4d9" stroke-width="1.4"/>
+            </g>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 02 — PROBLEM -->
+  <section class="sec sec--fit" data-section="Problem" data-code="02" data-label="Problem">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">02 — Problem</p>
+        <h2 class="h-section">The situation we started from.</h2>
+      </div>
+      <div class="plate" data-reveal>
+        <span class="plate-label">Problem statement</span>
+        <p class="prose" style="font-size:var(--fs-3);color:var(--ink);line-height:var(--lh-snug)">{{ .item.problem }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 03 — APPROACH -->
+  <section class="sec sec--wide" data-section="Approach" data-code="03" data-label="Approach">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">03 — Approach</p>
+        <h2 class="h-section">How we went at it.</h2>
+      </div>
+      <div class="grid grid-2" data-stagger>
+        {{ each .item.approach }}
+        <div class="card">
+          <div class="card-top">
+            <span class="mono term accent">{{ .n }}</span>
+            <span class="tag tag--faint">{{ .title }}</span>
+          </div>
+          <p>{{ .detail }}</p>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 04 — TECHNOLOGY -->
+  <section class="sec sec--fit" data-section="Technology" data-code="04" data-label="Technology">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">04 — Technology</p>
+        <h2 class="h-section">The tools, and why.</h2>
+      </div>
+      <div class="split">
+        <div class="metric-block" data-reveal>
+          <span class="plate-label">Measured</span>
+          <div class="metrics mt-3">
+            {{ each .item.metrics }}
+            <div class="metric">
+              <span class="metric-v">{{ .v }}</span>
+              <span class="metric-k">{{ .k }}</span>
+            </div>
+            {{ end }}
+          </div>
+        </div>
+        <div data-stagger>
+          <div class="tag-row">
+            {{ each .item.stack }}
+            <span class="tag tag--accent">{{ . }}</span>
+            {{ end }}
+          </div>
+          <p class="mt-3 prose" data-reveal>Stack choices are written down in the repo's ADR file. If you want to know why, that's the first file to open.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 05 — RESULT -->
+  <section class="sec sec--fit" data-section="Result" data-code="05" data-label="Result">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">05 — Result</p>
+        <h2 class="h-section">What actually happened.</h2>
+      </div>
+      <div class="plate" data-reveal>
+        <span class="plate-label">Result</span>
+        <p class="prose" style="font-size:var(--fs-3);color:var(--ink);line-height:var(--lh-snug)">{{ .item.result }}</p>
+      </div>
+      {{ if .item.notes }}
+      <div class="article-note mt-4" data-reveal>
+        <span class="mono term accent">FIELD NOTE — </span>{{ .item.notes }}
+      </div>
+      {{ end }}
+    </div>
+  </section>
+
+  <!-- SECTION 06 — TEAM & LINKS -->
+  <section class="sec sec--fit" data-section="Team" data-code="06" data-label="Team">
+    <div class="sec-in">
+      <div class="sec-head sec-head-grid" data-reveal>
+        <div>
+          <p class="kicker">06 — Team & links</p>
+          <h2 class="h-section">Who built it.</h2>
+        </div>
+        <div class="row">
+          {{ if .item.links.github }}<a class="btn btn-ghost" href="{{ .item.links.github }}" rel="noopener">GitHub <span class="arrow">→</span></a>{{ end }}
+          {{ if .item.links.demo }}<a class="btn btn-ghost" href="{{ .item.links.demo }}" rel="noopener">Live demo <span class="arrow">→</span></a>{{ end }}
+        </div>
+      </div>
+      <div class="row" data-stagger>
+        {{ each .item.team }}
+        <div class="datum">
+          <span class="datum-v" style="font-size:var(--fs-3)">{{ .name }}</span>
+          <span class="datum-k">{{ .role }}</span>
+        </div>
+        {{ end }}
+      </div>
+      <div class="tag-row mt-4" data-reveal>
+        {{ each .item.capabilities }}
+        <span class="tag">{{ . }}</span>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 07 — PAGER -->
+  <section class="sec sec--fit" data-section="More" data-code="07" data-label="More">
+    <div class="sec-in">
+      <div class="pager">
+        <a href="{{ .prev.url }}"><span aria-hidden="true">←</span> {{ .prev.title }}</a>
+        <a href="/projects/" class="mono">ALL PROJECTS</a>
+        <a href="{{ .next.url }}">{{ .next.title }} <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  {{ include "partials/footer.html" }}
+</main>
+
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-glow" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+{{ include "partials/scripts.html" }}
+</body>
+</html>

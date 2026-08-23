@@ -1,0 +1,135 @@
+[
+  {
+    "slug": "what-happens-when-you-press-enter",
+    "title": "What Actually Happens When You Press Enter",
+    "category": "Systems",
+    "date": "2026-01-24",
+    "author": "Arif Chowdhury",
+    "role": "Systems study group lead",
+    "featured": true,
+    "subtitle": "A keystroke becomes a process. The journey through the kernel is short, and worth knowing exactly once.",
+    "tags": ["linux", "kernel", "fundamentals"],
+    "body": [
+      { "type": "p", "text": "Every command you run begins as a physical event: a key goes down, a voltage changes on a wire, and a signal travels from the controller to your CPU. But between that keystroke and the shell printing a prompt again, a surprisingly small number of precise things happen. This is the journey, roughly, of pressing Enter in a terminal." },
+      { "type": "h2", "text": "1. The interrupt" },
+      { "type": "p", "text": "The keyboard controller raises an interrupt. The CPU stops whatever it was doing, looks up the interrupt vector table, and jumps to the driver's handler. None of this is magic — it is just a table of function pointers, and the hardware knows how to find it." },
+      { "type": "code", "text": "hardware interrupt → IRQ line → driver handler\n  → scancode read from the controller\n  → scancode translated to a keycode\n  → keycode queued for userspace" },
+      { "type": "h2", "text": "2. The pipe to userspace" },
+      { "type": "p", "text": "The kernel does not hand the terminal program raw keycodes. It writes a byte to a pseudo-terminal. The terminal emulator reads that byte, applies its own keymap, and appends it to its line buffer. When you press Enter, the emulator sends the whole line as a read on the pty's master side — and the shell, which has been blocked in a read() on the slave side, finally returns." },
+      { "type": "h2", "text": "3. Parse, look up, fork" },
+      { "type": "p", "text": "The shell parses the line, expands variables, and looks up the executable in PATH. Then it forks. The new child — a copy of the shell — calls execve, which replaces its memory image with the target binary. One of the parent's jobs is to wait: it blocks in waitpid until the child exits, then prints a prompt." },
+      { "type": "code", "text": "read() on the pty slave\n→ shell parses + expands\n→ fork() → execve()\n→ child runs, parent blocks in waitpid()\n→ exit status → next prompt" },
+      { "type": "h2", "text": "Why this matters" },
+      { "type": "p", "text": "None of these steps are required by any specification — they are the accumulated result of decisions made over forty years. But knowing the shape of the pipeline means that when something breaks, you do not guess. You ask which layer the break is in: hardware, driver, terminal, shell, or the process itself. The skill of debugging is mostly the skill of knowing which layer to suspect." },
+      { "type": "quote", "text": "Debugging is the process of correctly shrinking the search space. Everything else is typing." },
+      { "type": "note", "text": "This post grew out of a Systems reading group session. The full walkthrough with live demos is on the club's study group notes." }
+    ]
+  },
+  {
+    "slug": "ebpf-for-the-curious-beginner",
+    "title": "eBPF for the Curious Beginner",
+    "category": "Systems",
+    "date": "2026-03-02",
+    "author": "Sabbir Rahman",
+    "role": "Systems study group",
+    "featured": true,
+    "subtitle": "You can attach a tiny program to the kernel and observe it without writing a kernel module. Here is the honest first hour.",
+    "tags": ["ebpf", "linux", "observability"],
+    "body": [
+      { "type": "p", "text": "eBPF sounds intimidating, and it deserves to. But the first-hour version is small: a verifier that checks your program is safe, a just-in-time compiler, and the ability to attach that program to specific kernel events. You are not 'writing a kernel module' — you are attaching a sandboxed program to a hook." },
+      { "type": "h2", "text": "The pieces" },
+      { "type": "list", "items": ["A program: bytecode written in C and compiled to BPF.", "A verifier: proves the program terminates, bounds-checks its memory, and touches nothing dangerous.", "A JIT: compiles the bytecode to native instructions on load.", "A hook: syscalls, tracepoints, kprobes, or network packets.", "Maps: the only way your program talks to userspace."] },
+      { "type": "code", "text": "// count every execve\nextern int bpf_trace_printk(const char *fmt, ...);\n\nSEC(\"tracepoint/syscalls/sys_enter_execve\")\nint count(void *ctx) {\n  bpf_trace_printk(\"someone ran a command\\n\");\n  return 0;\n}" },
+      { "type": "p", "text": "That program compiles, passes the verifier, and prints a line for every execve on the whole system. No module, no reboot. It is the same mechanism that powers modern observability tools — you are not reading about the machinery, you are running it." },
+      { "type": "h2", "text": "What the verifier actually checks" },
+      { "type": "p", "text": "The verifier is the reason eBPF is safe enough to ship in production kernels. It simulates your program's paths and proves three things: no unbounded loops, no out-of-bounds memory, and no dangerous pointer arithmetic. Your program is not trusted; it is checked." },
+      { "type": "quote", "text": "The kernel does not trust your program. The verifier proves it is safe, and the JIT makes it fast. That trade — safety for speed — is the whole design." },
+      { "type": "p", "text": "For the club, eBPF is the cleanest doorway into 'I can observe the kernel' — no modules, no panics, just a small program and honest curiosity. The reading group's notes include the toolchain setup we use on the club lab machines." }
+    ]
+  },
+  {
+    "slug": "why-we-write-everything-down",
+    "title": "Why We Write Everything Down",
+    "category": "Lessons",
+    "date": "2026-02-08",
+    "author": "Nodhini project team",
+    "role": "DCITC",
+    "featured": false,
+    "subtitle": "The documentation that nobody wants to write is the documentation that saves the project. A field report from our first open source release.",
+    "tags": ["documentation", "lessons", "open-source"],
+    "body": [
+      { "type": "p", "text": "When we started Nodhini, the plan was a tokenizer, a stemmer, and a tagger. What we did not plan for was how much of the project would be writing. Every 'quick decision' — why the corpus is cleaned the way it is, why the tag set has 11 labels and not 9, why the stemmer's exception list looks the way it looks — became a paragraph somewhere. That habit, not the code, is what made the project survive." },
+      { "type": "h2", "text": "The turning point" },
+      { "type": "p", "text": "A month in, a member left for exams with the tokenizer half-rebuilt in their head. The code worked; the reasoning behind a dozen edge-case decisions lived in one person. We spent three days re-deriving decisions that had taken weeks the first time. That was the moment documentation became a first-class deliverable, not a chore." },
+      { "type": "list", "items": ["Every design decision gets a comment that says why, not what.", "Every dataset change is logged with a one-line reason.", "Every PR must update at least one document.", "The README explains the architecture with a diagram, not a wall of text."] },
+      { "type": "h2", "text": "What it actually buys you" },
+      { "type": "p", "text": "Documentation is not for the reader. It is for the author, six weeks later, when the context is gone. A project that writes everything down can be paused, revisited, and handed over. A project that does not can only be continued by the people who remember it — which, in a club whose members graduate every year, is a slow death." },
+      { "type": "quote", "text": "A project that writes everything down can be paused. A project that does not can only be continued by whoever remembers it." },
+      { "type": "p", "text": "Two months after release, two external contributors submitted pull requests. Both said the same thing: 'your docs made it possible to contribute without asking.' That is the entire argument." }
+    ]
+  },
+  {
+    "slug": "reading-the-linux-kernel-without-panicking",
+    "title": "Reading the Linux Kernel Without Panicking",
+    "category": "Linux",
+    "date": "2026-03-20",
+    "author": "Meherun Nesa",
+    "role": "Networking study group lead",
+    "featured": false,
+    "subtitle": "Thirty million lines is not a book to read — it is a map to navigate. A practical method that works for students.",
+    "tags": ["linux", "kernel", "reading"],
+    "body": [
+      { "type": "p", "text": "The Linux kernel is the largest codebase most students will ever touch, and the worst possible way to approach it is to 'read it'. Nobody does. What actually works is navigating it like a map: pick a path, follow the types, and ignore everything else." },
+      { "type": "h2", "text": "Pick one entry point" },
+      { "type": "p", "text": "Choose a single syscall or subsystem — say, the read() path, or the TCP receive path. Everything else in the kernel is background noise you are allowed to ignore until it becomes relevant. Depth beats breadth." },
+      { "type": "code", "text": "read() → do_syscall_64() → ksys_read()\n  → vfs_read() → the file's read callback\n  → eventually a device or socket layer\n\nFollow the function call tree, not the whole source." },
+      { "type": "h2", "text": "Follow the types, not the code" },
+      { "type": "p", "text": "Kernel code is dense because it is type-driven. When you meet an unfamiliar structure — say, struct file or struct sk_buff — stop and read its definition and its comments. Most of the design lives in the type definitions, not in the bodies of functions." },
+      { "type": "list", "items": ["Start from the syscall, follow the call chain.", "Read struct definitions before function bodies.", "Use the navigation tools: grep, ctags, and the online elixir browser.", "Write a one-paragraph note after each session; it forces understanding.", "Do not try to understand locking on the first pass."] },
+      { "type": "p", "text": "A session should end with a single paragraph you could explain to a classmate. If you cannot write it, you were scrolling, not reading. The goal is not coverage — it is one path understood end to end." },
+      { "type": "note", "text": "We run this as a four-week track in the Systems group using a single driver as the running example." }
+    ]
+  },
+  {
+    "slug": "field-report-voltlab",
+    "title": "A Field Report From VoltLab",
+    "category": "Lessons",
+    "date": "2026-04-11",
+    "author": "Tasnim Anjum",
+    "role": "VoltLab lead",
+    "featured": false,
+    "subtitle": "What a physics lab taught an IT club about measurement, noise, and knowing when the hardware is lying.",
+    "tags": ["electronics", "measurement", "lessons"],
+    "body": [
+      { "type": "p", "text": "VoltLab was supposed to be the easy project. Read an ADC, plot a curve, fit an exponential. The hardware worked on the bench for a week straight. Then we put it in a real physics lab, and the 'easy' project spent a month teaching us about noise." },
+      { "type": "h2", "text": "The first lie: the ADC" },
+      { "type": "p", "text": "Our first builds showed a beautiful exponential decay — until we checked it against a multimeter and found the curve was shifted by a constant. The ADC's reference voltage was not what the datasheet implied, and every sample carried that error. The lesson: measure your instrument before you trust it." },
+      { "type": "code", "text": "raw = adc.read()\nreal = raw * scale + offset   # offset measured, not assumed\nsmooth = moving_average(real, window=16)" },
+      { "type": "h2", "text": "The second lie: the room" },
+      { "type": "p", "text": "On the bench, mains hum was invisible. In the lab, fluorescent lights and a dozen phone chargers added noise at 50 Hz and 100 Hz. The fix was not more filters — it was a moving average over one full mains cycle, and a note in the manual telling students not to charge phones next to the board." },
+      { "type": "p", "text": "The real lesson is that engineering is the discipline of asking 'is this number real?' A measurement pipeline is only as honest as its least-trusted stage, and the cheapest way to find a lying stage is to check it against a second instrument." },
+      { "type": "quote", "text": "A measurement pipeline is only as honest as its least-trusted stage." },
+      { "type": "p", "text": "The physics department has now run three batches of first-year labs on VoltLab. The constant-offset story is in the lab manual, and one student found a genuinely new way to fool it last semester — which is, honestly, the best outcome we could ask for." }
+    ]
+  },
+  {
+    "slug": "anatomy-of-a-url",
+    "title": "The Anatomy of a URL",
+    "category": "Web",
+    "date": "2026-02-25",
+    "author": "Sadia Akter",
+    "role": "Web study group lead",
+    "featured": false,
+    "subtitle": "Every byte in the address bar has a job. A short tour of the parts nobody reads, because we are all too busy.",
+    "tags": ["web", "fundamentals", "url"],
+    "body": [
+      { "type": "p", "text": "The address bar is the most-translated string on your machine, and almost nobody can parse it by eye. So let's do it once, properly, because a URL is just a specification for where to find a resource and how to ask for it." },
+      { "type": "code", "text": "https://user:pass@example.com:443/path/to/page?q=value#frag\n└─scheme┘ └──userinfo──┘ └──host────┘ └port┘ └──path─────┘ └query─┘ └frag┘" },
+      { "type": "list", "items": ["Scheme: the protocol — how to speak. https means 'encrypted HTTP'.", "Userinfo: credentials embedded in the URL. A bad idea; the RFC deprecates it.", "Host: the name the DNS system resolves to an IP address.", "Port: which service on that host. Omitted when it is the default.", "Path: which resource on that server. The server, not the URL, decides what it means.", "Query: structured parameters, sent to the server. This is not a secret channel.", "Fragment: a location inside the page. Never sent to the server — the browser keeps it."] },
+      { "type": "h2", "text": "What the browser does with it" },
+      { "type": "p", "text": "The browser splits the URL, resolves the host through DNS (with caching at every layer), opens a TLS connection to the resolved IP and port, sends a request line built from the path and query, and then — and only then — does the server decide what to return. Every part of the URL had a job in that sequence, and none of them are decorative." },
+      { "type": "code", "text": "GET /path/to/page?q=value HTTP/1.1\nHost: example.com\nAccept: text/html" },
+      { "type": "p", "text": "The web's apparent magic dissolves the moment you can trace one request end to end. It is the same discipline as the keystroke post: know which layer you are in, and the system stops being a black box." }
+    ]
+  }
+]

@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<!-- ==================================================================
+     HOME PAGE  —  src/pages/index.html  →  public/index.html
+     ==================================================================
+     WHAT THIS FILE CONTROLS:
+       The landing experience: ten horizontal sections (00–09) that
+       introduce the club and preview every other page.
+
+     SECTION MAP (each <section class="sec"> is one filmstrip slide):
+        00 Intro/hero      headline lines (.hero-line/.hl animated by
+                           reveal.js + anime.js), CTA buttons, interactive
+                           Three.js wireframe sphere ([data-hero-sphere],
+                           driven by static/js/hero-sphere.js — home only)
+       01 What is DCITC   identity split + site.facts stat row
+       02 Philosophy      three .phil-item cards (Curate/Build/Understand)
+       03 What we do      .do-list rows of activities
+       04 Featured proj.  loops the featuredProjects scope array →
+                          card--media cards
+       05 Upcoming events loops upcomingEvents → .ev-row list
+       06 Achievements    loops achievements → .spark timeline
+       07 Resources       loops featuredResources → .res-card
+       08 Tech Journal    loops featuredPosts → article cards
+       09 Join CTA        full-width closing call to action
+
+     PLUMBING: body.hx-body + main[data-horizontal] make this a
+     horizontal page (04-layout.css + horizontal.js). Includes:
+     head/header partials up top, footer + scripts at the bottom.
+     data-section/data-code/data-label attributes label each slide.
+     ================================================================== -->
+<html lang="{{ .site.meta.language }}">
+{{ include "partials/head.html" }}
+<body class="hx-body" data-page="home">
+{{ include "partials/header.html" }}
+<div class="progress" aria-hidden="true"><span class="progress-fill"></span></div>
+
+<main id="main" class="hx" data-horizontal>
+  <!-- ============================================================
+       SECTION 00 — HERO
+  ============================================================= -->
+  <section class="sec sec--full sec--hero scan" data-section="Intro" data-code="00" data-label="Intro">
+    <div class="hero-in">
+      <div class="hero-copy">
+        <p class="hero-kicker mono" data-reveal="fade"><span class="dot"></span> {{ .site.short }} // DHAKA COLLEGE — EST. {{ .site.established }}</p>
+
+        <h1 class="h-display hero-title">
+          <span class="hero-line"><span class="hl">DHAKA COLLEGE</span></span>
+          <span class="hero-line"><span class="hl hero-accent">IT CLUB</span></span>
+        </h1>
+
+        <p class="hero-tagline mono" data-reveal="fade" style="--d:450ms">CURATE <span class="sep">·</span> BUILD <span class="sep">·</span> UNDERSTAND</p>
+
+        <p class="hero-stmt" data-reveal style="--d:520ms">A student-run laboratory for people who read documentation, build real systems, and refuse to chase trends.</p>
+
+        <div class="hero-cta" data-reveal style="--d:620ms">
+          <a class="btn btn-primary" href="/join/">Join the club <span class="arrow">→</span></a>
+          <a class="btn btn-ghost" href="/projects/">See what we build</a>
+        </div>
+      </div>
+
+      <!-- Interactive wireframe globe (replaces the old SVG system-map
+           panel). Transparent background — it floats on the page like any
+           other element. The canvas + orbit/pulse behaviour are created by
+           /js/hero-sphere.js. [data-hx-nodrag] tells horizontal.js that
+           drags here spin the globe, not the filmstrip. -->
+      <div class="hero-sphere" data-hero-sphere data-hx-nodrag></div>
+    </div>
+
+    <div class="hero-meta mono">
+      {{ each .site.facts }}
+      <span class="hero-meta-item">{{ .k }} {{ .v }}</span>
+      {{ end }}
+      <span class="hero-scroll">SCROLL <span class="hint" aria-hidden="true"></span> →</span>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 01 — WHAT IS DCITC
+  ============================================================= -->
+  <section class="sec sec--fit" data-section="What is DCITC" data-code="01" data-label="What is DCITC">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">01 — What is DCITC</p>
+      </div>
+      <div class="split">
+        <div data-stagger>
+          <h2 class="h-section">We are the people who ask <em class="accent">how</em>, then <em>why</em>.</h2>
+          <p class="lead mt-3">DCITC is the technology club of Dhaka College. We are not a lecture series and not a fan club for frameworks. We are a student-run study organization: fundamentals first, projects second, trends never.</p>
+        </div>
+        <div class="stack--lg" data-stagger>
+          <div class="plate" data-reveal>
+            <span class="plate-label">Identity</span>
+            <p class="prose">A room where someone can spend a Tuesday evening tracing a TCP handshake with tcpdump, and a Thursday one debugging a Bengali stemmer with the people who wrote it.</p>
+          </div>
+          <div class="row" data-reveal>
+            {{ each .site.facts }}
+            <div class="datum">
+              <span class="datum-k">{{ .k }}</span>
+              <span class="datum-v">{{ .v }}</span>
+            </div>
+            {{ end }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 02 — PHILOSOPHY
+  ============================================================= -->
+  <section class="sec sec--wide" data-section="Philosophy" data-code="02" data-label="Philosophy">
+    <div class="sec-in">
+      <div class="sec-head sec-head-grid" data-reveal>
+        <div>
+          <p class="kicker">02 — Philosophy</p>
+          <h2 class="h-section">Three verbs, one operating principle.</h2>
+        </div>
+        <p class="lead">Everything the club does is one of these three actions. If an activity is none of them, it does not survive.</p>
+      </div>
+      <div class="phil-grid" data-stagger>
+        <article class="phil-item">
+          <span class="phil-n mono">01 / INPUT</span>
+          <h3>Curate</h3>
+          <p>We read the documentation, pick the resources that survive scrutiny, and keep the noise out. Good material is a public good; we maintain it.</p>
+        </article>
+        <article class="phil-item">
+          <span class="phil-n mono">02 / PROCESS</span>
+          <h3>Build</h3>
+          <p>Reading without building is collecting. Every study group ends in a project: a tool, a measurement, a mirror, a paper trace.</p>
+        </article>
+        <article class="phil-item">
+          <span class="phil-n mono">03 / OUTPUT</span>
+          <h3>Understand</h3>
+          <p>Trends come and go. Fundamentals compound. We trade the impressive for the durable and explain everything until it is obvious.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 03 — WHAT WE DO
+  ============================================================= -->
+  <section class="sec sec--fit" data-section="What we do" data-code="03" data-label="What we do">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">03 — Sectors of Our Club</p>
+        <h2 class="h-section">Explore Our Departments.</h2>
+      </div>
+      <div class="do-list" data-stagger>
+        <div class="do-row">
+          <span class="do-code mono">01</span>
+          <span class="do-title">Administration</span>
+          <span class="do-desc">Weekly, public, notes-first. Systems, algorithms, AI/ML, web, security, electronics.</span>
+        </div>
+        <div class="do-row">
+          <span class="do-code mono">02</span>
+          <span class="do-title">Publications</span>
+          <span class="do-desc">Real problems, shipped. From a Bengali NLP toolkit to lab dataloggers — all documented.</span>
+        </div>
+        <div class="do-row">
+          <span class="do-code mono">03</span>
+          <span class="do-title">Programming and Robotics</span>
+          <span class="do-desc">Hands-on, small, and repeatable. Terminal, Git, networking, measurement — not slide decks.</span>
+        </div>
+        <div class="do-row">
+          <span class="do-code mono">04</span>
+          <span class="do-title">Web Development and Cyber Security</span>
+          <span class="do-desc">We write down what we learn. Kernel paths, eBPF, field reports — the club's public memory.</span>
+        </div>
+        <div class="do-row">
+          <span class="do-code mono">05</span>
+          <span class="do-title">Interactive Media and Automation</span>
+          <span class="do-desc">We host our own mirrors, journal, and CTF infra. Running things teaches more than any tutorial.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 04 — FEATURED PROJECTS
+  ============================================================= -->
+  <section class="sec sec--wide" data-section="Featured projects" data-code="04" data-label="Projects">
+    <div class="sec-in">
+      <div class="sec-head sec-head-grid" data-reveal>
+        <div>
+          <p class="kicker">04 — Featured projects</p>
+          <h2 class="h-section">Things we built, in the open.</h2>
+        </div>
+        <a class="u-link mono" href="/projects/">ALL PROJECTS →</a>
+      </div>
+      <div class="grid grid-3" data-stagger>
+        {{ each .featuredProjects }}
+        <a class="card card--media" href="{{ .url }}">
+          <div class="card-thumb"><img src="{{ .thumb }}" alt="" loading="lazy"></div>
+          <div class="card-body">
+            <div class="card-top">
+              <span class="tag tag--accent">{{ .code }}</span>
+              <span class="mono term">{{ .year }} · {{ .category }}</span>
+            </div>
+            <h3 class="card-title">{{ .title }}</h3>
+            <p>{{ .tagline }}</p>
+            <div class="card-foot">
+              <span class="tag-row">
+                {{ each .stack }}
+                <span class="tag tag--faint">{{ . }}</span>
+                {{ end }}
+              </span>
+              <span class="card-arrow" aria-hidden="true">→</span>
+            </div>
+          </div>
+        </a>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 05 — UPCOMING EVENTS
+  ============================================================= -->
+  <section class="sec sec--fit" data-section="Upcoming events" data-code="05" data-label="Events">
+    <div class="sec-in">
+      <div class="sec-head sec-head-grid" data-reveal>
+        <div>
+          <p class="kicker">05 — Upcoming events</p>
+          <h2 class="h-section">Next on the bench.</h2>
+        </div>
+        <a class="u-link mono" href="/events/">ALL EVENTS →</a>
+      </div>
+      <div class="ev-list" data-stagger>
+        {{ each .upcomingEvents }}
+        <a class="ev-row" href="{{ .url }}">
+          <span class="ev-date">{{ fmtDate .date }}</span>
+          <span class="ev-main">
+            <h3>{{ .title }}</h3>
+            <p>{{ .location }} · {{ .level }}</p>
+          </span>
+          <span class="status status--{{ if .upcoming }}upcoming{{ else }}ongoing{{ end }}">{{ .status }}</span>
+        </a>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 06 — ACHIEVEMENTS PREVIEW
+  ============================================================= -->
+  <section class="sec sec--fit" data-section="Achievements" data-code="06" data-label="Achievements">
+    <div class="sec-in">
+      <div class="sec-head sec-head-grid" data-reveal>
+        <div>
+          <p class="kicker">06 — Achievements</p>
+          <h2 class="h-section">Progress, not trophies.</h2>
+        </div>
+        <a class="u-link mono" href="/achievements/">TIMELINE →</a>
+      </div>
+      <div class="spark" data-stagger>
+        {{ each .achievements }}
+        <div class="spark-item">
+          <span class="spark-year">{{ .year }}</span>
+          <span class="spark-line" aria-hidden="true"></span>
+          <span class="spark-text">{{ .summary }}</span>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 07 — CURATED RESOURCES
+  ============================================================= -->
+  <section class="sec sec--fit" data-section="Resources" data-code="07" data-label="Resources">
+    <div class="sec-in">
+      <div class="sec-head sec-head-grid" data-reveal>
+        <div>
+          <p class="kicker">07 — Curated resources</p>
+          <h2 class="h-section">A knowledge base, not a link farm.</h2>
+        </div>
+        <a class="u-link mono" href="/resources/">BROWSE →</a>
+      </div>
+      <div class="res-list" data-stagger>
+        {{ each .featuredResources }}
+        <div class="res-card">
+          <span class="res-kind">{{ .kind }}</span>
+          <h3 class="res-title">{{ .title }}</h3>
+          <p class="res-desc">{{ .description }}</p>
+          <div class="res-foot">
+            <span class="res-cat">{{ .category }}</span>
+            <a class="card-arrow" href="{{ .link }}" rel="noopener" aria-label="Open {{ .title }}">↗</a>
+          </div>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 08 — TECH JOURNAL
+  ============================================================= -->
+  <section class="sec sec--fit" data-section="Tech Journal" data-code="08" data-label="Journal">
+    <div class="sec-in">
+      <div class="sec-head sec-head-grid" data-reveal>
+        <div>
+          <p class="kicker">08 — The Tech Journal</p>
+          <h2 class="h-section">What we learn, written down.</h2>
+        </div>
+        <a class="u-link mono" href="/blog/">ALL ISSUES →</a>
+      </div>
+      <div class="jrnl-cards" data-stagger>
+        {{ each .featuredPosts }}
+        <a class="card" href="{{ .url }}">
+          <div class="card-top">
+            <span class="tag tag--accent">{{ .category }}</span>
+            <span class="art-date mono">{{ fmtDate .date }}</span>
+          </div>
+          <h3 class="card-title">{{ .title }}</h3>
+          <p>{{ .subtitle }}</p>
+          <div class="card-foot">
+            <span class="mono term">{{ .author }} · {{ .readingTime }}</span>
+            <span class="card-arrow" aria-hidden="true">→</span>
+          </div>
+        </a>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SECTION 09 — JOIN CTA
+  ============================================================= -->
+  <section class="sec sec--full scan" data-section="Join" data-code="09" data-label="Join">
+    <div class="sec-in" style="text-align:center">
+      <p class="kicker kicker--plain mono" data-reveal="fade">09 — Participate</p>
+      <h2 class="h-display" data-reveal="up" style="max-width:18ch;margin-inline:auto">JOIN THE LAB.</h2>
+      <p class="lead mt-3" style="margin-inline:auto" data-reveal>No experience required. Curiosity is the only prerequisite — bring something you want to understand, and we will help you build it.</p>
+      <div class="hero-cta" style="justify-content:center" data-reveal>
+        <a class="btn btn-primary" href="/join/">How to join <span class="arrow">→</span></a>
+        <a class="btn btn-ghost" href="/contact/">Talk to us</a>
+      </div>
+    </div>
+  </section>
+
+  {{ include "partials/footer.html" }}
+</main>
+
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-glow" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+{{ include "partials/scripts.html" }}
+
+<!-- Hero wireframe globe — home page only. three.js is vendored locally
+     (static/js/vendor/three/, copied to public/ by scripts/build.js) and
+     resolved through this import map by /js/hero-sphere.js. -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "/js/vendor/three/three.module.js",
+    "three/addons/": "/js/vendor/three/addons/"
+  }
+}
+</script>
+<script type="module" src="/js/hero-sphere.js"></script>
+</body>
+</html>

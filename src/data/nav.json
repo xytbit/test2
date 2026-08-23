@@ -1,0 +1,14 @@
+{
+  "items": [
+    { "label": "About", "href": "/about/", "match": "/about", "code": "01", "group": "primary" },
+    { "label": "Events", "href": "/events/", "match": "/events", "code": "02", "group": "primary" },
+    { "label": "Projects", "href": "/projects/", "match": "/projects", "code": "03", "group": "primary" },
+    { "label": "Achievements", "href": "/achievements/", "match": "/achievements", "code": "04", "group": "more" },
+    { "label": "Gallery", "href": "/gallery/", "match": "/gallery", "code": "05", "group": "more" },
+    { "label": "Resources", "href": "/resources/", "match": "/resources", "code": "06", "group": "primary" },
+    { "label": "Journal", "href": "/blog/", "match": "/blog", "code": "07", "group": "primary" },
+    { "label": "Team", "href": "/team/", "match": "/team", "code": "08", "group": "more" },
+    { "label": "Contact", "href": "/contact/", "match": "/contact", "code": "09", "group": "more" },
+    { "label": "Join", "href": "/join/", "match": "/join", "code": "10", "group": "primary", "cta": true }
+  ]
+}

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800" width="1200" height="800" role="img" aria-label="orientation-2026">
+  <rect width="1200" height="800" fill="#0d1117"/>
+  <rect x="0" y="0" width="1200" height="800" fill="#0d1117" stroke="undefined" stroke-width="1"/>
+<line x1="0" y1="0" x2="0" y2="800" stroke="#2c3540" stroke-width="0.5"/><line x1="80" y1="0" x2="80" y2="800" stroke="#2c3540" stroke-width="0.5"/><line x1="160" y1="0" x2="160" y2="800" stroke="#2c3540" stroke-width="0.5"/><line x1="240" y1="0" x2="240" y2="800" stroke="#2c3540" stroke-width="0.5"/><line x1="320" y1="0" x2="320" y2="800" stroke="#2c3540" stroke-width="0.5"/><line x1="400" y1="0" x2="400" y2="800" stroke="#2c3540" stroke-width="0.5"/><line x1="480" y1="0" x2="480" y2="800" stroke="#2c3540" stroke-width="0.5"/><line x1="560" y1="0" x2="560" y2="800" stroke="#2c3540" stroke-width="0.5"/><line x1="640" y1="0" x2="640" y2="800" stroke="#2c3540" stroke-width="0.5"/><line x1="720" y1="0" x2="720" y2="800" stroke="#2c3540" stroke-width="0.5"/><line x1="800" y1="0" x2="800" y2="800" stroke="#2c3540" stroke-width="0.5"/><line x1="880" y1="0" x2="880" y2="800" stroke="#2c3540" stroke-width="0.5"/><line x1="960" y1="0" x2="960" y2="800" stroke="#2c3540" stroke-width="0.5"/><line x1="1040" y1="0" x2="1040" y2="800" stroke="#2c3540" stroke-width="0.5"/><line x1="1120" y1="0" x2="1120" y2="800" stroke="#2c3540" stroke-width="0.5"/><line x1="1200" y1="0" x2="1200" y2="800" stroke="#2c3540" stroke-width="0.5"/><line x1="0" y1="0" x2="1200" y2="0" stroke="#2c3540" stroke-width="0.5"/><line x1="0" y1="80" x2="1200" y2="80" stroke="#2c3540" stroke-width="0.5"/><line x1="0" y1="160" x2="1200" y2="160" stroke="#2c3540" stroke-width="0.5"/><line x1="0" y1="240" x2="1200" y2="240" stroke="#2c3540" stroke-width="0.5"/><line x1="0" y1="320" x2="1200" y2="320" stroke="#2c3540" stroke-width="0.5"/><line x1="0" y1="400" x2="1200" y2="400" stroke="#2c3540" stroke-width="0.5"/><line x1="0" y1="480" x2="1200" y2="480" stroke="#2c3540" stroke-width="0.5"/><line x1="0" y1="560" x2="1200" y2="560" stroke="#2c3540" stroke-width="0.5"/><line x1="0" y1="640" x2="1200" y2="640" stroke="#2c3540" stroke-width="0.5"/><line x1="0" y1="720" x2="1200" y2="720" stroke="#2c3540" stroke-width="0.5"/><line x1="0" y1="800" x2="1200" y2="800" stroke="#2c3540" stroke-width="0.5"/>
+<line x1="80" y1="285.9702846733853" x2="1120" y2="285.9702846733853" stroke="#d7dce3" stroke-width="2"/>
+<circle cx="80" cy="285.9702846733853" r="6" fill="#4fd1a5" stroke="none" stroke-width="1"/>
+<circle cx="1000" cy="285.9702846733853" r="6" fill="#d7dce3" stroke="none" stroke-width="1"/>
+<line x1="233.33333333333331" y1="285.9702846733853" x2="233.33333333333331" y2="217.8904180182144" stroke="#3a4655" stroke-width="1"/>
+<line x1="233.33333333333331" y1="217.8904180182144" x2="263.3333333333333" y2="217.8904180182144" stroke="#3a4655" stroke-width="1"/>
+<text x="269.3333333333333" y="221.8904180182144" font-family="monospace" font-size="14" fill="#3a4655" text-anchor="start" letter-spacing="1">t+1</text>
+<line x1="386.66666666666663" y1="285.9702846733853" x2="386.66666666666663" y2="183.87523030024022" stroke="#3a4655" stroke-width="1"/>
+<line x1="386.66666666666663" y1="183.87523030024022" x2="416.66666666666663" y2="183.87523030024022" stroke="#3a4655" stroke-width="1"/>
+<text x="422.66666666666663" y="187.87523030024022" font-family="monospace" font-size="14" fill="#3a4655" text-anchor="start" letter-spacing="1">t+2</text>
+<line x1="540" y1="285.9702846733853" x2="540" y2="138.80684047471732" stroke="#3a4655" stroke-width="1"/>
+<line x1="540" y1="138.80684047471732" x2="570" y2="138.80684047471732" stroke="#3a4655" stroke-width="1"/>
+<text x="576" y="142.80684047471732" font-family="monospace" font-size="14" fill="#3a4655" text-anchor="start" letter-spacing="1">t+3</text>
+<line x1="693.3333333333333" y1="285.9702846733853" x2="693.3333333333333" y2="192.278620663099" stroke="#3a4655" stroke-width="1"/>
+<line x1="693.3333333333333" y1="192.278620663099" x2="723.3333333333333" y2="192.278620663099" stroke="#3a4655" stroke-width="1"/>
+<text x="729.3333333333333" y="196.278620663099" font-family="monospace" font-size="14" fill="#3a4655" text-anchor="start" letter-spacing="1">t+4</text>
+<line x1="846.6666666666667" y1="285.9702846733853" x2="846.6666666666667" y2="120.85192329715937" stroke="#3a4655" stroke-width="1"/>
+<line x1="846.6666666666667" y1="120.85192329715937" x2="876.6666666666667" y2="120.85192329715937" stroke="#3a4655" stroke-width="1"/>
+<text x="882.6666666666667" y="124.85192329715937" font-family="monospace" font-size="14" fill="#3a4655" text-anchor="start" letter-spacing="1">t+5</text>
+<line x1="1000" y1="285.9702846733853" x2="1000" y2="235.84271572809666" stroke="#3a4655" stroke-width="1"/>
+<line x1="1000" y1="235.84271572809666" x2="1030" y2="235.84271572809666" stroke="#3a4655" stroke-width="1"/>
+<text x="1036" y="239.84271572809666" font-family="monospace" font-size="14" fill="#3a4655" text-anchor="start" letter-spacing="1">t+6</text>
+<text x="80" y="60" font-family="monospace" font-size="15" fill="#3a4655" text-anchor="start" letter-spacing="1">FIELD PLOT // 001</text>
+<text x="1120" y="760" font-family="monospace" font-size="14" fill="#3a4655" text-anchor="end" letter-spacing="1">x=646 y=938</text>
+  </svg>

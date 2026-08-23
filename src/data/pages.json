@@ -1,0 +1,112 @@
+[
+  {
+    "file": "index.html",
+    "out": "index.html",
+    "url": "/",
+    "title": "Dhaka College IT Club — Curate. Build. Understand.",
+    "code": "HOME",
+    "desc": "DCITC is a student-run technology organization at Dhaka College that studies fundamentals, builds real systems, and teaches each other.",
+    "section": "home",
+    "horizontal": true
+  },
+  {
+    "file": "about.html",
+    "out": "about/index.html",
+    "url": "/about/",
+    "title": "About — Dhaka College IT Club",
+    "code": "ABOUT",
+    "desc": "What DCITC is, where it came from, what it believes about technology, and how it works.",
+    "section": "about",
+    "horizontal": true
+  },
+  {
+    "file": "events.html",
+    "out": "events/index.html",
+    "url": "/events/",
+    "title": "Events — Dhaka College IT Club",
+    "code": "EVENTS",
+    "desc": "Workshops, study groups, hackathons and quiet code nights hosted by DCITC.",
+    "section": "events",
+    "horizontal": true
+  },
+  {
+    "file": "projects.html",
+    "out": "projects/index.html",
+    "url": "/projects/",
+    "title": "Projects — Dhaka College IT Club",
+    "code": "PROJECTS",
+    "desc": "Real systems built by DCITC members: from Bengali NLP toolkits to lab hardware.",
+    "section": "projects",
+    "horizontal": true
+  },
+  {
+    "file": "achievements.html",
+    "out": "achievements/index.html",
+    "url": "/achievements/",
+    "title": "Achievements — Dhaka College IT Club",
+    "code": "ACHV",
+    "desc": "A timeline of what DCITC has shipped, placed in, and built since 2024.",
+    "section": "achievements",
+    "horizontal": true
+  },
+  {
+    "file": "gallery.html",
+    "out": "gallery/index.html",
+    "url": "/gallery/",
+    "title": "Gallery — Dhaka College IT Club",
+    "code": "GALLERY",
+    "desc": "Photographs of the workshops, study groups, labs and events that make up DCITC.",
+    "section": "gallery",
+    "horizontal": true
+  },
+  {
+    "file": "resources.html",
+    "out": "resources/index.html",
+    "url": "/resources/",
+    "title": "Resources — Dhaka College IT Club",
+    "code": "RESOURCES",
+    "desc": "A curated knowledge base: the books, docs, tools and tutorials DCITC actually recommends.",
+    "section": "resources",
+    "horizontal": true
+  },
+  {
+    "file": "blog.html",
+    "out": "blog/index.html",
+    "url": "/blog/",
+    "title": "The DCITC Tech Journal",
+    "code": "JOURNAL",
+    "desc": "Technical writing by DCITC members: kernel paths, eBPF, measurement, and lessons from real projects.",
+    "section": "blog",
+    "horizontal": true
+  },
+  {
+    "file": "team.html",
+    "out": "team/index.html",
+    "url": "/team/",
+    "title": "Team — Dhaka College IT Club",
+    "code": "TEAM",
+    "desc": "The executive committee, technical team, media and organizing teams behind DCITC.",
+    "section": "team",
+    "horizontal": true
+  },
+  {
+    "file": "join.html",
+    "out": "join/index.html",
+    "url": "/join/",
+    "title": "Join — Dhaka College IT Club",
+    "code": "JOIN",
+    "desc": "Why join DCITC, what you will learn, what happens here, and how to get in.",
+    "section": "join",
+    "horizontal": true
+  },
+  {
+    "file": "contact.html",
+    "out": "contact/index.html",
+    "url": "/contact/",
+    "title": "Contact — Dhaka College IT Club",
+    "code": "CONTACT",
+    "desc": "Reach DCITC: email, social channels, and where the club lives at Dhaka College.",
+    "section": "contact",
+    "horizontal": true
+  }
+]

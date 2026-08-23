@@ -1,0 +1,43 @@
+/* ==================================================================
+   HORIZONTAL BROWSING  —  static/css/06-horizontal.css  (bundle 6/9)
+   ==================================================================
+   WHAT THIS FILE CONTROLS:
+     Interaction polish for the horizontal filmstrip that
+     horizontal.js drives: drag cursors (grab/grabbing via .is-drag-
+     ready/.is-dragging classes set by pointer handlers), vertical
+     centering of content inside viewport-height sections, ultrawide
+     and short-viewport rhythm adjustments, and scrollbar suppression.
+
+   WHAT CHANGES WHAT:
+     - The cursor classes here are toggled BY JS (horizontal.js
+       onPointerDown/Move/Up) — renaming them breaks the connection.
+     - Short-viewport block (620–780px) tightens --sec-pad-y so tall
+       sections still fit under main.hx's vertical clipping.
+     - Scrollbar hiding pairs with `scrollbar-width: none` already set
+       on main.hx in 04-layout.css (belt and suspenders).
+   ================================================================== */
+
+main.hx.is-dragging { cursor: grabbing; user-select: none; }
+main.hx.is-drag-ready { cursor: grab; }
+
+/* content vertical center within a viewport-height section */
+.sec > .sec-in { margin-block: auto; }
+
+/* let a long section breathe, never clip */
+.sec .sec-in { overflow: visible; }
+
+/* ultrawide: keep rhythm, avoid stretched emptiness */
+@media (min-width: 2000px) {
+  .sec--full { width: 100vw; }
+  .sec--wide { width: min(92vw, 1900px); }
+}
+
+/* short viewports: tighten vertical padding so sections still fit */
+@media (min-height: 620px) and (max-height: 780px) {
+  .sec { --sec-pad-y: clamp(1.5rem, 4vh, 2.5rem); }
+  .hero-in .h-display { font-size: clamp(2.4rem, 9vw, 5.5rem); }
+}
+
+/* hide horizontal scrollbar everywhere it would appear */
+main.hx { scrollbar-width: none; }
+main.hx::-webkit-scrollbar { width: 0; height: 0; }

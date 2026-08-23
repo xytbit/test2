@@ -1,0 +1,193 @@
+[
+  {
+    "slug": "nodhini",
+    "title": "Nodhini",
+    "tagline": "An open-source Bengali NLP toolkit built by the language study group.",
+    "status": "active",
+    "year": "2026",
+    "category": "AI / ML",
+    "featured": true,
+    "stack": ["Python", "scikit-learn", "spaCy", "HuggingFace"],
+    "summary": "Nodhini is a small but honest set of Bengali text-processing tools — tokenizer, stemmer, and POS tagger — written from first principles and shared under MIT. It exists because most commercial NLP pipelines treat Bangla as an afterthought.",
+    "problem": "Existing Bengali NLP tooling is either a thin wrapper around a single model or an abandoned research project. Students could not read the source, could not fix it, and could not learn from it. The club wanted a codebase small enough to read in one sitting.",
+    "approach": [
+      { "title": "Corpus", "detail": "Scraped and cleaned 40k headlines and exam questions; hand-labeled a 2k sentence gold set in a spreadsheet the whole study group could review." },
+      { "title": "Tokenizer", "detail": "Wrote a rule-based Bangla tokenizer first — no ML — to force the group to understand morphology before adding a model." },
+      { "title": "Stemmer", "detail": "Implemented a lightweight affix-stripping stemmer with a curated exception list, verified against 500 hand-checked verbs." },
+      { "title": "Tagger", "detail": "Trained a CRF tagger with feature engineering documented in the repo; precision measured on the gold set." }
+    ],
+    "result": "0.86 POS accuracy on the held-out gold set, a 30-line tokenizer any first-year can read, and six students who now genuinely understand how a tagger works.",
+    "metrics": [
+      { "k": "POS acc.", "v": "86.1%" },
+      { "k": "Gold set", "v": "2,000" },
+      { "k": "Lines core", "v": "~900" },
+      { "k": "Releases", "v": "0.4.2" }
+    ],
+    "team": [
+      { "name": "Sadia Akter", "role": "Lead" },
+      { "name": "Rafiul Hasan", "role": "Corpus" },
+      { "name": "Nusrat Jahan", "role": "Tagger" }
+    ],
+    "links": { "github": "https://github.com/", "demo": "https://huggingface.co/" },
+    "notes": "Lessons learned became the journal post 'Why We Write Everything Down'.",
+    "capabilities": ["Bangla tokenizer", "Affix stemmer", "CRF POS tagger", "Evaluated on a public gold set"]
+  },
+  {
+    "slug": "campusmesh",
+    "title": "CampusMesh",
+    "tagline": "An offline content mirror and mesh testbed running on lab Raspberry Pis.",
+    "status": "active",
+    "year": "2025",
+    "category": "Systems",
+    "featured": true,
+    "stack": ["Linux", "nginx", "Python", "Raspberry Pi", "batman-adv"],
+    "summary": "A distributed offline server that mirrors course materials, an apt mirror, and club docs across the college network — designed so a lecture hall keeps working when the internet does not.",
+    "problem": "The college network goes down often and the library has a single aging desktop. During outages, practical classes stalled because materials lived online and no one had a local copy.",
+    "approach": [
+      { "title": "Mirror", "detail": "A nightly cron job syncs a curated set of docs, package mirrors and videos onto each node's SSD." },
+      { "title": "Mesh", "detail": "Nodes announce themselves over batman-adv; clients resolve dcitc.local to the nearest healthy node." },
+      { "title": "Health", "detail": "A tiny agent reports disk, uptime and sync age to a dashboard so members can see the mesh degrade in real time." }
+    ],
+    "result": "Three lecture halls covered, zero manual intervention during the last two outages, and a standing example of why local caching matters.",
+    "metrics": [
+      { "k": "Nodes", "v": "3" },
+      { "k": "Cached", "v": "18 GB" },
+      { "k": "Outage coverage", "v": "2/2" },
+      { "k": "Uptime", "v": "99.1%" }
+    ],
+    "team": [
+      { "name": "Arif Chowdhury", "role": "Lead" },
+      { "name": "Meherun Nesa", "role": "Networking" },
+      { "name": "Tanzir Islam", "role": "Ops" }
+    ],
+    "links": { "github": "https://github.com/", "demo": "" },
+    "notes": "The mesh setup spawned a study group on Linux networking.",
+    "capabilities": ["Offline mirrors", "Mesh failover", "Health dashboard", "apt + docs caching"]
+  },
+  {
+    "slug": "padchat",
+    "title": "PadChat",
+    "tagline": "A dependency-free LAN chat server for the computer lab, written in Go.",
+    "status": "complete",
+    "year": "2025",
+    "category": "Systems",
+    "featured": false,
+    "stack": ["Go", "WebSocket", "SQLite"],
+    "summary": "During one semester the lab's internet was throttled to near zero. PadChat gives the lab its own chat and shared note board over the LAN, with nothing but a single static binary.",
+    "problem": "Lab sessions needed a way to share snippets and ask the instructor for help without the internet. Existing tools either required an account or an external server.",
+    "approach": [
+      { "title": "Protocol", "detail": "A minimal JSON message protocol over WebSocket: text, code, and 'help request' events with a queue for the instructor." },
+      { "title": "Board", "detail": "A shared scratchpad persisted to SQLite so the session's notes survive reboots." },
+      { "title": "Ship", "detail": "Cross-compiled a single static binary; deployment is one file and one flag." }
+    ],
+    "result": "Used for two semesters by three instructor sections; the codebase is small enough that a new member can trace a message end-to-end in an hour.",
+    "metrics": [
+      { "k": "Binary size", "v": "4.2 MB" },
+      { "k": "Core lines", "v": "~1,100" },
+      { "k": "Dependencies", "v": "0" },
+      { "k": "Sessions", "v": "40+" }
+    ],
+    "team": [
+      { "name": "Sabbir Rahman", "role": "Lead" },
+      { "name": "Farhan Karim", "role": "Client" }
+    ],
+    "links": { "github": "https://github.com/", "demo": "" },
+    "notes": "Became the reference example in the systems reading group.",
+    "capabilities": ["LAN messaging", "Shared scratchpad", "Instructor queue", "Single static binary"]
+  },
+  {
+    "slug": "voltab",
+    "title": "VoltLab",
+    "tagline": "An ESP32 datalogger the physics department actually uses in first-year labs.",
+    "status": "complete",
+    "year": "2024",
+    "category": "Electronics",
+    "featured": true,
+    "stack": ["ESP32", "C", "MicroPython", "React"],
+    "summary": "VoltLab replaces the paper stopwatch-and-ruler approach to capacitor discharge experiments with a $6 board that plots curves to a browser dashboard in real time.",
+    "problem": "Physics practicals measure capacitor discharge by eye and by hand. The results are noisy, slow, and demotivating. The department wanted data, not sketches.",
+    "approach": [
+      { "title": "DAQ", "detail": "ESP32 samples the ADC at 1 kHz, applies a moving average, and streams frames over WebSocket." },
+      { "title": "Fit", "detail": "The dashboard fits an exponential decay in the browser and reports tau with residual error, so students check theory against measurement." },
+      { "title": "Zero config", "detail": "The board creates its own access point; students connect and open one URL. No drivers, no install." }
+    ],
+    "result": "Adopted for the 2024–25 first-year lab batch. Time constant measurements now agree with the expected value within 5%.",
+    "metrics": [
+      { "k": "Sample rate", "v": "1 kHz" },
+      { "k": "Board cost", "v": "~$6" },
+      { "k": "Fit error", "v": "< 5%" },
+      { "k": "Labs", "v": "3" }
+    ],
+    "team": [
+      { "name": "Tasnim Anjum", "role": "Lead" },
+      { "name": "Ibrahim Sarker", "role": "Firmware" },
+      { "name": "Priya Das", "role": "Dashboard" }
+    ],
+    "links": { "github": "https://github.com/", "demo": "" },
+    "notes": "A physics teacher now co-advises the electronics reading group.",
+    "capabilities": ["1 kHz sampling", "Live plotting", "Exponential fit", "Zero-config setup"]
+  },
+  {
+    "slug": "marktrack",
+    "title": "MarkTrack",
+    "tagline": "A CLI study tracker for spaced repetition, built in Rust to learn Rust.",
+    "status": "active",
+    "year": "2026",
+    "category": "Dev Tools",
+    "featured": false,
+    "stack": ["Rust", "SQLite", "tui-rs"],
+    "summary": "MarkTrack is a small terminal app that schedules review sessions using a simplified Leitner system. It was the club's deliberate 'first serious Rust' project.",
+    "problem": "Members were learning Rust by tutorial, not by shipping. The club needed a project small enough to finish but real enough to force ownership, borrowing, and a file format.",
+    "approach": [
+      { "title": "Scope", "detail": "Three commands only: add, review, stats. Anything else was a PR proposal, not a requirement." },
+      { "title": "Storage", "detail": "SQLite via rusqlite; schema documented and versioned from day one." },
+      { "title": "Review", "detail": "The TUI shows one card, asks how well you remembered it, and moves it between three Leitner boxes." }
+    ],
+    "result": "Shipped 0.9.0 and used internally for a month before opening issues; every author now feels confident reading and writing Rust.",
+    "metrics": [
+      { "k": "Commands", "v": "3" },
+      { "k": "First release", "v": "2026-04" },
+      { "k": "Bugs filed", "v": "0 (so far)" },
+      { "k": "Reviewers", "v": "5" }
+    ],
+    "team": [
+      { "name": "Nafis Alam", "role": "Lead" },
+      { "name": "Jannatul Ferdous", "role": "Schema" },
+      { "name": "Adnan Kabir", "role": "TUI" }
+    ],
+    "links": { "github": "https://github.com/", "demo": "" },
+    "notes": "Its existence is the result — the tool itself is secondary.",
+    "capabilities": ["Leitner review", "TUI", "SQLite storage", "stats"]
+  },
+  {
+    "slug": "algoplay",
+    "title": "AlgoPlay",
+    "tagline": "An algorithm visualizer that animates the code, not just the data.",
+    "status": "active",
+    "year": "2026",
+    "category": "Algorithms",
+    "featured": false,
+    "stack": ["TypeScript", "Canvas", "Vite"],
+    "summary": "AlgoPlay lets members step through sorting and graph algorithms with the executing line of code highlighted next to the visualization — built during the algorithms reading group.",
+    "problem": "Blackboard walkthroughs of algorithms leave most students guessing at the loop invariants. Video tutorials are passive. The group wanted a tool they could pause, rewind, and argue with.",
+    "approach": [
+      { "title": "Trace", "detail": "An instrumented subset of algorithms emits step events; the visualizer is a pure function of the event log." },
+      { "title": "Code sync", "detail": "Each step maps back to a source line, rendered beside the canvas." },
+      { "title": "Share", "detail": "Steps serialize to a URL so a student can send a broken state to a friend." }
+    ],
+    "result": "The reading group now runs its Tuesday sessions on AlgoPlay, and three 'aha' moments were directly attributed to rewinding a merge sort.",
+    "metrics": [
+      { "k": "Algorithms", "v": "12" },
+      { "k": "Step types", "v": "6" },
+      { "k": "Weekly users", "v": "~25" },
+      { "k": "Rebuilds", "v": "11" }
+    ],
+    "team": [
+      { "name": "Rakib Hossain", "role": "Lead" },
+      { "name": "Mubashir Hasan", "role": "Engine" }
+    ],
+    "links": { "github": "https://github.com/", "demo": "https://vitejs.dev/" },
+    "notes": "The step-log design influenced how the journal talks about tracing.",
+    "capabilities": ["Sorting visualizer", "Graph traversal", "Step + rewind", "Code-to-state sync"]
+  }
+]

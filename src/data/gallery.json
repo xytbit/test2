@@ -1,0 +1,18 @@
+[
+  { "seed": "workshop-01", "caption": "Linux workshop, session one — nobody is lost, everybody has a terminal.", "category": "Workshop", "aspect": "wide", "featured": true },
+  { "seed": "workshop-02", "caption": "The fix-the-broken-box challenge from the Linux fundamentals session.", "category": "Workshop", "aspect": "tall" },
+  { "seed": "workshop-03", "caption": "Git & Open Source — first pull request queue on the projector.", "category": "Workshop", "aspect": "square", "featured": true },
+  { "seed": "hackathon-01", "caption": "Build Week hour 30. The lab is quiet; the commits are not.", "category": "Hackathon", "aspect": "wide", "featured": true },
+  { "seed": "hackathon-02", "caption": "Judging: 40% working software, 40% engineering judgment, 20% docs.", "category": "Hackathon", "aspect": "tall" },
+  { "seed": "study-01", "caption": "Systems study group — tracing a packet on the whiteboard before the wireshark.", "category": "Study Group", "aspect": "square" },
+  { "seed": "study-02", "caption": "Algorithms reading group, Tuesday session on AlgoPlay.", "category": "Study Group", "aspect": "wide" },
+  { "seed": "study-03", "caption": "AI reading group walks through a backpropagation example by hand.", "category": "Study Group", "aspect": "tall", "featured": true },
+  { "seed": "lab-01", "caption": "VoltLab on the physics bench — the ADC's first honest curve.", "category": "Lab", "aspect": "wide", "featured": true },
+  { "seed": "lab-02", "caption": "CampusMesh node in the lecture hall rack.", "category": "Lab", "aspect": "square" },
+  { "seed": "lab-03", "caption": "The electronics group's component wall, one drawer per obsession.", "category": "Lab", "aspect": "tall" },
+  { "seed": "outreach-01", "caption": "Orientation 2026 — project demos before the speeches.", "category": "Outreach", "aspect": "wide" },
+  { "seed": "outreach-02", "caption": "First Code Night: no talks, no schedule, just commits.", "category": "Outreach", "aspect": "square", "featured": true },
+  { "seed": "infra-01", "caption": "The club's self-hosted stack — from patch cables to the journal.", "category": "Infrastructure", "aspect": "tall" },
+  { "seed": "infra-02", "caption": "Three Raspberry Pi nodes, a switch, and an honest label maker.", "category": "Infrastructure", "aspect": "wide" },
+  { "seed": "ctf-01", "caption": "Beginner Track CTF — the bash puzzle that stumped everyone for an hour.", "category": "Workshop", "aspect": "square" }
+]

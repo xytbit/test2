@@ -1,0 +1,30 @@
+[
+  {
+    "year": "2024",
+    "summary": "The club rebuilds itself as a study organization rather than an events-only club.",
+    "items": [
+      { "title": "Study groups founded", "detail": "Three reading groups launched: Systems, Algorithms, and AI/ML. Each meets weekly and produces public notes." },
+      { "title": "First Linux workshop", "detail": "A sold-out terminal workshop for 40 students — the template every workshop since has followed." },
+      { "title": "VoltLab begins", "detail": "A physics department request starts the electronics track; the first prototype runs in the club lab." }
+    ]
+  },
+  {
+    "year": "2025",
+    "summary": "The first shipped software, a department adoption, and a national CTF finish.",
+    "items": [
+      { "title": "Three projects shipped", "detail": "PadChat enters the computer lab, VoltLab is adopted by the physics department, and CampusMesh covers two lecture halls." },
+      { "title": "National CTF top 20", "detail": "A mixed team of four reaches the top 20 in a national capture-the-flag — the club's first competitive placement." },
+      { "title": "Journal launches", "detail": "The Tech Journal publishes its first issue: a systems post and a field report from VoltLab." }
+    ]
+  },
+  {
+    "year": "2026",
+    "summary": "Open source, 120+ members, and infrastructure the club runs itself.",
+    "items": [
+      { "title": "Nodhini goes open source", "detail": "The Bengali NLP toolkit releases under MIT; two external contributors submit PRs within a month." },
+      { "title": "100+ active members", "detail": "Membership passes 120, spread across six study groups and four project teams." },
+      { "title": "Build Week", "detail": "The first 48-hour hackathon ships nine runnable projects and becomes a standing event." },
+      { "title": "Self-hosted infra", "detail": "The club moves its journal, mirrors, and CTF infrastructure onto its own hardware." }
+    ]
+  }
+]

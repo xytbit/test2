@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<!-- ==================================================================
+     TEAM PAGE  —  src/pages/team.html  →  public/team/index.html
+     ==================================================================
+     WHAT THIS FILE CONTROLS:
+       The full team roster, generated almost entirely from data:
+
+       00 Overview        intro + live counts (len/totalMembers helpers)
+       (loop)             ONE SECTION PER GROUP from the team
+                          collection — each renders a .group-head, the
+                          group note, and a .team-grid of .profile
+                          cards (avatar from /img/gen/av-<seed>.svg,
+                          name, role, note, tag chips). Groups come
+                          from src/data/team.json (Exec / Core / …).
+       FIN Members        closing "the other 100" plate + join CTA
+
+     The section count therefore changes automatically when groups are
+     added/removed in team.json — no template edit needed.
+     ================================================================== -->
+<html lang="{{ .site.meta.language }}">
+{{ include "partials/head.html" }}
+<body class="hx-body" data-page="team">
+{{ include "partials/header.html" }}
+<div class="progress" aria-hidden="true"><span class="progress-fill"></span></div>
+
+<main id="main" class="hx" data-horizontal>
+  <!-- SECTION 00 — INTRO -->
+  <section class="sec sec--full sec--intro scan" data-section="Overview" data-code="00" data-label="Overview">
+    <div class="intro-in">
+      <p class="kicker" data-reveal="fade">00 — Team</p>
+      <h1 class="h-display intro-title" data-reveal="up">RUN BY MEMBERS, NOT BY TITLE.</h1>
+      <p class="lead mt-3" data-reveal style="--d:180ms">Four teams, one culture. Everyone here leads a study group, ships a project, or keeps something running — usually all three.</p>
+      <div class="intro-meta mono" data-reveal style="--d:280ms">
+        <span>TEAMS <span class="accent">{{ len .team }}</span></span>
+        <span>LISTED <span class="accent">{{ totalMembers .team }}</span></span>
+        <span>MEMBERSHIP <span class="accent">120+</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTIONS — TEAMS -->
+  {{ each .team }}
+  <section class="sec sec--wide" data-section="{{ .name }}" data-code="{{ .code }}" data-label="{{ .name }}">
+    <div class="sec-in">
+      <div class="group-head" data-reveal>
+        <h2>{{ .name }}</h2>
+        <span class="mono term">{{ .code }}</span>
+      </div>
+      <p class="prose" data-reveal style="--d:80ms">{{ .note }}</p>
+      <div class="team-grid mt-4" data-stagger>
+        {{ each .members }}
+        <div class="profile">
+          <div class="avatar"><img src="/img/gen/av-{{ .seed }}.svg" alt="Portrait of {{ .name }}" loading="lazy"></div>
+          <div class="profile-body">
+            <h3 class="profile-name">{{ .name }}</h3>
+            <span class="profile-role">{{ .role }}</span>
+            <p class="profile-note">{{ .note }}</p>
+            <div class="profile-tags tag-row">
+              {{ each .tags }}
+              <span class="tag tag--faint">{{ . }}</span>
+              {{ end }}
+            </div>
+          </div>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+  {{ end }}
+
+  <!-- SECTION — MEMBERS -->
+  <section class="sec sec--fit" data-section="Members" data-code="FIN" data-label="Members">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">Final — Members</p>
+        <h2 class="h-section">The other 100.</h2>
+      </div>
+      <div class="plate" data-reveal>
+        <span class="plate-label">Membership</span>
+        <p class="prose" style="font-size:var(--fs-3);color:var(--ink);line-height:var(--lh-snug)">Beyond the teams, 120+ members attend study groups, contribute to repos, and staff workshops. The teams exist to serve them, not the other way around.</p>
+      </div>
+      <div class="hero-cta mt-4" data-reveal>
+        <a class="btn btn-primary" href="/join/">Become one <span class="arrow">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  {{ include "partials/footer.html" }}
+</main>
+
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-glow" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+{{ include "partials/scripts.html" }}
+</body>
+</html>

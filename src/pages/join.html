@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<!-- ==================================================================
+     JOIN PAGE  —  src/pages/join.html  →  public/join/index.html
+     ==================================================================
+     WHAT THIS FILE CONTROLS:
+       The recruitment pitch, four horizontal sections:
+
+       00 Overview        headline + mailto apply CTA (site.email)
+       01 Why join        three .phil-item benefit cards
+       02 The path        .steps numbered onboarding rows (01–04)
+       03 Who it's for    .audience checklist rows
+       04 How to join     prose + terminal-styled intro "file" (.term)
+
+     The only dynamic data is the club email from site.json; the rest
+     is static copy.
+     ================================================================== -->
+<html lang="{{ .site.meta.language }}">
+{{ include "partials/head.html" }}
+<body class="hx-body" data-page="join">
+{{ include "partials/header.html" }}
+<div class="progress" aria-hidden="true"><span class="progress-fill"></span></div>
+
+<main id="main" class="hx" data-horizontal>
+  <!-- SECTION 00 — INTRO -->
+  <section class="sec sec--full sec--intro scan" data-section="Overview" data-code="00" data-label="Overview">
+    <div class="intro-in">
+      <p class="kicker" data-reveal="fade">00 — Join</p>
+      <h1 class="h-display intro-title" data-reveal="up">CURIOSITY IS THE ONLY PREREQUISITE.</h1>
+      <p class="lead mt-3" data-reveal style="--d:180ms">You do not need to be the best programmer in the room. You need to be the one who reads the manual, asks the question, and shows up twice.</p>
+      <div class="hero-cta mt-4" data-reveal style="--d:280ms">
+        <a class="btn btn-primary" href="mailto:{{ .site.email }}?subject=Join%20DCITC">Apply by email <span class="arrow">→</span></a>
+        <a class="btn btn-ghost" href="/contact/">Ask us first</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 01 — WHY -->
+  <section class="sec sec--fit" data-section="Why join" data-code="01" data-label="Why join">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">01 — Why join</p>
+        <h2 class="h-section">What membership actually gives you.</h2>
+      </div>
+      <div class="phil-grid" data-stagger>
+        <div class="phil-item">
+          <span class="phil-n mono">A / LEARN</span>
+          <h3>Fundamentals, in order</h3>
+          <p>A structured path from terminal to kernel, from loops to system calls — via study groups with public notes.</p>
+        </div>
+        <div class="phil-item">
+          <span class="phil-n mono">B / BUILD</span>
+          <h3>Real projects</h3>
+          <p>Your name on a shipped, documented system. The club's repos are the resume.</p>
+        </div>
+        <div class="phil-item">
+          <span class="phil-n mono">C / TEACH</span>
+          <h3>A room that reads</h3>
+          <p>Mentors, reviewers, and a culture where 'let me check the manual' is a compliment.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 02 — THE PATH -->
+  <section class="sec sec--fit" data-section="The path" data-code="02" data-label="The path">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">02 — The path</p>
+        <h2 class="h-section">Your first semester, roughly.</h2>
+      </div>
+      <div class="steps" data-stagger>
+        <div class="step-row">
+          <span class="step-n mono">01</span>
+          <div class="step-body">
+            <h3>Pick a study group</h3>
+            <p>Systems, algorithms, AI/ML, web, security, or electronics. Sit in on one session first — you are welcome as a guest.</p>
+          </div>
+        </div>
+        <div class="step-row">
+          <span class="step-n mono">02</span>
+          <div class="step-body">
+            <h3>Finish the onboarding track</h3>
+            <p>A self-paced track: terminal, Git, a first repo. Roughly four hours, entirely doable, entirely worth it.</p>
+          </div>
+        </div>
+        <div class="step-row">
+          <span class="step-n mono">03</span>
+          <div class="step-body">
+            <h3>Make one contribution</h3>
+            <p>A typo fix counts. Then a real issue. Then a feature. Review is kind, specific, and available.</p>
+          </div>
+        </div>
+        <div class="step-row">
+          <span class="step-n mono">04</span>
+          <div class="step-body">
+            <h3>Ship something small</h3>
+            <p>By the end of the semester, a project you can show someone — however small, it has to work.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 03 — WHO IT'S FOR -->
+  <section class="sec sec--fit" data-section="Who it's for" data-code="03" data-label="Who it's for">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">03 — Who it's for</p>
+        <h2 class="h-section">This club is for you if…</h2>
+      </div>
+      <div class="audience" data-stagger>
+        <div class="aud-row">
+          <span class="aud-code mono">01</span>
+          <span class="aud-text">You have asked <em class="accent">"but how does that actually work?"</em> in the last month.</span>
+        </div>
+        <div class="aud-row">
+          <span class="aud-code mono">02</span>
+          <span class="aud-text">You would rather understand a small thing deeply than skim ten big things.</span>
+        </div>
+        <div class="aud-row">
+          <span class="aud-code mono">03</span>
+          <span class="aud-text">You are comfortable not knowing, as long as you get to find out.</span>
+        </div>
+        <div class="aud-row">
+          <span class="aud-code mono">04</span>
+          <span class="aud-text">You want to build things that are used by real people — classmates, teachers, the lab.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 04 — HOW TO JOIN -->
+  <section class="sec sec--fit scan" data-section="How to join" data-code="04" data-label="How to join">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">04 — How to join</p>
+        <h2 class="h-section">One email, one meeting.</h2>
+      </div>
+      <div class="split">
+        <div class="stack--lg" data-reveal>
+          <p class="prose">Send a short email introducing yourself — name, year, and one thing you want to understand this semester. We reply within a week and invite you to a study group as a guest. No forms, no interviews, no fees for the first semester.</p>
+          <div>
+            <a class="btn btn-primary" href="mailto:{{ .site.email }}?subject=Join%20DCITC">Write to {{ .site.email }} <span class="arrow">→</span></a>
+          </div>
+        </div>
+        <div class="term" data-reveal="right" style="font-size:var(--fs-1);line-height:2.2">
+          $ cat intro.txt<br>
+          name: <span class="accent">you</span><br>
+          year: <span class="accent">any</span><br>
+          interest: <span class="accent">something real</span><br>
+          prerequisites: <span class="accent">curiosity</span><br>
+          $ git push origin/you
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {{ include "partials/footer.html" }}
+</main>
+
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-glow" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+{{ include "partials/scripts.html" }}
+</body>
+</html>

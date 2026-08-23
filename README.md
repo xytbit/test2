@@ -1,0 +1,98 @@
+# DCITC — Dhaka College IT Club website
+
+Static site generator with zero runtime dependencies. Content lives in
+`src/data/*.json`, layouts in `src/pages/` + `src/partials/`, styles and
+scripts in `static/`. The build outputs a fully static site to `public/`.
+
+## Commands
+
+| Command | What it does |
+| --- | --- |
+| `npm run build` | Build `public/` from source |
+| `npm run serve` | Static file server for `public/` (zero-dep, defaults to `http://localhost:8080`) |
+| `npm run dev` | Watch source + rebuild on change (needs `node` >= 18) |
+
+## Structure
+
+```
+scripts/
+  build.js     zero-dependency template engine + asset pipeline
+  serve.js     static server with directory-index resolution
+  dev.js       watch + rebuild
+src/
+  data/        content collections (site, nav, projects, events, posts, …)
+  pages/       page templates (home, about, projects, blog, …)
+  partials/    head, header, footer, scripts
+static/
+  css/         tokens → type → layout → nav → horizontal → components → pages → anim
+  js/          theme, horizontal, reveal, transitions, pages, main (+ vendored anime.min.js)
+public/        build output (everything below is generated, do not edit)
+```
+
+## Editing content
+
+All content is JSON. Each collection is a flat array of objects; the engine
+exposes each item's fields as `.field` and computes a few helpers
+(`.n` = 1-based index, `.slug`, `.url`, `.isActive` for the current page).
+
+> JSON cannot carry comments, so every data file is documented here.
+> Field-level behaviour (codes, urls, thumbs, status booleans…) is added
+> in the "data loading + enrichment" section of `scripts/build.js`.
+
+### Data file reference (`src/data/`)
+
+| File | Controls | Consumed by |
+| --- | --- | --- |
+| `site.json` | Global identity: name, short name ("DCITC"), wordmark, tagline, statement, founding year, email, locations, logo path/alt, social links (footer EXTERNAL + contact channels), meta (language/domain), and `facts` — the EST./MEMBERS/PROJECTS stat pairs shown on the home hero, about intro and home identity section. | header.html (brand), footer.html (statement/socials/©), head.html (og:site_name), index/about/contact pages |
+| `nav.json` | The single source of truth for navigation. Each item: `label`, `href`, `match` (URL rule used by `navFor()` to compute active state: `/` exact, trailing `*` = prefix, otherwise exact-or-subpage), `code` (the "01"–"10" mono prefix), `group` (`primary` → inline header link, `more` → "More" dropdown; everything appears in the mobile drawer), `cta: true` marks the accent button (Join). | header.html via `navFor()` |
+| `pages.json` | The page registry. One entry per top-level page: which template file renders it (`file`), where it's written (`out`, directory-style), canonical `url`, `<title>`/`desc` meta, display `code` (shown in the footer kicker), `section` label, `horizontal` flag. Order here does not matter for nav (that's nav.json) but documents the sitemap. | build.js `buildPage()` loop |
+| `projects.json` | Project portfolio. Key fields per item: `slug` (→ `/projects/<slug>/` + generated cover art seed), `title`, `tagline`, `status` (active/past…), `year`, `category`, `featured` (home page cards, first 3), `stack[]` (chips), `summary`, `problem`, `approach[]` (numbered at build), `metrics[{k,v}]`, `result`, `notes`, `team[{name,role}]`, `capabilities[]`, `links{github,demo}`. | projects.html, project.html, home featured |
+| `events.json` | Events. Per item: `slug`, `title`, `date` (ISO — formatted by helpers), `status` (`upcoming`/`ongoing`/`past` — converted to booleans at build, driving which section/badge shows), `location`, `duration`, `level`, `subtitle`, `description`, `program[{time,title}]`, `speaker{name,role}`, `resources[]`, `register`. | events.html, event.html, home upcoming list |
+| `posts.json` | Tech journal articles. Per item: `slug`, `title`, `category`, `date`, `author`, `role`, `featured` (home/blog featured), `subtitle`, `tags[]`, and `body[]` — an ordered list of typed blocks (`p`, `h2`, `code`, `quote`, `list` with `items[]`, `note`) that article.html renders sequentially. Reading time is computed from body word count at build. | blog.html, article.html, home journal preview |
+| `team.json` | Team groups (e.g. Executive Committee, Core). Each group: `name`, `note`, `members[]` with `name`, `role`, `seed` (avatar art key → `/img/gen/av-<seed>.svg`), `note`, `tags[]`. Roles drive the about-page carousel filter (President, VP, General Secretary, Technical Lead). team.html renders one section per group automatically. | team.html, about.html carousel |
+| `achievements.json` | Milestone timeline. Each entry: `year`, `summary`, `items[{title,detail}]`. Rendered twice on achievements.html (vertical timeline + expandable record) and summarized on the home spark section. | achievements.html, home |
+| `resources.json` | Curated knowledge base. Per item: `title`, `category` (must match a CATEGORIES entry in build.js for filtering), `kind` (book/doc/tool…), `level`, `tag`, `featured` (home picks, first 4), `description`, `link`. | resources.html, home |
+| `gallery.json` | Gallery plates. Per item: `seed` (deterministic SVG art key), `caption`, `category` (filter chips), `aspect`, `featured` (reel strip). | gallery.html |
+
+To swap the logo: put a file in `static/img/` and set `site.logo.path`.
+
+## Template syntax
+
+- `{{ .field }}`, `{{ .a.b }}` — field access
+- `{{ each .projects }} … {{ end }}` — iterate an array
+- `{{ if / if not / if eq .x "v" }} … {{ else }} … {{ end }}`
+- `{{ if and (eq .a "x") (ne .b "y") }}` — logical helpers: `and`, `or`, `not`,
+  `eq`, `ne`, `gt`, `lt`
+- `{{ include "partials/head.html" }}` — partial include
+- Helpers (single-argument only): `fmtDate`, `fmtDateLong`, `pad2`, `len`,
+  `sumLen`, `totalMembers`, `upper`, `join`, `readingTime`
+
+Precompute values in `build.js` if a field needs more than one helper call.
+
+## Design system
+
+- Dark-first; accent `#4fd1a5` (dark) / `#157a5b` (light). Toggle persists in
+  `localStorage` and never causes a flash (`data-theme` is set inline in
+  `<head>`).
+- Space Grotesk / Inter / JetBrains Mono (Google Fonts).
+- Horizontal browsing on viewports ≥ 900px: `main[data-horizontal]` scrolls
+  horizontally via wheel, keyboard, or drag with gentle inertia easing (no
+  snap — deliberately removed); below 900px it falls back to a normal vertical
+  page and the nav collapses to a drawer.
+- `prefers-reduced-motion: reduce` disables scroll animations, reveals, and
+  parallax; all content stays readable without JS.
+- Procedural SVG generation (logo, favicon, gallery plates, avatars) means no
+  binary assets to maintain.
+
+## Migrating to Hugo
+
+This project mirrors Hugo's conventions so migration is mechanical:
+
+- `src/data/*.json` → `content/*` + `data/` (front matter + page bundles)
+- `src/pages/*.html` → `layouts/_default/*.html`
+- `src/partials/*.html` → `layouts/partials/*.html`
+- `static/` → `static/` (unchanged)
+
+The template syntax maps cleanly to Go templates: `{{ each }}` → `{{ range }}`,
+`{{ if eq }}` → `{{ if eq }}`, `{{ include }}` → `{{ partial }}`. The horizontal
+scroller, theme system, and CSS/JS are pure static assets and carry over as-is.

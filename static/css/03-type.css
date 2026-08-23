@@ -1,0 +1,98 @@
+/* ==================================================================
+   TYPOGRAPHY  —  static/css/03-type.css  (bundle file 3/9)
+   ==================================================================
+   WHAT THIS FILE CONTROLS:
+     Text styling classes used across every page: heading family/scale
+     (.h-display, .h-section, .h-3), long-form (.lead, .prose), the
+     mono label styles (.kicker with accent dash, .term), and small
+     inline helpers (.accent, em emphasis, sup.ord).
+
+   WHAT CHANGES WHAT:
+     - Sizes come from the --fs-* scale in 01-vars.css; change a token
+       there and every heading/body size follows.
+     - .kicker renders the "01 — Section" labels at the top of each
+       section (markup in src/pages/*.html).
+     - .term is ALSO a bordered terminal box in 07-components.css —
+       this file only sets its text treatment; context decides which
+       look applies.
+   ================================================================== */
+
+h1, h2, h3, h4 {
+  font-family: var(--font-disp);
+  font-weight: 600;
+  line-height: var(--lh-snug);
+  letter-spacing: var(--trk-disp);
+  text-wrap: balance;
+}
+
+.h-display {
+  font-size: var(--fs-6);
+  font-weight: 700;
+  line-height: 0.96;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+}
+
+.h-section {
+  font-size: var(--fs-5);
+  font-weight: 600;
+  letter-spacing: -0.025em;
+}
+
+.h-3 {
+  font-size: var(--fs-3);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.lead {
+  font-size: var(--fs-3);
+  line-height: var(--lh-snug);
+  color: var(--ink-dim);
+  max-width: 52ch;
+}
+
+.prose {
+  max-width: 68ch;
+  font-size: var(--fs-2);
+  line-height: var(--lh-body);
+  color: var(--ink-dim);
+}
+.prose > p + p { margin-top: 1.1em; }
+
+.kicker {
+  font-family: var(--font-mono);
+  font-size: var(--fs-1);
+  letter-spacing: 0.06em;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+}
+.kicker::before {
+  content: '';
+  width: 1.6em;
+  height: 1px;
+  background: var(--accent);
+}
+
+.kicker--plain::before { display: none; }
+
+.term {
+  font-family: var(--font-mono);
+  font-size: var(--fs-1);
+  letter-spacing: var(--trk-mono);
+  color: var(--ink-dim);
+  text-transform: uppercase;
+}
+
+.accent { color: var(--accent); }
+
+sup.ord { font-size: 0.6em; }
+
+em { color: var(--ink); font-style: normal; }
+
+.prose em { color: var(--ink); }
+
+::marker { color: var(--ink-faint); }

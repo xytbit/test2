@@ -1,0 +1,46 @@
+<!-- ==================================================================
+     DCITC <head> PARTIAL  —  src/partials/head.html
+     ==================================================================
+     WHAT THIS FILE CONTROLS:
+       The head of every page: charset/viewport, title + meta
+       description (fed from the page def in pages.json via the
+       page.title / page.desc scope fields), Open Graph tags, favicon,
+       Google Fonts (Space Grotesk / Inter / JetBrains Mono), and the
+       single stylesheet /css/main.css (the build-time concat bundle).
+
+     THE INLINE SCRIPT (order-critical, runs BEFORE first paint):
+       1. swaps html class no-js → js — 09-anim.css only hides reveal
+          elements under html.js, so no-JS visitors see everything;
+       2. reads localStorage('dcitc-theme') (or falls back to OS
+          prefers-color-scheme) and sets html[data-theme] + colorScheme
+          immediately — prevents a flash of the wrong theme. theme.js
+          takes over interaction after load and shares the same key.
+     ================================================================== -->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{ .page.title }}</title>
+  <meta name="description" content="{{ .page.desc }}">
+  <meta name="generator" content="DCITC site builder">
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <meta property="og:title" content="{{ .page.title }}">
+  <meta property="og:description" content="{{ .page.desc }}">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ .site.name }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/main.css">
+  <script>
+    (function () {
+      var r = document.documentElement;
+      r.classList.add('js');
+      try {
+        var t = localStorage.getItem('dcitc-theme');
+        var d = t || (window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+        r.setAttribute('data-theme', d);
+        r.style.colorScheme = d;
+      } catch (e) { r.setAttribute('data-theme', 'dark'); }
+    })();
+  </script>
+</head>

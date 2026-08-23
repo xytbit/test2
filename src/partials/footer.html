@@ -1,0 +1,76 @@
+<!-- ==================================================================
+     DCITC FOOTER PARTIAL  —  src/partials/footer.html
+     ==================================================================
+     WHAT THIS FILE CONTROLS:
+       The frost-glass closing panel included at the end of <main> on
+       every page EXCEPT article.html (articles intentionally have no
+       footer). Styling lives in 07-components.css (.sec-footer block).
+
+     STRUCTURE:
+       .foot-top
+         .foot-id      left: kicker "SHORT // PAGECODE" (site.short +
+                       page.code) + club statement (site.json)
+         .foot-cols    right: 2×2 grid of link columns —
+                         ORGANIZATION / WORK   (top row)
+                         EVENTS / EXTERNAL     (bottom row)
+                       EXTERNAL loops the socials array from site.json
+       .foot-wordmark  giant hollow "DCITC" behind everything
+                       (aria-hidden, pointer-events none, z-index 0;
+                       sized in cqi via container-type on .sec-footer)
+       .foot-bottom    copyright + location strip
+
+     LAYOUT CONTRACT (do not regress):
+       - .sec-footer is a direct flex child of main.hx → it carries its
+         own flex: 0 0 auto and must have NO margin-inline, so the page
+         ends flush with no trailing gap at max scroll.
+     ================================================================== -->
+<footer class="sec-footer" data-section="colophon">
+  <div class="foot-top">
+    <div class="foot-id">
+      <p class="foot-kicker mono">{{ .site.short }} // {{ .page.code }}</p>
+      <p class="foot-statement">{{ .site.statement }}</p>
+    </div>
+    <div class="foot-cols">
+      <div class="foot-col">
+        <p class="mono foot-head">ORGANIZATION</p>
+        <ul>
+          <li><a href="/about/">About</a></li>
+          <li><a href="/team/">Team</a></li>
+          <li><a href="/join/">Join</a></li>
+          <li><a href="/contact/">Contact</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <p class="mono foot-head">WORK</p>
+        <ul>
+          <li><a href="/projects/">Projects</a></li>
+          <li><a href="/achievements/">Achievements</a></li>
+          <li><a href="/blog/">Tech Journal</a></li>
+          <li><a href="/resources/">Resources</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <p class="mono foot-head">EVENTS</p>
+        <ul>
+          <li><a href="/events/">Upcoming</a></li>
+          <li><a href="/events/">Archive</a></li>
+          <li><a href="/gallery/">Gallery</a></li>
+          <li><a href="/events/">Study Groups</a></li>
+        </ul>
+      </div>
+      <div class="foot-col">
+        <p class="mono foot-head">EXTERNAL</p>
+        <ul>
+          {{ each .site.socials }}
+          <li><a href="{{ .url }}" rel="noopener">{{ .label }} <span class="mono">↗</span></a></li>
+          {{ end }}
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="foot-wordmark" aria-hidden="true">{{ .site.short }}</div>
+  <div class="foot-bottom">
+    <p class="mono">© {{ fmtYear "2026-01-01" }} {{ .site.name }} · Built and maintained by members.</p>
+    <p class="mono">DHAKA COLLEGE · {{ .site.locationShort }}</p>
+  </div>
+</footer>

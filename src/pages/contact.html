@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<!-- ==================================================================
+     CONTACT PAGE  —  src/pages/contact.html  →  public/contact/index.html
+     ==================================================================
+     WHAT THIS FILE CONTROLS:
+       How to reach the club, three horizontal sections:
+
+       00 Overview        headline + lead
+       01 Information     four .contact-card tiles (email, location,
+                          founded, hours — all from site.json)
+       02 Channels        .do-list rows looping the site.socials array
+                          (GitHub/Facebook/YouTube/Discord)
+       03 Message         prose + mailto CTA + .blueprint inbox diagram
+
+     Data source: src/data/site.json (email, location, socials).
+     ================================================================== -->
+<html lang="{{ .site.meta.language }}">
+{{ include "partials/head.html" }}
+<body class="hx-body" data-page="contact">
+{{ include "partials/header.html" }}
+<div class="progress" aria-hidden="true"><span class="progress-fill"></span></div>
+
+<main id="main" class="hx" data-horizontal>
+  <!-- SECTION 00 — INTRO -->
+  <section class="sec sec--full sec--intro scan" data-section="Overview" data-code="00" data-label="Overview">
+    <div class="intro-in">
+      <p class="kicker" data-reveal="fade">00 — Contact</p>
+      <h1 class="h-display intro-title" data-reveal="up">REACH THE LAB.</h1>
+      <p class="lead mt-3" data-reveal style="--d:180ms">Questions, collaborations, guest sessions, or just a good paper to share — the inbox is open.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 01 — INFO -->
+  <section class="sec sec--wide" data-section="Information" data-code="01" data-label="Information">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">01 — Information</p>
+        <h2 class="h-section">Where we are.</h2>
+      </div>
+      <div class="grid grid-4" data-stagger>
+        <div class="contact-card">
+          <span class="datum-k">Email</span>
+          <a class="contact-big" href="mailto:{{ .site.email }}">{{ .site.email }}</a>
+          <span class="mono term" style="color:var(--ink-faint)">reply within a week</span>
+        </div>
+        <div class="contact-card">
+          <span class="datum-k">Location</span>
+          <span class="contact-big">{{ .site.locationShort }}</span>
+          <span class="mono term" style="color:var(--ink-faint)">{{ .site.location }}</span>
+        </div>
+        <div class="contact-card">
+          <span class="datum-k">Founded</span>
+          <span class="contact-big">{{ .site.established }}</span>
+          <span class="mono term" style="color:var(--ink-faint)">by students, for students</span>
+        </div>
+        <div class="contact-card">
+          <span class="datum-k">Club hours</span>
+          <span class="contact-big">Weekly</span>
+          <span class="mono term" style="color:var(--ink-faint)">study groups · project nights</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 02 — CHANNELS -->
+  <section class="sec sec--fit" data-section="Channels" data-code="02" data-label="Channels">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">02 — Channels</p>
+        <h2 class="h-section">Pick your protocol.</h2>
+      </div>
+      <div class="do-list" data-stagger>
+        {{ each .site.socials }}
+        <a class="do-row" href="{{ .url }}" rel="noopener">
+          <span class="do-code mono">{{ .code }}</span>
+          <span class="do-title">{{ .label }}</span>
+          <span class="do-desc">{{ .handle }} <span class="accent">↗</span></span>
+        </a>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 03 — CTA -->
+  <section class="sec sec--fit scan" data-section="Message" data-code="03" data-label="Message">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">03 — Message</p>
+        <h2 class="h-section">A short note goes a long way.</h2>
+      </div>
+      <div class="split">
+        <div data-reveal>
+          <p class="prose">Write to the club inbox with anything — joining, guest lectures, department collaborations, or a resource you think we missed. We read everything and answer most of it.</p>
+          <div class="hero-cta mt-3">
+            <a class="btn btn-primary" href="mailto:{{ .site.email }}">Start a thread <span class="arrow">→</span></a>
+          </div>
+        </div>
+        <div class="blueprint" data-reveal="right" data-stagger>
+          <div class="bp-node">DCITC <small>inbox</small></div>
+          <div class="bp-links">
+            <span class="bp-line"><b>▸</b> read daily</span>
+            <span class="bp-line"><b>▸</b> reply &lt; 7 days</span>
+            <span class="bp-line"><b>▸</b> zero spam</span>
+          </div>
+          <div class="bp-node">DHAKA COLLEGE <small>campus</small></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  {{ include "partials/footer.html" }}
+</main>
+
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-glow" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+{{ include "partials/scripts.html" }}
+</body>
+</html>

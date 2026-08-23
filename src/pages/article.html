@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<!-- ==================================================================
+     ARTICLE SINGLE (template)  —  src/pages/article.html
+     →  public/blog/<slug>/index.html  (one per journal post)
+     ==================================================================
+     WHAT THIS FILE CONTROLS:
+       The reading page rendered once per item of posts.json by
+       makeItem() in scripts/build.js.
+
+     THE VERTICAL EXCEPTION:
+       <body> has NO hx-body class and <main> has NO data-horizontal —
+       this is the only fully vertical, reading-optimized page. That
+       triggers body:not(.hx-body) rules in 04-layout.css and makes
+       horizontal.js fall back to initVertical() (document-scroll
+       progress bar). It also intentionally includes NO footer partial.
+
+     STRUCTURE:
+       header section    kicker (category/code/date/readingTime),
+                         title, subtitle, byline
+       cover section     generated SVG cover plate
+       body section      loops the item.body blocks by type:
+                           p / h2 / code / quote / list / note
+       end section       tags + prev/all-issues/next pager + end mark
+     ================================================================== -->
+<html lang="{{ .site.meta.language }}">
+{{ include "partials/head.html" }}
+<body data-page="article">
+{{ include "partials/header.html" }}
+<div class="progress" aria-hidden="true"><span class="progress-fill"></span></div>
+
+<main id="main">
+  <!-- VERTICAL, READING-OPTIMIZED LAYOUT -->
+  <section class="sec" data-section="Article">
+    <div class="article">
+      <div class="art-kicker mono" data-reveal="fade">
+        <span class="tag tag--accent">{{ .item.category }}</span>
+        <span>{{ .item.code }}</span>
+        <span>{{ fmtDate .item.date }}</span>
+        <span>{{ .item.readingTime }}</span>
+      </div>
+      <h1 class="art-title mt-3" data-reveal="up">{{ .item.title }}</h1>
+      <p class="lead mt-2" data-reveal style="--d:120ms">{{ .item.subtitle }}</p>
+      <div class="art-byline mt-3" data-reveal style="--d:180ms">
+        <span>BY {{ upper .item.author }}</span>
+        <span aria-hidden="true">·</span>
+        <span>{{ .item.role }}</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="sec sec--flush" data-section="Cover">
+    <div class="article">
+      <figure class="art-cover" data-reveal="scale">
+        <img src="{{ .item.cover }}" alt="Cover plate for {{ .item.title }}" loading="eager">
+      </figure>
+    </div>
+  </section>
+
+  <section class="sec sec--flush" data-section="Body">
+    <article class="article">
+      {{ each .item.body }}
+        {{ if eq .type "p" }}
+        <p data-reveal>{{ .text }}</p>
+        {{ end }}
+        {{ if eq .type "h2" }}
+        <h2 data-reveal>{{ .text }}</h2>
+        {{ end }}
+        {{ if eq .type "code" }}
+        <pre class="code" data-reveal><code>{{ .text }}</code></pre>
+        {{ end }}
+        {{ if eq .type "quote" }}
+        <blockquote data-reveal>{{ .text }}</blockquote>
+        {{ end }}
+        {{ if eq .type "list" }}
+        <ul data-reveal>
+          {{ each .items }}
+          <li>{{ . }}</li>
+          {{ end }}
+        </ul>
+        {{ end }}
+        {{ if eq .type "note" }}
+        <p class="note mono" data-reveal>NOTE — {{ .text }}</p>
+        {{ end }}
+      {{ end }}
+    </article>
+  </section>
+
+  <section class="sec sec--flush" data-section="End">
+    <div class="article">
+      <div class="tag-row" data-reveal>
+        {{ each .item.tags }}
+        <span class="tag">{{ . }}</span>
+        {{ end }}
+      </div>
+      <div class="pager mt-5" data-reveal>
+        <a href="{{ .prev.url }}"><span aria-hidden="true">←</span> {{ .prev.title }}</a>
+        <a href="/blog/" class="mono">ALL ISSUES</a>
+        <a href="{{ .next.url }}">{{ .next.title }} <span aria-hidden="true">→</span></a>
+      </div>
+      <p class="mono mt-5" style="color:var(--ink-faint);font-size:var(--fs-0)">END OF ARTICLE · {{ .item.code }} · {{ .site.short }}</p>
+    </div>
+  </section>
+</main>
+
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-glow" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+{{ include "partials/scripts.html" }}
+</body>
+</html>

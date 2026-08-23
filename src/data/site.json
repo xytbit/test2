@@ -1,0 +1,30 @@
+{
+  "name": "Dhaka College IT Club",
+  "short": "DCITC",
+  "wordmark": "DHAKA COLLEGE / IT CLUB",
+  "tagline": "Curate. Build. Understand.",
+  "statement": "DCITC is not chasing technology. DCITC studies it.",
+  "established": "2019",
+  "email": "itclub@dhakacollege.edu.bd",
+  "location": "Dhaka College, Mirpur Road, Dhaka 1205, Bangladesh",
+  "locationShort": "Dhaka College Campus",
+  "logo": { "path": "/img/logo.svg", "alt": "DCITC monogram — node graph mark" },
+  "socials": [
+    { "label": "GitHub", "handle": "@dcitc", "url": "https://github.com/" },
+    { "label": "Facebook", "handle": "/dcitc", "url": "https://facebook.com/" },
+    { "label": "YouTube", "handle": "@dcitc", "url": "https://youtube.com/" },
+    { "label": "Discord", "handle": "dcitc.study", "url": "https://discord.com/" }
+  ],
+  "meta": {
+    "author": "DCITC Technical Team",
+    "language": "en",
+    "domain": "dcitc.example.edu.bd"
+  },
+  "facts": [
+    { "k": "EST.", "v": "2019" },
+    { "k": "MEMBERS", "v": "120+" },
+    { "k": "PROJECTS", "v": "17" },
+    { "k": "WORKSHOPS", "v": "34" },
+    { "k": "STUDY GROUPS", "v": "6" }
+  ]
+}

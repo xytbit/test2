@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<!-- ==================================================================
+     TECH JOURNAL INDEX  —  src/pages/blog.html  →  public/blog/index.html
+     ==================================================================
+     WHAT THIS FILE CONTROLS:
+       The journal front page:
+
+       00 Masthead        issue count (len of posts) + display title
+       01 Featured        full-width media cards for featuredPosts
+                          (cover from generated SVG plates)
+       02 Archive         3-col grid of every post; each card links to
+                          its article page (/blog/<slug>/, rendered
+                          from article.html)
+
+     Data source: src/data/posts.json — readingTime + cover are
+     computed per post in scripts/build.js.
+     ================================================================== -->
+<html lang="{{ .site.meta.language }}">
+{{ include "partials/head.html" }}
+<body class="hx-body" data-page="blog">
+{{ include "partials/header.html" }}
+<div class="progress" aria-hidden="true"><span class="progress-fill"></span></div>
+
+<main id="main" class="hx" data-horizontal>
+  <!-- SECTION 00 — MASTHEAD -->
+  <section class="sec sec--full sec--intro scan" data-section="Masthead" data-code="00" data-label="Masthead">
+    <div class="intro-in">
+      <div class="masthead" data-reveal="fade">
+        <svg class="masthead-mark" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3" stroke="currentColor" stroke-width="1.5"/></svg>
+        <span class="mono term">ISSUE {{ len .posts }} · SINCE 2025</span>
+      </div>
+      <h1 class="jrnl-head mt-2" data-reveal="up">THE DCITC<br>TECH JOURNAL</h1>
+      <p class="lead mt-3" data-reveal style="--d:180ms">Serious technical writing by club members: kernel paths, eBPF, measurement, fundamentals, and honest field reports from our own projects.</p>
+    </div>
+  </section>
+
+  <!-- SECTION 01 — FEATURED -->
+  <section class="sec sec--wide" data-section="Featured" data-code="01" data-label="Featured">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">01 — Featured</p>
+        <h2 class="h-section">Start here.</h2>
+      </div>
+      {{ each .featuredPosts }}
+      <a class="card card--media" href="{{ .url }}" data-reveal="up">
+        <div class="card-thumb"><img src="{{ .cover }}" alt="" loading="lazy"></div>
+        <div class="card-body">
+          <div class="card-top">
+            <span class="tag tag--accent">{{ .category }}</span>
+            <span class="art-date mono">{{ fmtDate .date }} · {{ .readingTime }}</span>
+          </div>
+          <h3 class="card-title" style="font-size:var(--fs-4)">{{ .title }}</h3>
+          <p>{{ .subtitle }}</p>
+          <div class="card-foot">
+            <span class="mono term">{{ .author }} — {{ .role }}</span>
+            <span class="card-arrow" aria-hidden="true">→</span>
+          </div>
+        </div>
+      </a>
+      {{ end }}
+    </div>
+  </section>
+
+  <!-- SECTION 02 — ARCHIVE -->
+  <section class="sec sec--wide" data-section="Archive" data-code="02" data-label="Archive">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">02 — Archive</p>
+        <h2 class="h-section">Every issue.</h2>
+      </div>
+      <div class="grid grid-3" data-stagger>
+        {{ each .posts }}
+        <a class="card" href="{{ .url }}">
+          <div class="card-top">
+            <span class="tag tag--accent">{{ .category }}</span>
+            <span class="art-date mono">{{ fmtDate .date }}</span>
+          </div>
+          <h3 class="card-title">{{ .title }}</h3>
+          <p>{{ .subtitle }}</p>
+          <div class="card-foot">
+            <span class="mono term">{{ .author }} · {{ .readingTime }}</span>
+            <span class="card-arrow" aria-hidden="true">→</span>
+          </div>
+        </a>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+
+  {{ include "partials/footer.html" }}
+</main>
+
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-glow" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+{{ include "partials/scripts.html" }}
+</body>
+</html>

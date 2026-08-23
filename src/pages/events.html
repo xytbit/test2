@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<!-- ==================================================================
+     EVENTS INDEX  —  src/pages/events.html  →  public/events/index.html
+     ==================================================================
+     WHAT THIS FILE CONTROLS:
+       The events hub, split by status (booleans computed in
+       scripts/build.js from each event's "status" field):
+
+       00 Overview        intro + counts of upcoming/past
+       01 Upcoming        .evx collapsing card deck for the
+                          upcomingEvents subset (one expanded card,
+                          the rest thin strips; hover/click/keyboard
+                          expands — see .evx block in 08-pages.css
+                          and initEventDeck() in pages.js)
+       02 Ongoing series  .ev-row list — filters pastEvents with
+                          `if .ongoing`
+       03 Archive         .ev-row list — filters pastEvents with
+                          `if .past`
+
+     Each card/row links to the event's single page
+     (/events/<slug>/, rendered from event.html).
+     Data source: src/data/events.json.
+     ================================================================== -->
+<html lang="{{ .site.meta.language }}">
+{{ include "partials/head.html" }}
+<body class="hx-body" data-page="events">
+{{ include "partials/header.html" }}
+<div class="progress" aria-hidden="true"><span class="progress-fill"></span></div>
+
+<main id="main" class="hx" data-horizontal>
+  <!-- SECTION 00 — INTRO -->
+  <section class="sec sec--full sec--intro scan" data-section="Overview" data-code="00" data-label="Overview">
+    <div class="intro-in">
+      <p class="kicker" data-reveal="fade">00 — Events</p>
+      <h1 class="h-display intro-title" data-reveal="up">WORKSHOPS, GROUPS & BUILD WEEKS.</h1>
+      <p class="lead mt-3" data-reveal style="--d:180ms">Everything we run is hands-on, small, and repeatable. No keynote lectures. No registration mazes — turn up, sit down, and start.</p>
+      <div class="intro-meta mono" data-reveal style="--d:280ms">
+        <span>UPCOMING <span class="accent">{{ len .upcomingEvents }}</span></span>
+        <span>SERIES <span class="accent">1</span></span>
+        <span>ARCHIVE <span class="accent">{{ len .pastEvents }}</span></span>
+        <span>FORMAT <span class="accent">HANDS-ON</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 01 — UPCOMING -->
+  <section class="sec sec--wide" data-section="Upcoming" data-code="01" data-label="Upcoming">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">01 — Upcoming</p>
+        <h2 class="h-section">Next on the bench.</h2>
+      </div>
+      <ul class="evx" data-evx>
+        {{ each .upcomingEvents }}
+        <li class="evx-item"{{ if .first }} data-active="true"{{ end }}>
+          <article>
+            <span class="evx-strip mono">{{ .title }}</span>
+            <div class="evx-body">
+              <p class="evx-kicker mono">{{ .code }} · {{ .status }}</p>
+              <h3>{{ .title }}</h3>
+              <p class="evx-desc">{{ .subtitle }}</p>
+              <div class="evx-meta">
+                <span class="tag">{{ .dateFmt }}</span>
+                <span class="tag">{{ .location }}</span>
+                <span class="tag">{{ .level }} · {{ .duration }}</span>
+              </div>
+              <a class="evx-cta" href="{{ .url }}"><span>Open event</span><span aria-hidden="true">→</span></a>
+            </div>
+            <img src="{{ .cover }}" alt="" loading="lazy">
+          </article>
+        </li>
+        {{ end }}
+      </ul>
+    </div>
+  </section>
+
+  <!-- SECTION 02 — ONGOING SERIES -->
+  <section class="sec sec--fit" data-section="Ongoing" data-code="02" data-label="Ongoing series">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">02 — Ongoing series</p>
+        <h2 class="h-section">Rolling enrollment, weekly rhythm.</h2>
+      </div>
+      <div class="ev-list" data-stagger>
+        {{ each .pastEvents }}
+          {{ if .ongoing }}
+          <a class="ev-row" href="{{ .url }}">
+            <span class="ev-date">{{ fmtDate .date }}</span>
+            <span class="ev-main">
+              <h3>{{ .title }}</h3>
+              <p>{{ .location }} · {{ .level }}</p>
+            </span>
+            <span class="status status--ongoing">{{ .status }}</span>
+          </a>
+          {{ end }}
+        {{ end }}
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 03 — ARCHIVE -->
+  <section class="sec sec--fit" data-section="Archive" data-code="03" data-label="Archive">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">03 — Archive</p>
+        <h2 class="h-section">What we've already run.</h2>
+      </div>
+      <div class="ev-list" data-stagger>
+        {{ each .pastEvents }}
+          {{ if .past }}
+          <a class="ev-row" href="{{ .url }}">
+            <span class="ev-date">{{ fmtDate .date }}</span>
+            <span class="ev-main">
+              <h3>{{ .title }}</h3>
+              <p>{{ .location }} · {{ .level }}</p>
+            </span>
+            <span class="status status--past">done</span>
+          </a>
+          {{ end }}
+        {{ end }}
+      </div>
+    </div>
+  </section>
+
+  {{ include "partials/footer.html" }}
+</main>
+
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-glow" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+{{ include "partials/scripts.html" }}
+</body>
+</html>

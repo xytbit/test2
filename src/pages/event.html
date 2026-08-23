@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<!-- ==================================================================
+     EVENT SINGLE (template)  —  src/pages/event.html
+     →  public/events/<slug>/index.html  (one per event)
+     ==================================================================
+     WHAT THIS FILE CONTROLS:
+       The detail page rendered once per item of events.json by
+       makeItem() in scripts/build.js. Template scope mirrors
+       project.html: item, prev, next, page.
+
+     SECTION MAP:
+       00 Overview        status badge (upcoming/ongoing/past via the
+                          build-time booleans), title, subtitle, and a
+                          date/location/duration/level meta row
+                          (fmtDateLong helper for the date)
+       01 About           event brief plate (item.description)
+       02 Program         .do-list rows from item.program
+       03 Speaker         speaker name/role datum
+       04 Resources       related-track tags + optional register note
+       05 More            prev / all-events / next pager
+     ================================================================== -->
+<html lang="{{ .site.meta.language }}">
+{{ include "partials/head.html" }}
+<body class="hx-body" data-page="event">
+{{ include "partials/header.html" }}
+<div class="progress" aria-hidden="true"><span class="progress-fill"></span></div>
+
+<main id="main" class="hx" data-horizontal>
+  <!-- SECTION 00 — OVERVIEW -->
+  <section class="sec sec--full sec--intro scan" data-section="Overview" data-code="00" data-label="Overview">
+    <div class="single-in">
+      <p class="kicker" data-reveal="fade">
+        {{ .item.code }} — <span class="status status--{{ if .item.upcoming }}upcoming{{ end }}{{ if .item.ongoing }}ongoing{{ end }}{{ if .item.past }}past{{ end }}">{{ if .item.upcoming }}upcoming{{ end }}{{ if .item.ongoing }}ongoing{{ end }}{{ if .item.past }}past{{ end }}</span>
+      </p>
+      <h1 class="single-title mt-2" data-reveal="up">{{ .item.title }}</h1>
+      <p class="lead mt-3" data-reveal style="--d:160ms">{{ .item.subtitle }}</p>
+      <div class="single-meta mt-4" data-reveal style="--d:240ms">
+        <div class="datum">
+          <span class="datum-k">Date</span>
+          <span class="term">{{ fmtDateLong .item.date }}</span>
+        </div>
+        <div class="datum">
+          <span class="datum-k">Location</span>
+          <span class="term">{{ .item.location }}</span>
+        </div>
+        <div class="datum">
+          <span class="datum-k">Duration</span>
+          <span class="term">{{ .item.duration }}</span>
+        </div>
+        <div class="datum">
+          <span class="datum-k">Level</span>
+          <span class="term">{{ .item.level }}</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 01 — ABOUT -->
+  <section class="sec sec--fit" data-section="About" data-code="01" data-label="About">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">01 — About</p>
+        <h2 class="h-section">What this is.</h2>
+      </div>
+      <div class="plate" data-reveal>
+        <span class="plate-label">Event brief</span>
+        <p class="prose" style="font-size:var(--fs-3);color:var(--ink);line-height:var(--lh-snug)">{{ .item.description }}</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 02 — PROGRAM -->
+  <section class="sec sec--fit" data-section="Program" data-code="02" data-label="Program">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">02 — Program</p>
+        <h2 class="h-section">The plan.</h2>
+      </div>
+      <div class="do-list" data-stagger>
+        {{ each .item.program }}
+        <div class="do-row">
+          <span class="do-code mono">{{ .time }}</span>
+          <span class="do-title">{{ .title }}</span>
+          <span class="do-desc">—</span>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 03 — SPEAKER -->
+  <section class="sec sec--fit" data-section="Speaker" data-code="03" data-label="Speaker">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">03 — Speaker</p>
+        <h2 class="h-section">Who is running it.</h2>
+      </div>
+      <div class="datum" data-reveal>
+        <span class="datum-v" style="font-size:var(--fs-4)">{{ .item.speaker.name }}</span>
+        <span class="datum-k">{{ .item.speaker.role }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 04 — RESOURCES & REGISTER -->
+  <section class="sec sec--fit" data-section="Resources" data-code="04" data-label="Resources">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">04 — Resources & participation</p>
+        <h2 class="h-section">Related tracks and how to turn up.</h2>
+      </div>
+      <div class="row" data-reveal>
+        {{ each .item.resources }}
+        <span class="tag tag--accent">{{ . }}</span>
+        {{ end }}
+      </div>
+      {{ if .item.register }}
+      <div class="article-note mt-4" data-reveal>
+        <span class="mono term accent">REGISTER — </span>{{ .item.register }}
+      </div>
+      {{ end }}
+    </div>
+  </section>
+
+  <!-- SECTION 05 — PAGER -->
+  <section class="sec sec--fit" data-section="More" data-code="05" data-label="More">
+    <div class="sec-in">
+      <div class="pager">
+        <a href="{{ .prev.url }}"><span aria-hidden="true">←</span> {{ .prev.title }}</a>
+        <a href="/events/" class="mono">ALL EVENTS</a>
+        <a href="{{ .next.url }}">{{ .next.title }} <span aria-hidden="true">→</span></a>
+      </div>
+    </div>
+  </section>
+
+  {{ include "partials/footer.html" }}
+</main>
+
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-glow" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+{{ include "partials/scripts.html" }}
+</body>
+</html>

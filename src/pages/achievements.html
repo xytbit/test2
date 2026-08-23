@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<!-- ==================================================================
+     ACHIEVEMENTS PAGE  —  src/pages/achievements.html  →  public/achievements/index.html
+     ==================================================================
+     WHAT THIS FILE CONTROLS:
+       The milestone timeline, two views of the same data:
+
+       00 Overview        intro + counts (years via len, milestones
+                          via the sumLen helper)
+       01 Timeline        vertical .timeline — loops the achievements
+                          collection, each year a .tl-item containing
+                          .ach entries
+       02 Expanded record same data as details.fold accordions with
+                          the year summary + item list
+
+     Data source: src/data/achievements.json (year → summary + items[]).
+     ================================================================== -->
+<html lang="{{ .site.meta.language }}">
+{{ include "partials/head.html" }}
+<body class="hx-body" data-page="achievements">
+{{ include "partials/header.html" }}
+<div class="progress" aria-hidden="true"><span class="progress-fill"></span></div>
+
+<main id="main" class="hx" data-horizontal>
+  <!-- SECTION 00 — INTRO -->
+  <section class="sec sec--full sec--intro scan" data-section="Overview" data-code="00" data-label="Overview">
+    <div class="intro-in">
+      <p class="kicker" data-reveal="fade">00 — Achievements</p>
+      <h1 class="h-display intro-title" data-reveal="up">A TIMELINE OF WORK, NOT A TROPHY WALL.</h1>
+      <p class="lead mt-3" data-reveal style="--d:180ms">We record what shipped, what was learned, and what changed because of it. Milestones are measurements, not decorations.</p>
+      <div class="intro-meta mono" data-reveal style="--d:280ms">
+        <span>YEARS <span class="accent">{{ len .achievements }}</span></span>
+        <span>MILESTONES <span class="accent">{{ sumLen .achievements }}</span></span>
+        <span>SINCE <span class="accent">2024</span></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 01 — TIMELINE -->
+  <section class="sec sec--fit" data-section="Timeline" data-code="01" data-label="Timeline">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">01 — Timeline</p>
+        <h2 class="h-section">How we got here.</h2>
+      </div>
+      <div class="timeline">
+        {{ each .achievements }}
+        <div class="tl-item is-filled" data-reveal="left">
+          <span class="tl-year">{{ .year }}</span>
+          <div class="tl-meta">
+            {{ each .items }}
+            <div class="ach">
+              <span class="ach-title">{{ .title }}</span>
+              <span class="ach-detail">{{ .detail }}</span>
+            </div>
+            {{ end }}
+          </div>
+        </div>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION 02 — EXPANDED RECORD -->
+  <section class="sec sec--fit" data-section="Record" data-code="02" data-label="Expanded record">
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">02 — Expanded record</p>
+        <h2 class="h-section">The summaries, expanded.</h2>
+      </div>
+      <div class="stack--lg" data-stagger>
+        {{ each .achievements }}
+        <details class="fold">
+          <summary>
+            <span class="mono">{{ .year }} · {{ .code }}</span>
+            <span class="fold-chev" aria-hidden="true">+</span>
+          </summary>
+          <div class="fold-body">
+            <p class="prose">{{ .summary }}</p>
+            <ul class="mt-3">
+              {{ each .items }}
+              <li><strong class="accent">{{ .title }}</strong> — {{ .detail }}</li>
+              {{ end }}
+            </ul>
+          </div>
+        </details>
+        {{ end }}
+      </div>
+    </div>
+  </section>
+
+  {{ include "partials/footer.html" }}
+</main>
+
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-glow" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+{{ include "partials/scripts.html" }}
+</body>
+</html>
