@@ -743,12 +743,16 @@ details.fold .fold-body {
   padding: clamp(1.5rem, 4vh, 3rem) clamp(1.5rem, 3vw, 3rem);
   border-left: 1px solid var(--line);
   border-right: 1px solid var(--line);
+  /* genuine frost: blur + saturation-lift everything painted beneath
+     (bg-grid/glow/body), with the noise grain layered on top */
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
   background:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--bg-elev-2) 52%, transparent),
-      color-mix(in srgb, var(--bg-elev) 30%, transparent)
+      color-mix(in srgb, var(--bg-elev-2) 44%, transparent),
+      color-mix(in srgb, var(--bg-elev) 26%, transparent)
     );
   box-shadow: inset 0 1px 0 0 color-mix(in srgb, var(--ink) 8%, transparent);
 }
@@ -819,7 +823,9 @@ details.fold .fold-body {
   line-height: 0.85;
   letter-spacing: -0.03em;
   color: transparent;
-  -webkit-text-stroke: 1.25px color-mix(in srgb, var(--ink) 55%, transparent);
+  /* hollow stroke carries a slight accent cast; overall subtlety still
+     governed by opacity below (70% alpha here ≈ 8% effective paint) */
+  -webkit-text-stroke: 1.25px color-mix(in srgb, var(--accent) 70%, transparent);
   opacity: 0.12;
   user-select: none;
 }

@@ -1827,12 +1827,16 @@ details.fold .fold-body {
   padding: clamp(1.5rem, 4vh, 3rem) clamp(1.5rem, 3vw, 3rem);
   border-left: 1px solid var(--line);
   border-right: 1px solid var(--line);
+  /* genuine frost: blur + saturation-lift everything painted beneath
+     (bg-grid/glow/body), with the noise grain layered on top */
+  -webkit-backdrop-filter: blur(18px) saturate(150%);
+  backdrop-filter: blur(18px) saturate(150%);
   background:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0.09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--bg-elev-2) 52%, transparent),
-      color-mix(in srgb, var(--bg-elev) 30%, transparent)
+      color-mix(in srgb, var(--bg-elev-2) 44%, transparent),
+      color-mix(in srgb, var(--bg-elev) 26%, transparent)
     );
   box-shadow: inset 0 1px 0 0 color-mix(in srgb, var(--ink) 8%, transparent);
 }
@@ -1903,7 +1907,9 @@ details.fold .fold-body {
   line-height: 0.85;
   letter-spacing: -0.03em;
   color: transparent;
-  -webkit-text-stroke: 1.25px color-mix(in srgb, var(--ink) 55%, transparent);
+  /* hollow stroke carries a slight accent cast; overall subtlety still
+     governed by opacity below (70% alpha here ≈ 8% effective paint) */
+  -webkit-text-stroke: 1.25px color-mix(in srgb, var(--accent) 70%, transparent);
   opacity: 0.12;
   user-select: none;
 }
@@ -1971,7 +1977,7 @@ body:not(.hx-body) .sec-footer {
        achievements page       .ach/.fold accordions
        gallery                 .strip reel + .masonry + .gal-filters
        resources page          .res-list/.res-card/.search-field
-       journal masthead        .masthead/.jrnl-head
+       journal masthead        .masthead
        team                    .group-head/.team-grid
        join                    .steps/.step-row/.audience
        contact                 .contact-card/.contact-big
@@ -2045,15 +2051,17 @@ body:not(.hx-body) .sec-footer {
 
 /* Page fluid — full-viewport ASCII backdrop behind EVERY home section
    (static/js/fluid-triangle.js, faithful port of javierbyte/fluid-
-   triangle). Fixed, pointer-events:none, z-index:-1 → above .bg-grid
-   (-2), below all content: the transparent sections let it show
-   through across the whole page. It deliberately has NO background of
-   its own — the site's --bg shows through instead of the original's
-   pure black (gray in dark mode, near-white in light mode) — and the
-   characters take token colors, so the theme toggle re-skins the field
-   with zero JS. --fluid-opacity is the single dimming knob. */
+   triangle). DESKTOP ONLY: below the 900px breakpoint the layer is
+   display:none AND the JS gate never boots it (mobile CPUs + battery).
+   Fixed, pointer-events:none, z-index:-1 → above .bg-grid (-2), below
+   all content: the transparent sections let it show through across the
+   whole page. It deliberately has NO background of its own — the
+   site's --bg shows through instead of the original's pure black (gray
+   in dark mode, near-white in light mode) — and the characters take
+   token colors, so the theme toggle re-skins the field with zero JS.
+   --fluid-opacity is the single dimming knob. */
 .page-fluid {
-  --fluid-opacity: 0.45;
+  --fluid-opacity: 0.38;
   position: fixed;
   inset: 0;
   z-index: -1;
@@ -2061,7 +2069,12 @@ body:not(.hx-body) .sec-footer {
   pointer-events: none;
 }
 html[data-theme='light'] .page-fluid {
-  --fluid-opacity: 0.32;
+  --fluid-opacity: 0.25;
+}
+@media (max-width: 899px) {
+  .page-fluid {
+    display: none;
+  }
 }
 .page-fluid .render {
   position: absolute;
@@ -2156,8 +2169,10 @@ body.is-fluid-grabbing main[data-hx-nodrag] * {
     position: static;
     margin-top: 2rem;
   }
+  /* scroll hint is a desktop affordance — the filmstrip pans by touch
+     below 900px, so the arrow would be pointing at the wrong gesture */
   .hero-scroll {
-    margin-left: 0;
+    display: none;
   }
 }
 
@@ -2173,15 +2188,6 @@ body.is-fluid-grabbing main[data-hx-nodrag] * {
 .intro-title {
   margin-top: 1.2rem;
   max-width: 20ch;
-}
-.intro-meta {
-  margin-top: 2rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: clamp(1rem, 3vw, 2.5rem);
-}
-.intro-meta .datum-k {
-  font-size: var(--fs-0);
 }
 
 /* ---------- home: philosophy ---------- */
@@ -2854,14 +2860,6 @@ html.js .evx {
   height: 2rem;
   color: var(--accent);
 }
-.jrnl-head {
-  font-family: var(--font-disp);
-  font-size: clamp(2.2rem, 6vw, 4.5rem);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1;
-}
-
 /* ---------- team ---------- */
 .group-head {
   display: flex;

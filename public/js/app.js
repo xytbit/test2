@@ -1545,12 +1545,24 @@
     });
   }
 
-  /* --- main loop (upstream shape: one simulate + one render/frame) --- */
+  /* --- main loop: ONE simulate + ONE render per RENDERED frame.
+         Rendered frames are capped at ~30fps by skipping whole frames
+         (a skipped frame does NO sim work — no catch-up debt). The
+         render goes through textContent instead of upstream's
+         innerHTML: the field is plain ASCII, so per-frame HTML parsing
+         is pure overhead. --- */
   var reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
   var rafId = null;
+  var FRAME_MIN_MS = 1000 / 30;
+  var lastFrameT = 0;
 
-  function update() {
+  function update(now) {
     rafId = null;
+    if (!pausedForever && now - lastFrameT < FRAME_MIN_MS) {
+      rafId = requestAnimationFrame(update);
+      return;
+    }
+    lastFrameT = now;
     var MAX_RADIUS = window.innerWidth > window.innerHeight ? 0.47 : 0.37;
     scene.obstacleRadius = (scene.obstacleRadius * 3 + MAX_RADIUS) / 4;
 
@@ -1582,7 +1594,7 @@
       }
       toRender += row + '\n';
     }
-    renderEl.innerHTML = toRender;
+    renderEl.textContent = toRender;
 
     if (!pausedForever) {
       if (settleFrames > 0) {
@@ -1611,28 +1623,18 @@
   var pausedForever = false; // set once the loop must stop for good
   var settleFrames = 0; // >0 while reduced-motion settling
 
-  function init() {
-    var mount = document.querySelector('[data-fluid-triangle]');
-    if (!mount || mounted) return;
-    mounted = true;
+  /* --- desktop-only gate + start/stop lifecycle ---
+     The fluid runs on pointer/desktop viewports only (site breakpoint
+     900px): mobile CPUs and batteries shouldn't pay for a background
+     toy. The gate is live — crossing 900px boots or stops the loop, so
+     tablet orientation changes behave too. Below 900px nothing is
+     mounted and zero listeners are bound. --- */
+  var DESKTOP_MQ = window.matchMedia('(min-width: 900px)');
+  var listenersBound = false;
 
-    renderEl = document.createElement('div');
-    renderEl.className = 'render';
-    mount.appendChild(renderEl);
-
-    setupScene();
-
-    if (reduced.matches) {
-      // prefers-reduced-motion: no permanent animation and no
-      // interaction listeners. Run a SHORT async settle burst so the
-      // opening frame looks calm, then stop the loop for good.
-      settleFrames = 60;
-      scene.paused = false;
-      startDrag(window.innerWidth / 2, window.innerHeight * 0.54);
-      endDrag();
-      rafId = requestAnimationFrame(update);
-      return;
-    }
+  function bindListeners() {
+    if (listenersBound) return;
+    listenersBound = true;
 
     // interaction — on window so the fluid reacts everywhere on the
     // page even though the layer sits behind the content
@@ -1652,9 +1654,11 @@
     window.addEventListener('mousedown', motionOnce, { once: true });
     window.addEventListener('touchend', motionOnce, { once: true });
 
-    // resize → soft rebuild (upstream did location.reload())
+    // resize → soft rebuild (upstream did location.reload()); inert
+    // while stopped on a sub-900px viewport
     var resizeTimer;
     window.addEventListener('resize', function () {
+      if (!DESKTOP_MQ.matches) return;
       clearTimeout(resizeTimer);
       resizeTimer = setTimeout(function () {
         setupScene();
@@ -1662,12 +1666,60 @@
         endDrag();
       }, 250);
     });
+  }
 
-    // draw the initial obstacle + start the single upstream-style loop
+  function start() {
+    if (!renderEl) {
+      var mount = document.querySelector('[data-fluid-triangle]');
+      if (!mount) return;
+      renderEl = document.createElement('div');
+      renderEl.className = 'render';
+      mount.appendChild(renderEl);
+    }
+    setupScene();
+    bindListeners();
+    pausedForever = false;
+
+    if (reduced.matches) {
+      // prefers-reduced-motion: no permanent animation. Run a SHORT
+      // async settle burst so the opening frame looks calm, then stop
+      // the loop for good.
+      settleFrames = 60;
+      scene.paused = false;
+      startDrag(window.innerWidth / 2, window.innerHeight * 0.54);
+      endDrag();
+      rafId = requestAnimationFrame(update);
+      return;
+    }
+
+    // draw the initial obstacle + start the capped upstream-style loop
     startDrag(window.innerWidth / 2, window.innerHeight * 0.54);
     endDrag();
     scene.paused = false;
     rafId = requestAnimationFrame(update);
+  }
+
+  function stopAll() {
+    if (rafId !== null) cancelAnimationFrame(rafId);
+    rafId = null;
+    scene.paused = true;
+    pausedForever = true;
+    if (renderEl) renderEl.textContent = '';
+  }
+
+  function onDesktopGate(e) {
+    if (e.matches) start();
+    else stopAll();
+  }
+
+  function init() {
+    if (mounted) return;
+
+    // DESKTOP ONLY: below 900px this is the whole init — nothing
+    // mounts, nothing runs; the CSS also display:none's the layer.
+    mounted = true;
+    DESKTOP_MQ.addEventListener('change', onDesktopGate);
+    if (DESKTOP_MQ.matches) start();
   }
 
   NS.fluidTriangle = { init: init };

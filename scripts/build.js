@@ -170,16 +170,6 @@ const helpers = {
   len(v) {
     return Array.isArray(v) ? v.length : typeof v === 'string' ? v.length : 0;
   },
-  sumLen(arr) {
-    // total items across sub-arrays (achievements)
-    if (!Array.isArray(arr)) return 0;
-    return arr.reduce((n, it) => n + (Array.isArray(it.items) ? it.items.length : 0), 0);
-  },
-  totalMembers(groups) {
-    // total members across team groups (team page "LISTED" count)
-    if (!Array.isArray(groups)) return 0;
-    return groups.reduce((n, g) => n + (Array.isArray(g.members) ? g.members.length : 0), 0);
-  },
 };
 
 // Truthiness for conditions. Empty string/array/object, null, undefined,

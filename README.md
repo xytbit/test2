@@ -65,7 +65,7 @@ To swap the logo: put a file in `static/img/` and set `site.logo.path`.
   `eq`, `ne`, `gt`, `lt`
 - `{{ include "partials/head.html" }}` — partial include
 - Helpers (single-argument only): `fmtDate`, `fmtDateLong`, `fmtYear`,
-  `upper`, `len`, `sumLen`, `totalMembers`, `readingTime`
+  `upper`, `len`, `readingTime`
 
 Precompute values in `build.js` if a field needs more than one helper call.
 

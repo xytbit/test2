@@ -17,7 +17,7 @@
        achievements page       .ach/.fold accordions
        gallery                 .strip reel + .masonry + .gal-filters
        resources page          .res-list/.res-card/.search-field
-       journal masthead        .masthead/.jrnl-head
+       journal masthead        .masthead
        team                    .group-head/.team-grid
        join                    .steps/.step-row/.audience
        contact                 .contact-card/.contact-big
@@ -91,15 +91,17 @@
 
 /* Page fluid — full-viewport ASCII backdrop behind EVERY home section
    (static/js/fluid-triangle.js, faithful port of javierbyte/fluid-
-   triangle). Fixed, pointer-events:none, z-index:-1 → above .bg-grid
-   (-2), below all content: the transparent sections let it show
-   through across the whole page. It deliberately has NO background of
-   its own — the site's --bg shows through instead of the original's
-   pure black (gray in dark mode, near-white in light mode) — and the
-   characters take token colors, so the theme toggle re-skins the field
-   with zero JS. --fluid-opacity is the single dimming knob. */
+   triangle). DESKTOP ONLY: below the 900px breakpoint the layer is
+   display:none AND the JS gate never boots it (mobile CPUs + battery).
+   Fixed, pointer-events:none, z-index:-1 → above .bg-grid (-2), below
+   all content: the transparent sections let it show through across the
+   whole page. It deliberately has NO background of its own — the
+   site's --bg shows through instead of the original's pure black (gray
+   in dark mode, near-white in light mode) — and the characters take
+   token colors, so the theme toggle re-skins the field with zero JS.
+   --fluid-opacity is the single dimming knob. */
 .page-fluid {
-  --fluid-opacity: 0.45;
+  --fluid-opacity: 0.38;
   position: fixed;
   inset: 0;
   z-index: -1;
@@ -107,7 +109,12 @@
   pointer-events: none;
 }
 html[data-theme='light'] .page-fluid {
-  --fluid-opacity: 0.32;
+  --fluid-opacity: 0.25;
+}
+@media (max-width: 899px) {
+  .page-fluid {
+    display: none;
+  }
 }
 .page-fluid .render {
   position: absolute;
@@ -202,8 +209,10 @@ body.is-fluid-grabbing main[data-hx-nodrag] * {
     position: static;
     margin-top: 2rem;
   }
+  /* scroll hint is a desktop affordance — the filmstrip pans by touch
+     below 900px, so the arrow would be pointing at the wrong gesture */
   .hero-scroll {
-    margin-left: 0;
+    display: none;
   }
 }
 
@@ -219,15 +228,6 @@ body.is-fluid-grabbing main[data-hx-nodrag] * {
 .intro-title {
   margin-top: 1.2rem;
   max-width: 20ch;
-}
-.intro-meta {
-  margin-top: 2rem;
-  display: flex;
-  flex-wrap: wrap;
-  gap: clamp(1rem, 3vw, 2.5rem);
-}
-.intro-meta .datum-k {
-  font-size: var(--fs-0);
 }
 
 /* ---------- home: philosophy ---------- */
@@ -900,14 +900,6 @@ html.js .evx {
   height: 2rem;
   color: var(--accent);
 }
-.jrnl-head {
-  font-family: var(--font-disp);
-  font-size: clamp(2.2rem, 6vw, 4.5rem);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1;
-}
-
 /* ---------- team ---------- */
 .group-head {
   display: flex;
