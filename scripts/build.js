@@ -23,8 +23,7 @@
  *     5. Concatenates static/css/01..09 → public/css/main.css and
  *        static/js/theme…main → public/js/app.js (order matters: see
  *        CSS_FILES / JS_FILES near the bottom), then copies vendored
- *        libraries (anime.min.js, three.js) and the hero-sphere ES
- *        module into public/ verbatim.
+ *        libraries (anime.min.js) into public/ verbatim.
  *
  * WHY HUGO-COMPATIBLE:
  *   The output in /public is plain static HTML + CSS + JS, laid out in
@@ -705,7 +704,8 @@ function genLogo() {
 //   CSS: tokens → reset → type → layout → nav → horizontal →
 //        components → pages → animation (later files may override
 //        earlier ones; 08-pages.css tunes what earlier files set).
-//   JS:  theme → horizontal → reveal → transitions → pages → main.
+//   JS:  theme → horizontal → reveal → transitions → pages →
+//        fluid-triangle → main.
 //        Each file registers itself on window.DCITC.*; main.js (last)
 //        calls every .init() in that same order.
 const CSS_FILES = [
@@ -714,7 +714,8 @@ const CSS_FILES = [
 ];
 
 const JS_FILES = [
-  'theme.js', 'horizontal.js', 'reveal.js', 'transitions.js', 'pages.js', 'main.js',
+  'theme.js', 'horizontal.js', 'reveal.js', 'transitions.js', 'pages.js',
+  'fluid-triangle.js', 'main.js',
 ];
 
 function concat(dir, files) {
@@ -797,13 +798,9 @@ function main() {
   console.log('bundles');
   write(path.join(OUT, 'css', 'main.css'), concat(path.join(STATIC, 'css'), CSS_FILES));
   write(path.join(OUT, 'js', 'app.js'), concat(path.join(STATIC, 'js'), JS_FILES));
-  // vendored libs (anime.min.js + the three.js tree used by the hero
-  // sphere) are copied verbatim — never concatenated, they load as-is.
+  // vendored lib (anime.min.js, used by reveal.js) is copied verbatim —
+  // never concatenated, it loads as-is before the bundle.
   fs.cpSync(path.join(STATIC, 'js', 'vendor'), path.join(OUT, 'js', 'vendor'), { recursive: true });
-  // hero-sphere.js is an ES module (import/export), so it can't join the
-  // classic-script concat bundle; it ships as its own file and is loaded
-  // via <script type="module"> from the home page only (see index.html).
-  fs.copyFileSync(path.join(STATIC, 'js', 'hero-sphere.js'), path.join(OUT, 'js', 'hero-sphere.js'));
 
   // 3. top-level pages from src/data/pages.json ---------------------
   // Each def maps a template file → output path + metadata (title,

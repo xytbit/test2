@@ -8,19 +8,24 @@
 
      SECTION MAP (each <section class="sec"> is one filmstrip slide):
         00 Intro/hero      headline lines (.hero-line/.hl animated by
-                           reveal.js + anime.js), CTA buttons, interactive
-                           Three.js wireframe sphere ([data-hero-sphere],
-                           driven by static/js/hero-sphere.js — home only)
-       01 What is DCITC   identity split + site.facts stat row
-       02 Philosophy      three .phil-item cards (Curate/Build/Understand)
-       03 What we do      .do-list rows of activities
-       04 Featured proj.  loops the featuredProjects scope array →
-                          card--media cards
-       05 Upcoming events loops upcomingEvents → .ev-row list
-       06 Achievements    loops achievements → .spark timeline
-       07 Resources       loops featuredResources → .res-card
-       08 Tech Journal    loops featuredPosts → article cards
-       09 Join CTA        full-width closing call to action
+                           reveal.js + anime.js)
+        01 What is DCITC   identity split + site.facts stat row
+        02 Philosophy      three .phil-item cards (Curate/Build/Understand)
+        03 What we do      .do-list rows of activities
+        04 Featured proj.  loops the featuredProjects scope array →
+                           card--media cards
+        05 Upcoming events loops upcomingEvents → .ev-row list
+        06 Achievements    loops achievements → .spark timeline
+        07 Resources       loops featuredResources → .res-card
+        08 Tech Journal    loops featuredPosts → article cards
+        09 Join CTA        full-width closing call to action
+
+     PAGE FLUID: the .page-fluid div below hosts a full-viewport ASCII
+     fluid (javierbyte/fluid-triangle port in static/js/fluid-triangle.js)
+     that sits BEHIND every section as the living page background — dim,
+     theme-colored via tokens. Drag anywhere on the page stirs it;
+     main[data-hx-nodrag] tells horizontal.js to leave mouse-dragging
+     to the fluid on this page (wheel/keys/touch still pan the strip).
 
      PLUMBING: body.hx-body + main[data-horizontal] make this a
      horizontal page (04-layout.css + horizontal.js). Includes:
@@ -33,7 +38,13 @@
 {{ include "partials/header.html" }}
 <div class="progress" aria-hidden="true"><span class="progress-fill"></span></div>
 
-<main id="main" class="hx" data-horizontal>
+<!-- Full-viewport ASCII fluid backdrop (fluid-triangle.js). Fixed
+     layer at z-index:-1: above .bg-grid, below all page content —
+     visible through the transparent sections across the WHOLE page.
+     pointer-events:none on the layer; the module listens on window. -->
+<div class="page-fluid" data-fluid-triangle aria-hidden="true"></div>
+
+<main id="main" class="hx" data-horizontal data-hx-nodrag>
   <!-- ============================================================
        SECTION 00 — HERO
   ============================================================= -->
@@ -50,19 +61,7 @@
         <p class="hero-tagline mono" data-reveal="fade" style="--d:450ms">CURATE <span class="sep">·</span> BUILD <span class="sep">·</span> UNDERSTAND</p>
 
         <p class="hero-stmt" data-reveal style="--d:520ms">A student-run laboratory for people who read documentation, build real systems, and refuse to chase trends.</p>
-
-        <div class="hero-cta" data-reveal style="--d:620ms">
-          <a class="btn btn-primary" href="/join/">Join the club <span class="arrow">→</span></a>
-          <a class="btn btn-ghost" href="/projects/">See what we build</a>
-        </div>
       </div>
-
-      <!-- Interactive wireframe globe (replaces the old SVG system-map
-           panel). Transparent background — it floats on the page like any
-           other element. The canvas + orbit/pulse behaviour are created by
-           /js/hero-sphere.js. [data-hx-nodrag] tells horizontal.js that
-           drags here spin the globe, not the filmstrip. -->
-      <div class="hero-sphere" data-hero-sphere data-hx-nodrag></div>
     </div>
 
     <div class="hero-meta mono">
@@ -345,18 +344,5 @@
 <div class="bg-glow" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
 {{ include "partials/scripts.html" }}
-
-<!-- Hero wireframe globe — home page only. three.js is vendored locally
-     (static/js/vendor/three/, copied to public/ by scripts/build.js) and
-     resolved through this import map by /js/hero-sphere.js. -->
-<script type="importmap">
-{
-  "imports": {
-    "three": "/js/vendor/three/three.module.js",
-    "three/addons/": "/js/vendor/three/addons/"
-  }
-}
-</script>
-<script type="module" src="/js/hero-sphere.js"></script>
 </body>
 </html>
