@@ -1127,6 +1127,104 @@ html.js .evx {
   font-size: var(--fs-1);
   color: var(--ink-faint);
 }
+/* markdown extras — the body is generated from content/blog/*.md, so
+   these cover everything marked() can emit that the hand-written
+   template never did. Scoped to .md-body so nothing else shifts. */
+.md-body ol {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding-left: 0;
+  list-style: none;
+  counter-reset: md-ol;
+}
+.md-body ol li {
+  position: relative;
+  padding-left: 2em;
+  color: var(--ink-dim);
+  counter-increment: md-ol;
+}
+.md-body ol li::before {
+  content: counter(md-ol, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  font-family: var(--font-mono);
+  font-size: var(--fs-0);
+  color: var(--accent);
+}
+.md-body li > ul,
+.md-body li > ol {
+  margin-top: 0.6rem;
+}
+.md-body :not(pre) > code {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  color: var(--accent);
+  background: var(--accent-soft);
+  border-radius: var(--r-sm, 4px);
+  padding: 0.12em 0.4em;
+}
+.md-body table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--fs-1);
+}
+.md-body th,
+.md-body td {
+  border: 1px solid var(--line);
+  padding: 0.55rem 0.8rem;
+  text-align: left;
+  color: var(--ink-dim);
+}
+.md-body th {
+  font-family: var(--font-mono);
+  font-size: var(--fs-0);
+  letter-spacing: var(--trk-mono);
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  background: var(--bg-elev);
+}
+.md-body img {
+  max-width: 100%;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line);
+}
+.md-body hr {
+  border: none;
+  border-top: 1px solid var(--line-strong);
+  margin-block: 2.2rem;
+}
+.md-body a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  text-underline-offset: 3px;
+}
+/* event-page brief plate — markdown writeup inside the About plate.
+   Scoped to .ev-brief so it never touches journal (.article.md-body)
+   pages; carries its own typography because .article rules don't. */
+.md-body.ev-brief {
+  font-size: var(--fs-2);
+  line-height: var(--lh-body);
+  color: var(--ink-dim);
+}
+.md-body.ev-brief > * + * {
+  margin-top: 1rem;
+}
+.md-body.ev-brief h2,
+.md-body.ev-brief h3 {
+  font-family: var(--font-disp);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.md-body.ev-brief h2 {
+  font-size: var(--fs-3);
+  margin-top: 1.6rem;
+}
+.md-body.ev-brief h3 {
+  font-size: var(--fs-2);
+}
 
 .art-kicker {
   display: flex;

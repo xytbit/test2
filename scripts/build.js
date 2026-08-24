@@ -59,6 +59,8 @@
 
 const fs = require('fs');
 const path = require('path');
+const { marked } = require('marked'); // Markdown → HTML (GFM tables etc.)
+const yaml = require('js-yaml'); // blog frontmatter parsing
 
 const ROOT = path.resolve(__dirname, '..');
 const SRC = path.join(ROOT, 'src');
@@ -482,10 +484,8 @@ function renderTemplate(tpl, scope, root) {
 const site = readJSON(path.join(SRC, 'data', 'site.json')); // global identity: name, socials, facts…
 const navDef = readJSON(path.join(SRC, 'data', 'nav.json')); // nav items + active-match rules
 let projects = readJSON(path.join(SRC, 'data', 'projects.json'));
-let events = readJSON(path.join(SRC, 'data', 'events.json'));
 let achievements = readJSON(path.join(SRC, 'data', 'achievements.json'));
 let resources = readJSON(path.join(SRC, 'data', 'resources.json'));
-let posts = readJSON(path.join(SRC, 'data', 'posts.json'));
 let team = readJSON(path.join(SRC, 'data', 'team.json'));
 let gallery = readJSON(path.join(SRC, 'data', 'gallery.json'));
 
@@ -514,42 +514,203 @@ projects = projects.map((p, i) => ({
   approach: (p.approach || []).map((a, j) => ({ ...a, n: String(j + 1).padStart(2, '0') })),
 }));
 
-events = events.map((ev, i) => {
-  const past = ev.status === 'past';
-  const ongoing = ev.status === 'ongoing';
-  return {
+/* ------------------------------------------------------------------ */
+/* markdown pipeline (blog + events share this setup)                  */
+/* ------------------------------------------------------------------ */
+
+// escape raw text going inside <code> in fenced blocks
+function escHtml(x) {
+  return String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// marked configured once. gfm gives tables/strikethrough/task lists;
+// breaks:false keeps standard CommonMark line semantics. The code
+// renderer routes fences to the site's pre.code style (terminal look,
+// 07-components.css) instead of a bare <pre>.
+marked.use({
+  gfm: true,
+  breaks: false,
+  renderer: {
+    code(token) {
+      return `<pre class="code"><code>${escHtml(token.text)}</code></pre>`;
+    },
+  },
+});
+
+// parse one .md file → { frontmatter fields, body(md), html }
+function loadMarkdownPost(file) {
+  const raw = read(file);
+  const m = raw.match(/^---\r?\n([\s\S]*?)\r?\n---\r?\n?([\s\S]*)$/);
+  if (!m) throw new Error(`${path.basename(file)} has no ---frontmatter--- block`);
+  let fm;
+  try {
+    fm = yaml.load(m[1]);
+  } catch (e) {
+    throw new Error(`${path.basename(file)} has invalid frontmatter YAML: ${e.message}`);
+  }
+  return { fm, body: m[2] };
+}
+
+/* ------------------------------------------------------------------ */
+/* markdown events (content/events/*.md)                               */
+/* ------------------------------------------------------------------ */
+// Same authoring model as the blog: one file per event, filename IS
+// the slug (/events/<slug>/). Frontmatter carries the STRUCTURED data
+// the deck/timeline render as components; the optional markdown BODY
+// is the long-form writeup shown on the event page (falls back to the
+// short `description` when absent).
+//
+//   ---
+//   title: "Linux Fundamentals Workshop"  (required)
+//   date: "2026-09-18"                    (required)
+//   status: "upcoming" | "ongoing" | "past"   (required — drives badges)
+//   subtitle: "…"                         (deck/archive card text)
+//   description: "…"                      (short brief + body fallback)
+//   location / duration / level           (meta row on the event page)
+//   speaker: { name, role }
+//   program: [{ time, title }]            (timeline rows)
+//   resources: [track names]
+//   register: "how to join"
+//   draft: true                           (skipped entirely)
+//   ---
+//
+// Sorted date-desc (tie: slug asc) — EVENT.xx codes are assigned AFTER
+// sorting, so EVENT.01 is the most recent event. The build wipes
+// public/ wholesale, so deleting a .md removes its page next run.
+
+const EVENTS_DIR = path.join(ROOT, 'content', 'events');
+
+function loadEvents() {
+  if (!fs.existsSync(EVENTS_DIR)) return [];
+  const files = fs
+    .readdirSync(EVENTS_DIR)
+    .filter((f) => f.endsWith('.md') && !f.startsWith('_'))
+    .sort();
+
+  const evs = [];
+  for (const f of files) {
+    const slug = f.replace(/\.md$/, '');
+    if (!/^[a-z0-9][a-z0-9-]*$/.test(slug)) {
+      throw new Error(`event filename "${f}" must be lowercase-hyphenated (it becomes the URL)`);
+    }
+    const { fm, body } = loadMarkdownPost(path.join(EVENTS_DIR, f));
+    if (fm.draft) continue;
+
+    for (const key of ['title', 'date', 'status']) {
+      if (!fm[key]) throw new Error(`event "${f}" is missing required frontmatter "${key}"`);
+    }
+    if (!parseISO(fm.date)) throw new Error(`event "${f}" has an unparsable date ("${fm.date}")`);
+    if (!['upcoming', 'ongoing', 'past'].includes(fm.status)) {
+      throw new Error(`event "${f}" status must be upcoming|ongoing|past (got "${fm.status}")`);
+    }
+
+    evs.push({
+      ...fm,
+      slug,
+      url: `/events/${slug}/`,
+      cover: `/img/gen/${slug}.svg`, // generated cover plate (collapsing deck)
+      contentHtml: body.trim() ? marked.parse(body) : '',
+    });
+  }
+
+  // newest first; display codes assigned AFTER sorting (01 = newest)
+  evs.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : a.slug.localeCompare(b.slug)));
+  const mapped = evs.map((ev, i) => ({
     ...ev,
     code: `EVENT.${String(i + 1).padStart(2, '0')}`,
-    url: `/events/${ev.slug}/`,
-    past,
-    ongoing,
-    upcoming: !past && !ongoing, // booleans drive status badges
+    past: ev.status === 'past',
+    ongoing: ev.status === 'ongoing',
+    upcoming: ev.status === 'upcoming', // booleans drive status badges
     dateFmt: helpers.fmtDate(ev.date),
-    cover: `/img/gen/${ev.slug}.svg`, // generated cover plate
-  };
-});
-// Flag the FIRST upcoming event so the collapsing deck on the events
-// page can ship with data-active="true" pre-rendered (no-JS default).
-const firstUpcoming = events.find((ev) => ev.upcoming);
-if (firstUpcoming) firstUpcoming.first = true;
+  }));
+
+  // Flag the FIRST upcoming event so the collapsing deck on the events
+  // page can ship with data-active="true" pre-rendered (no-JS default).
+  const firstUpcoming = mapped.find((ev) => ev.upcoming);
+  if (firstUpcoming) firstUpcoming.first = true;
+  return mapped;
+}
+
+const events = loadEvents();
 
 achievements = achievements.map((a, i) => ({
   ...a,
   code: `MIL.${String(i + 1).padStart(2, '0')}`,
 }));
 
-posts = posts.map((p, i) => {
-  // reading time = total words across all body blocks / 200 wpm
-  const words = p.body.reduce((n, b) => n + String(b.text || b.code || '').split(/\s+/).length, 0);
-  return {
-    ...p,
-    code: `ART.${String(i + 1).padStart(2, '0')}`,
-    url: `/blog/${p.slug}/`,
-    readingTime: helpers.readingTime(words),
-    dateFmt: helpers.fmtDate(p.date),
-    cover: `/img/gen/${p.slug}.svg`, // generated cover plate
-  };
-});
+/* ------------------------------------------------------------------ */
+/* markdown blog (content/blog/*.md)                                   */
+/* ------------------------------------------------------------------ */
+// The Tech Journal's single source of truth is one Markdown file per
+// post in content/blog/. YAML frontmatter carries the metadata:
+//
+//   ---
+//   title: "Post title"        (required)
+//   date: "2026-08-24"         (required — drives sorting, newest first)
+//   description: "…"           (card + article subtitle; recommended)
+//   author: "Name"             (default "DCITC")
+//   role: "Study group lead"   (byline detail; default "Contributor")
+//   category: "Systems"        (chip; defaults to first tag)
+//   tags: [a, b]               (end-of-article chips)
+//   featured: true             (home teaser + blog Featured section)
+//   image: /img/blog/x.png     (cover; falls back to generated plate)
+//   draft: true                (skipped entirely — never published)
+//   ---
+//
+// The filename (minus .md) IS the slug → /blog/<slug>/. Drafts are
+// dropped before anything downstream runs; the build wipes public/
+// wholesale at start, so deleting a .md removes its page next build.
+
+const BLOG_DIR = path.join(ROOT, 'content', 'blog');
+
+function loadBlogPosts() {
+  if (!fs.existsSync(BLOG_DIR)) return [];
+  const files = fs
+    .readdirSync(BLOG_DIR)
+    .filter((f) => f.endsWith('.md') && !f.startsWith('_'))
+    .sort();
+
+  const posts = [];
+  for (const f of files) {
+    const slug = f.replace(/\.md$/, '');
+    if (!/^[a-z0-9][a-z0-9-]*$/.test(slug)) {
+      throw new Error(`blog filename "${f}" must be lowercase-hyphenated (it becomes the URL)`);
+    }
+    const { fm, body } = loadMarkdownPost(path.join(BLOG_DIR, f));
+    if (fm.draft) continue; // drafts never reach any output
+
+    // required fields — fail the build loudly rather than shipping junk
+    for (const key of ['title', 'date']) {
+      if (!fm[key]) throw new Error(`blog post "${f}" is missing required frontmatter "${key}"`);
+    }
+    if (!parseISO(fm.date)) throw new Error(`blog post "${f}" has an unparsable date ("${fm.date}")`);
+
+    // reading time ≈ word count of the markdown source / 200 wpm
+    const words = body.replace(/```[\s\S]*?```/g, ' ').split(/\s+/).filter(Boolean).length;
+
+    posts.push({
+      ...fm,
+      slug,
+      url: `/blog/${slug}/`,
+      subtitle: fm.description || '', // cards print .subtitle
+      category: fm.category || (Array.isArray(fm.tags) && fm.tags[0]) || 'Journal',
+      author: fm.author || 'DCITC',
+      role: fm.role || 'Contributor',
+      tags: Array.isArray(fm.tags) ? fm.tags : [],
+      cover: fm.image || `/img/gen/${slug}.svg`, // custom image or generated plate
+      readingTime: helpers.readingTime(words),
+      dateFmt: helpers.fmtDate(fm.date),
+      contentHtml: marked.parse(body),
+    });
+  }
+
+  // newest first (ties broken alphabetically by slug for determinism);
+  // display codes are assigned AFTER sorting so ART.01 is the newest
+  posts.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : a.slug.localeCompare(b.slug)));
+  return posts.map((p, i) => ({ ...p, code: `ART.${String(i + 1).padStart(2, '0')}` }));
+}
+
+const posts = loadBlogPosts();
 
 resources = resources.map((r, i) => ({
   ...r,

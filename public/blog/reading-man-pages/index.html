@@ -14,14 +14,17 @@
        horizontal.js fall back to initVertical() (document-scroll
        progress bar). It also intentionally includes NO footer partial.
 
-     STRUCTURE:
-       header section    kicker (category/code/date/readingTime),
-                         title, subtitle, byline
-       cover section     generated SVG cover plate
-       body section      loops the item.body blocks by type:
-                           p / h2 / code / quote / list / note
-       end section       tags + prev/all-issues/next pager + end mark
-     ================================================================== -->
+      STRUCTURE:
+        header section    kicker (category/code/date/readingTime),
+                          title, subtitle, byline
+        cover section     cover image (frontmatter `image:` or the
+                          generated SVG plate for the slug)
+        body section      the Markdown content, converted to HTML at
+                          build time (marked) and injected raw —
+                          .article prose rules style p/h2/lists/
+                          blockquotes/code tables etc.
+        end section       tags + prev/all-issues/next pager + end mark
+      ================================================================== -->
 <html lang="en">
 <!-- ==================================================================
      DCITC <head> PARTIAL  —  src/partials/head.html
@@ -44,12 +47,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Why We Write Everything Down</title>
-  <meta name="description" content="The documentation that nobody wants to write is the documentation that saves the project. A field report from our first open source release.">
+  <title>Reading Man Pages Without Fear</title>
+  <meta name="description" content="The single habit that separates people who use Linux from people who live in it: reading the manual that is already on your machine.">
   <meta name="generator" content="DCITC site builder">
   <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
-  <meta property="og:title" content="Why We Write Everything Down">
-  <meta property="og:description" content="The documentation that nobody wants to write is the documentation that saves the project. A field report from our first open source release.">
+  <meta property="og:title" content="Reading Man Pages Without Fear">
+  <meta property="og:description" content="The single habit that separates people who use Linux from people who live in it: reading the manual that is already on your machine.">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Dhaka College IT Club">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -446,17 +449,17 @@
   <section class="sec" data-section="Article">
     <div class="article">
       <div class="art-kicker mono" data-reveal="fade">
-        <span class="tag tag--accent">Lessons</span>
-        <span>ART.03</span>
-        <span>8 Feb 2026</span>
+        <span class="tag tag--accent">Linux</span>
+        <span>ART.02</span>
+        <span>20 Aug 2026</span>
         <span>1 min read</span>
       </div>
-      <h1 class="art-title mt-3" data-reveal="up">Why We Write Everything Down</h1>
-      <p class="lead mt-2" data-reveal style="--d:120ms">The documentation that nobody wants to write is the documentation that saves the project. A field report from our first open source release.</p>
+      <h1 class="art-title mt-3" data-reveal="up">Reading Man Pages Without Fear</h1>
+      <p class="lead mt-2" data-reveal style="--d:120ms">The single habit that separates people who use Linux from people who live in it: reading the manual that is already on your machine.</p>
       <div class="art-byline mt-3" data-reveal style="--d:180ms">
-        <span>BY NODHINI PROJECT TEAM</span>
+        <span>BY DCITC TECHNICAL TEAM</span>
         <span aria-hidden="true">·</span>
-        <span>DCITC</span>
+        <span>Systems sector</span>
       </div>
     </div>
   </section>
@@ -464,96 +467,38 @@
   <section class="sec sec--flush" data-section="Cover">
     <div class="article">
       <figure class="art-cover" data-reveal="scale">
-        <img src="/img/gen/why-we-write-everything-down.svg" alt="Cover plate for Why We Write Everything Down" loading="eager">
+        <img src="/img/gen/reading-man-pages.svg" alt="Cover plate for Reading Man Pages Without Fear" loading="eager">
       </figure>
     </div>
   </section>
 
   <section class="sec sec--flush" data-section="Body">
-    <article class="article">
-      
-        
-        <p data-reveal>When we started Nodhini, the plan was a tokenizer, a stemmer, and a tagger. What we did not plan for was how much of the project would be writing. Every 'quick decision' — why the corpus is cleaned the way it is, why the tag set has 11 labels and not 9, why the stemmer's exception list looks the way it looks — became a paragraph somewhere. That habit, not the code, is what made the project survive.</p>
-        
-        
-        
-        
-        
-        
-      
-        
-        
-        <h2 data-reveal>The turning point</h2>
-        
-        
-        
-        
-        
-      
-        
-        <p data-reveal>A month in, a member left for exams with the tokenizer half-rebuilt in their head. The code worked; the reasoning behind a dozen edge-case decisions lived in one person. We spent three days re-deriving decisions that had taken weeks the first time. That was the moment documentation became a first-class deliverable, not a chore.</p>
-        
-        
-        
-        
-        
-        
-      
-        
-        
-        
-        
-        
-        <ul data-reveal>
-          
-          <li>Every design decision gets a comment that says why, not what.</li>
-          
-          <li>Every dataset change is logged with a one-line reason.</li>
-          
-          <li>Every PR must update at least one document.</li>
-          
-          <li>The README explains the architecture with a diagram, not a wall of text.</li>
-          
-        </ul>
-        
-        
-      
-        
-        
-        <h2 data-reveal>What it actually buys you</h2>
-        
-        
-        
-        
-        
-      
-        
-        <p data-reveal>Documentation is not for the reader. It is for the author, six weeks later, when the context is gone. A project that writes everything down can be paused, revisited, and handed over. A project that does not can only be continued by the people who remember it — which, in a club whose members graduate every year, is a slow death.</p>
-        
-        
-        
-        
-        
-        
-      
-        
-        
-        
-        
-        <blockquote data-reveal>A project that writes everything down can be paused. A project that does not can only be continued by whoever remembers it.</blockquote>
-        
-        
-        
-      
-        
-        <p data-reveal>Two months after release, two external contributors submitted pull requests. Both said the same thing: 'your docs made it possible to contribute without asking.' That is the entire argument.</p>
-        
-        
-        
-        
-        
-        
-      
+    <article class="article md-body">
+      <p>Every tool on a Unix system ships with its own documentation, installed before you ever need it and readable without leaving the terminal. Most students never open it because the interface looks hostile. It is not — it is just terse.</p>
+<h2>The three keys</h2>
+<p><code>man ls</code> opens the manual for <code>ls</code>. Inside the pager:</p>
+<ol>
+<li><code>/pattern</code> searches forward (<code>/^--</code> finds the next section),</li>
+<li><code>n</code> jumps to the next match,</li>
+<li><code>q</code> quits.</li>
+</ol>
+<p>That is genuinely all the navigation you need to start.</p>
+<blockquote>
+<p>The SYNOPSIS line at the top of a man page is a grammar, not decoration. <code>ls [-la] [file...]</code> reads as &quot;flags optional, files optional&quot;.</p>
+</blockquote>
+<h2>Sections matter</h2>
+<p>The number in <code>man 1 printf</code> versus <code>man 3 printf</code> selects different manuals: section 1 is user commands, 3 is C library functions. When two tools share a name — and they will — the wrong section answers a question nobody asked.</p>
+<pre class="code"><code>whatis crontab     # which sections mention crontab?
+man -k password    # search every short description</code></pre><h2>A weekly exercise</h2>
+<ul>
+<li>Pick one command you already use daily.</li>
+<li>Read its full man page once, end to end.</li>
+<li>Note <em>one</em> flag you did not know.</li>
+</ul>
+<p>Flags like <code>mkdir -p</code>, <code>cp -a</code> or <code>grep -E</code> were never secrets — they were simply waiting in a file on your disk the whole time.</p>
+<hr>
+<p>Bring your favourite discovery to the next workshop; the best ones make it into the club&#39;s cheat-sheet repo.</p>
+
     </article>
   </section>
 
@@ -561,19 +506,17 @@
     <div class="article">
       <div class="tag-row" data-reveal>
         
-        <span class="tag">documentation</span>
+        <span class="tag">Linux</span>
         
-        <span class="tag">lessons</span>
-        
-        <span class="tag">open-source</span>
+        <span class="tag">CLI</span>
         
       </div>
       <div class="pager mt-5" data-reveal>
-        <a href="/blog/ebpf-for-the-curious-beginner/"><span aria-hidden="true">←</span> eBPF for the Curious Beginner</a>
+        <a href="/blog/the-journal-now-runs-on-markdown/"><span aria-hidden="true">←</span> The Journal Now Runs on Markdown</a>
         <a href="/blog/" class="mono">ALL ISSUES</a>
-        <a href="/blog/reading-the-linux-kernel-without-panicking/">Reading the Linux Kernel Without Panicking <span aria-hidden="true">→</span></a>
+        <a href="/blog/the-journal-now-runs-on-markdown/">The Journal Now Runs on Markdown <span aria-hidden="true">→</span></a>
       </div>
-      <p class="mono mt-5" style="color:var(--ink-faint);font-size:var(--fs-0)">END OF ARTICLE · ART.03 · DCITC</p>
+      <p class="mono mt-5" style="color:var(--ink-faint);font-size:var(--fs-0)">END OF ARTICLE · ART.02 · DCITC</p>
     </div>
   </section>
 </main>

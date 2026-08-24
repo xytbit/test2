@@ -9,12 +9,14 @@
        project.html: item, prev, next, page.
 
      SECTION MAP:
-       00 Overview        status badge (upcoming/ongoing/past via the
-                          build-time booleans), title, subtitle, and a
-                          date/location/duration/level meta row
-                          (fmtDateLong helper for the date)
-       01 About           event brief plate (item.description)
-       02 Program         .do-list rows from item.program
+        00 Overview        status badge (upcoming/ongoing/past via the
+                           build-time booleans), title, subtitle, and a
+                           date/location/duration/level meta row
+                           (fmtDateLong helper for the date)
+        01 About           event brief plate — the .md body rendered as
+                           markdown (content/events/<slug>.md), falling
+                           back to the short `description` frontmatter
+        02 Program         .do-list rows from item.program
        03 Speaker         speaker name/role datum
        04 Resources       related-track tags + optional register note
        05 More            prev / all-events / next pager
@@ -443,7 +445,7 @@
   <section class="sec sec--full sec--intro scan" data-section="Overview" data-code="00" data-label="Overview">
     <div class="single-in">
       <p class="kicker" data-reveal="fade">
-        EVENT.01 — <span class="status status--upcoming">upcoming</span>
+        EVENT.04 — <span class="status status--upcoming">upcoming</span>
       </p>
       <h1 class="single-title mt-2" data-reveal="up">Linux Fundamentals Workshop</h1>
       <p class="lead mt-3" data-reveal style="--d:160ms">From double-click to the shell: files, permissions, pipes, and a terminal you are not afraid of.</p>
@@ -477,7 +479,18 @@
       </div>
       <div class="plate" data-reveal>
         <span class="plate-label">Event brief</span>
-        <p class="prose" style="font-size:var(--fs-3);color:var(--ink);line-height:var(--lh-snug)">A hands-on session for first-years who have never opened a terminal. Attendees work on live systems with a mentor per table, covering navigation, permissions, pipes, redirection, and a real (small) task: fixing a deliberately broken configuration.</p>
+        
+        <!-- long-form writeup from the .md body (content/events/<slug>.md) -->
+        <div class="md-body ev-brief"><p>Bring a machine you can break. We hand out lab accounts at the door, so there is nothing to install.</p>
+<h2>What to expect</h2>
+<ul>
+<li>one mentor per table, live systems from minute one,</li>
+<li>the fix-the-broken-box challenge at the end — a config we sabotaged ourselves,</li>
+<li>no slides; everything happens in a terminal projected big.</li>
+</ul>
+<p>If you already live in a shell, come anyway: the challenge is harder than it looks.</p>
+</div>
+        
       </div>
     </div>
   </section>
@@ -559,9 +572,9 @@
   <section class="sec sec--fit" data-section="More" data-code="05" data-label="More">
     <div class="sec-in">
       <div class="pager">
-        <a href="/events/ctf-beginner-track/"><span aria-hidden="true">←</span> CTF: Beginner Track</a>
+        <a href="/events/networking-deep-dive/"><span aria-hidden="true">←</span> Networking Deep Dive Series</a>
         <a href="/events/" class="mono">ALL EVENTS</a>
-        <a href="/events/git-and-open-source/">Intro to Git & Open Source <span aria-hidden="true">→</span></a>
+        <a href="/events/ctf-beginner-track/">CTF: Beginner Track <span aria-hidden="true">→</span></a>
       </div>
     </div>
   </section>
@@ -595,7 +608,7 @@
 <footer class="sec-footer" data-section="colophon">
   <div class="foot-top">
     <div class="foot-id">
-      <p class="foot-kicker mono">DCITC // EVENT.01</p>
+      <p class="foot-kicker mono">DCITC // EVENT.04</p>
       <p class="foot-statement">DCITC is not chasing technology. DCITC studies it.</p>
     </div>
     <div class="foot-cols">

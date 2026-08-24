@@ -9,12 +9,14 @@
        project.html: item, prev, next, page.
 
      SECTION MAP:
-       00 Overview        status badge (upcoming/ongoing/past via the
-                          build-time booleans), title, subtitle, and a
-                          date/location/duration/level meta row
-                          (fmtDateLong helper for the date)
-       01 About           event brief plate (item.description)
-       02 Program         .do-list rows from item.program
+        00 Overview        status badge (upcoming/ongoing/past via the
+                           build-time booleans), title, subtitle, and a
+                           date/location/duration/level meta row
+                           (fmtDateLong helper for the date)
+        01 About           event brief plate — the .md body rendered as
+                           markdown (content/events/<slug>.md), falling
+                           back to the short `description` frontmatter
+        02 Program         .do-list rows from item.program
        03 Speaker         speaker name/role datum
        04 Resources       related-track tags + optional register note
        05 More            prev / all-events / next pager
@@ -443,7 +445,7 @@
   <section class="sec sec--full sec--intro scan" data-section="Overview" data-code="00" data-label="Overview">
     <div class="single-in">
       <p class="kicker" data-reveal="fade">
-        EVENT.07 — <span class="status status--past">past</span>
+        EVENT.05 — <span class="status status--past">past</span>
       </p>
       <h1 class="single-title mt-2" data-reveal="up">CTF: Beginner Track</h1>
       <p class="lead mt-3" data-reveal style="--d:160ms">A gentle, self-hosted capture-the-flag: crypto, web, reversing, and one bash puzzle.</p>
@@ -477,7 +479,39 @@
       </div>
       <div class="plate" data-reveal>
         <span class="plate-label">Event brief</span>
-        <p class="prose" style="font-size:var(--fs-3);color:var(--ink);line-height:var(--lh-snug)">A low-stakes CTF built and hosted by club members on college infrastructure. Twenty-one teams solved at least one flag; the beginner web challenge had the most solvers, and the final bash puzzle stumped everyone for an hour.</p>
+        
+        <!-- long-form writeup from the .md body (content/events/<slug>.md) -->
+        <div class="md-body ev-brief"><p>Twenty-one teams, eight hours, zero prior experience required. The scoreboard told the story:</p>
+<table>
+<thead>
+<tr>
+<th>Category</th>
+<th>Flags</th>
+<th>Most solved by</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Web</td>
+<td>4</td>
+<td>19 teams</td>
+</tr>
+<tr>
+<td>Crypto</td>
+<td>3</td>
+<td>11 teams</td>
+</tr>
+<tr>
+<td>Reversing</td>
+<td>2</td>
+<td>6 teams</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p>The final bash puzzle stumped everyone for an hour — then three teams solved it in ten minutes once someone read the man page.</p>
+</blockquote>
+<p>Writeups are linked from the club repo; the next CTF reuses this infrastructure.</p>
+</div>
+        
       </div>
     </div>
   </section>
@@ -545,9 +579,9 @@
   <section class="sec sec--fit" data-section="More" data-code="05" data-label="More">
     <div class="sec-in">
       <div class="pager">
-        <a href="/events/first-code-night/"><span aria-hidden="true">←</span> First Code Night</a>
+        <a href="/events/linux-fundamentals-workshop/"><span aria-hidden="true">←</span> Linux Fundamentals Workshop</a>
         <a href="/events/" class="mono">ALL EVENTS</a>
-        <a href="/events/linux-fundamentals-workshop/">Linux Fundamentals Workshop <span aria-hidden="true">→</span></a>
+        <a href="/events/first-code-night/">First Code Night <span aria-hidden="true">→</span></a>
       </div>
     </div>
   </section>
@@ -581,7 +615,7 @@
 <footer class="sec-footer" data-section="colophon">
   <div class="foot-top">
     <div class="foot-id">
-      <p class="foot-kicker mono">DCITC // EVENT.07</p>
+      <p class="foot-kicker mono">DCITC // EVENT.05</p>
       <p class="foot-statement">DCITC is not chasing technology. DCITC studies it.</p>
     </div>
     <div class="foot-cols">

@@ -14,14 +14,17 @@
        horizontal.js fall back to initVertical() (document-scroll
        progress bar). It also intentionally includes NO footer partial.
 
-     STRUCTURE:
-       header section    kicker (category/code/date/readingTime),
-                         title, subtitle, byline
-       cover section     generated SVG cover plate
-       body section      loops the item.body blocks by type:
-                           p / h2 / code / quote / list / note
-       end section       tags + prev/all-issues/next pager + end mark
-     ================================================================== -->
+      STRUCTURE:
+        header section    kicker (category/code/date/readingTime),
+                          title, subtitle, byline
+        cover section     cover image (frontmatter `image:` or the
+                          generated SVG plate for the slug)
+        body section      the Markdown content, converted to HTML at
+                          build time (marked) and injected raw —
+                          .article prose rules style p/h2/lists/
+                          blockquotes/code tables etc.
+        end section       tags + prev/all-issues/next pager + end mark
+      ================================================================== -->
 <html lang="{{ .site.meta.language }}">
 {{ include "partials/head.html" }}
 <body data-page="article">
@@ -57,31 +60,8 @@
   </section>
 
   <section class="sec sec--flush" data-section="Body">
-    <article class="article">
-      {{ each .item.body }}
-        {{ if eq .type "p" }}
-        <p data-reveal>{{ .text }}</p>
-        {{ end }}
-        {{ if eq .type "h2" }}
-        <h2 data-reveal>{{ .text }}</h2>
-        {{ end }}
-        {{ if eq .type "code" }}
-        <pre class="code" data-reveal><code>{{ .text }}</code></pre>
-        {{ end }}
-        {{ if eq .type "quote" }}
-        <blockquote data-reveal>{{ .text }}</blockquote>
-        {{ end }}
-        {{ if eq .type "list" }}
-        <ul data-reveal>
-          {{ each .items }}
-          <li>{{ . }}</li>
-          {{ end }}
-        </ul>
-        {{ end }}
-        {{ if eq .type "note" }}
-        <p class="note mono" data-reveal>NOTE — {{ .text }}</p>
-        {{ end }}
-      {{ end }}
+    <article class="article md-body">
+      {{ .item.contentHtml }}
     </article>
   </section>
 

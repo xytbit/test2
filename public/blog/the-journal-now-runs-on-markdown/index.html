@@ -14,14 +14,17 @@
        horizontal.js fall back to initVertical() (document-scroll
        progress bar). It also intentionally includes NO footer partial.
 
-     STRUCTURE:
-       header section    kicker (category/code/date/readingTime),
-                         title, subtitle, byline
-       cover section     generated SVG cover plate
-       body section      loops the item.body blocks by type:
-                           p / h2 / code / quote / list / note
-       end section       tags + prev/all-issues/next pager + end mark
-     ================================================================== -->
+      STRUCTURE:
+        header section    kicker (category/code/date/readingTime),
+                          title, subtitle, byline
+        cover section     cover image (frontmatter `image:` or the
+                          generated SVG plate for the slug)
+        body section      the Markdown content, converted to HTML at
+                          build time (marked) and injected raw —
+                          .article prose rules style p/h2/lists/
+                          blockquotes/code tables etc.
+        end section       tags + prev/all-issues/next pager + end mark
+      ================================================================== -->
 <html lang="en">
 <!-- ==================================================================
      DCITC <head> PARTIAL  —  src/partials/head.html
@@ -44,12 +47,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>What Actually Happens When You Press Enter</title>
-  <meta name="description" content="A keystroke becomes a process. The journey through the kernel is short, and worth knowing exactly once.">
+  <title>The Journal Now Runs on Markdown</title>
+  <meta name="description" content="How the Tech Journal is produced now: drop a .md file in content/blog, run one build command, done.">
   <meta name="generator" content="DCITC site builder">
   <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
-  <meta property="og:title" content="What Actually Happens When You Press Enter">
-  <meta property="og:description" content="A keystroke becomes a process. The journey through the kernel is short, and worth knowing exactly once.">
+  <meta property="og:title" content="The Journal Now Runs on Markdown">
+  <meta property="og:description" content="How the Tech Journal is produced now: drop a .md file in content/blog, run one build command, done.">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Dhaka College IT Club">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -446,17 +449,17 @@
   <section class="sec" data-section="Article">
     <div class="article">
       <div class="art-kicker mono" data-reveal="fade">
-        <span class="tag tag--accent">Systems</span>
+        <span class="tag tag--accent">Meta</span>
         <span>ART.01</span>
-        <span>24 Jan 2026</span>
-        <span>2 min read</span>
+        <span>24 Aug 2026</span>
+        <span>1 min read</span>
       </div>
-      <h1 class="art-title mt-3" data-reveal="up">What Actually Happens When You Press Enter</h1>
-      <p class="lead mt-2" data-reveal style="--d:120ms">A keystroke becomes a process. The journey through the kernel is short, and worth knowing exactly once.</p>
+      <h1 class="art-title mt-3" data-reveal="up">The Journal Now Runs on Markdown</h1>
+      <p class="lead mt-2" data-reveal style="--d:120ms">How the Tech Journal is produced now: drop a .md file in content/blog, run one build command, done.</p>
       <div class="art-byline mt-3" data-reveal style="--d:180ms">
-        <span>BY ARIF CHOWDHURY</span>
+        <span>BY DCITC TECHNICAL TEAM</span>
         <span aria-hidden="true">·</span>
-        <span>Systems study group lead</span>
+        <span>Publications sector</span>
       </div>
     </div>
   </section>
@@ -464,138 +467,65 @@
   <section class="sec sec--flush" data-section="Cover">
     <div class="article">
       <figure class="art-cover" data-reveal="scale">
-        <img src="/img/gen/what-happens-when-you-press-enter.svg" alt="Cover plate for What Actually Happens When You Press Enter" loading="eager">
+        <img src="/img/gen/the-journal-now-runs-on-markdown.svg" alt="Cover plate for The Journal Now Runs on Markdown" loading="eager">
       </figure>
     </div>
   </section>
 
   <section class="sec sec--flush" data-section="Body">
-    <article class="article">
-      
-        
-        <p data-reveal>Every command you run begins as a physical event: a key goes down, a voltage changes on a wire, and a signal travels from the controller to your CPU. But between that keystroke and the shell printing a prompt again, a surprisingly small number of precise things happen. This is the journey, roughly, of pressing Enter in a terminal.</p>
-        
-        
-        
-        
-        
-        
-      
-        
-        
-        <h2 data-reveal>1. The interrupt</h2>
-        
-        
-        
-        
-        
-      
-        
-        <p data-reveal>The keyboard controller raises an interrupt. The CPU stops whatever it was doing, looks up the interrupt vector table, and jumps to the driver's handler. None of this is magic — it is just a table of function pointers, and the hardware knows how to find it.</p>
-        
-        
-        
-        
-        
-        
-      
-        
-        
-        
-        <pre class="code" data-reveal><code>hardware interrupt → IRQ line → driver handler
-  → scancode read from the controller
-  → scancode translated to a keycode
-  → keycode queued for userspace</code></pre>
-        
-        
-        
-        
-      
-        
-        
-        <h2 data-reveal>2. The pipe to userspace</h2>
-        
-        
-        
-        
-        
-      
-        
-        <p data-reveal>The kernel does not hand the terminal program raw keycodes. It writes a byte to a pseudo-terminal. The terminal emulator reads that byte, applies its own keymap, and appends it to its line buffer. When you press Enter, the emulator sends the whole line as a read on the pty's master side — and the shell, which has been blocked in a read() on the slave side, finally returns.</p>
-        
-        
-        
-        
-        
-        
-      
-        
-        
-        <h2 data-reveal>3. Parse, look up, fork</h2>
-        
-        
-        
-        
-        
-      
-        
-        <p data-reveal>The shell parses the line, expands variables, and looks up the executable in PATH. Then it forks. The new child — a copy of the shell — calls execve, which replaces its memory image with the target binary. One of the parent's jobs is to wait: it blocks in waitpid until the child exits, then prints a prompt.</p>
-        
-        
-        
-        
-        
-        
-      
-        
-        
-        
-        <pre class="code" data-reveal><code>read() on the pty slave
-→ shell parses + expands
-→ fork() → execve()
-→ child runs, parent blocks in waitpid()
-→ exit status → next prompt</code></pre>
-        
-        
-        
-        
-      
-        
-        
-        <h2 data-reveal>Why this matters</h2>
-        
-        
-        
-        
-        
-      
-        
-        <p data-reveal>None of these steps are required by any specification — they are the accumulated result of decisions made over forty years. But knowing the shape of the pipeline means that when something breaks, you do not guess. You ask which layer the break is in: hardware, driver, terminal, shell, or the process itself. The skill of debugging is mostly the skill of knowing which layer to suspect.</p>
-        
-        
-        
-        
-        
-        
-      
-        
-        
-        
-        
-        <blockquote data-reveal>Debugging is the process of correctly shrinking the search space. Everything else is typing.</blockquote>
-        
-        
-        
-      
-        
-        
-        
-        
-        
-        
-        <p class="note mono" data-reveal>NOTE — This post grew out of a Systems reading group session. The full walkthrough with live demos is on the club's study group notes.</p>
-        
-      
+    <article class="article md-body">
+      <p>If you can write a README, you can publish here. The journal is no longer a pile of hand-edited HTML — every article is a single Markdown file that the build turns into a page.</p>
+<h2>How publishing works</h2>
+<p>Create a file in <code>content/blog/</code>. The filename becomes the URL, so <code>my-post.md</code> lives at <code>/blog/my-post/</code> forever.</p>
+<pre class="code"><code>content/blog/
+├── the-journal-now-runs-on-markdown.md   ← this post
+└── reading-man-pages.md</code></pre><p>Then rebuild:</p>
+<pre class="code"><code>node scripts/build.js</code></pre><p>That is the entire workflow. No card to register, no list to update — the index page and your article page are generated from the files themselves, sorted newest first.</p>
+<h2>What goes in the frontmatter</h2>
+<p>The block at the top of the file carries the metadata: title, date, description, author and tags are what you will touch most. <code>draft: true</code> keeps an unfinished post out of the build entirely.</p>
+<blockquote>
+<p>Write first, format later. Frontmatter takes thirty seconds; a good opening paragraph takes the rest of the evening.</p>
+</blockquote>
+<h2>Formatting cheat sheet</h2>
+<p>Everything you expect works:</p>
+<table>
+<thead>
+<tr>
+<th>You write</th>
+<th>You get</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>**bold**</code>, <code>*italic*</code></td>
+<td><strong>bold</strong>, <em>italic</em></td>
+</tr>
+<tr>
+<td><code>`code`</code></td>
+<td>inline code</td>
+</tr>
+<tr>
+<td><code>[text](url)</code></td>
+<td>a link</td>
+</tr>
+<tr>
+<td><code>&gt; line</code></td>
+<td>blockquote</td>
+</tr>
+</tbody></table>
+<p>Fenced blocks render in the site&#39;s terminal style:</p>
+<pre class="code"><code>git init club-journal &amp;&amp; cd club-journal
+echo "notes &gt; opinions" &gt; manifesto.txt</code></pre><p>Lists come in both flavours:</p>
+<ol>
+<li>numbered steps,</li>
+<li>like this one,</li>
+</ol>
+<ul>
+<li>and bullets,</li>
+<li>like these.</li>
+</ul>
+<hr>
+<p>New here? Read <a href="/blog/reading-man-pages/">the man pages primer</a> next — it is the habit everything else in the club is built on.</p>
+
     </article>
   </section>
 
@@ -603,17 +533,15 @@
     <div class="article">
       <div class="tag-row" data-reveal>
         
-        <span class="tag">linux</span>
+        <span class="tag">Meta</span>
         
-        <span class="tag">kernel</span>
-        
-        <span class="tag">fundamentals</span>
+        <span class="tag">Writing</span>
         
       </div>
       <div class="pager mt-5" data-reveal>
-        <a href="/blog/anatomy-of-a-url/"><span aria-hidden="true">←</span> The Anatomy of a URL</a>
+        <a href="/blog/reading-man-pages/"><span aria-hidden="true">←</span> Reading Man Pages Without Fear</a>
         <a href="/blog/" class="mono">ALL ISSUES</a>
-        <a href="/blog/ebpf-for-the-curious-beginner/">eBPF for the Curious Beginner <span aria-hidden="true">→</span></a>
+        <a href="/blog/reading-man-pages/">Reading Man Pages Without Fear <span aria-hidden="true">→</span></a>
       </div>
       <p class="mono mt-5" style="color:var(--ink-faint);font-size:var(--fs-0)">END OF ARTICLE · ART.01 · DCITC</p>
     </div>

@@ -9,12 +9,14 @@
        project.html: item, prev, next, page.
 
      SECTION MAP:
-       00 Overview        status badge (upcoming/ongoing/past via the
-                          build-time booleans), title, subtitle, and a
-                          date/location/duration/level meta row
-                          (fmtDateLong helper for the date)
-       01 About           event brief plate (item.description)
-       02 Program         .do-list rows from item.program
+        00 Overview        status badge (upcoming/ongoing/past via the
+                           build-time booleans), title, subtitle, and a
+                           date/location/duration/level meta row
+                           (fmtDateLong helper for the date)
+        01 About           event brief plate — the .md body rendered as
+                           markdown (content/events/<slug>.md), falling
+                           back to the short `description` frontmatter
+        02 Program         .do-list rows from item.program
        03 Speaker         speaker name/role datum
        04 Resources       related-track tags + optional register note
        05 More            prev / all-events / next pager
@@ -64,7 +66,13 @@
       </div>
       <div class="plate" data-reveal>
         <span class="plate-label">Event brief</span>
+        {{ if .item.contentHtml }}
+        <!-- long-form writeup from the .md body (content/events/<slug>.md) -->
+        <div class="md-body ev-brief">{{ .item.contentHtml }}</div>
+        {{ else }}
+        <!-- fallback: frontmatter description only -->
         <p class="prose" style="font-size:var(--fs-3);color:var(--ink);line-height:var(--lh-snug)">{{ .item.description }}</p>
+        {{ end }}
       </div>
     </div>
   </section>

@@ -39,6 +39,75 @@ exposes each item's fields as `.field` and computes a few helpers
 > Field-level behaviour (codes, urls, thumbs, status booleans…) is added
 > in the "data loading + enrichment" section of `scripts/build.js`.
 
+> Publishing blog posts or events? Read **`way.md`** — the step-by-step
+> content guide.
+
+## Markdown blog (`content/blog/`) and events (`content/events/`)
+
+The Tech Journal and the events calendar share the same authoring model:
+one Markdown file per item, filename (minus `.md`) **is** the slug
+(`/blog/<slug>/`, `/events/<slug>/`). YAML frontmatter carries metadata;
+the body is converted to HTML by `marked` at build time.
+
+Blog post frontmatter:
+
+```markdown
+---
+title: "My New Article"        # required
+date: "2026-08-24"             # required — newest first sorting
+description: "Short summary."  # card + article subtitle
+author: "Your Name"            # default "DCITC"
+role: "Study group lead"       # byline detail, default "Contributor"
+category: "Linux"              # chip; defaults to first tag
+tags:
+  - Linux
+  - CLI
+featured: true                 # home teaser + blog Featured (first 3)
+image: /img/blog/photo.png     # cover; default = generated plate /img/gen/<slug>.svg
+draft: true                    # skipped entirely — never published
+---
+```
+
+Event frontmatter (`title`/`date`/`status` required; status must be
+`upcoming`, `ongoing` or `past`):
+
+```markdown
+---
+title: "Linux Fundamentals Workshop"
+date: "2026-09-18"
+status: upcoming               # drives deck/archive placement + badge
+subtitle: "Card text."         # deck + archive cards
+description: "Short brief."    # detail page fallback when no body
+location: "Lab 4"
+duration: "3 hours"
+level: "Beginner"
+speaker:
+  name: "Arif Chowdhury"
+  role: "Systems study group lead"
+program:
+  - time: "14:00"
+    title: "Why the shell"
+resources:
+  - Linux
+register: "Seats are limited."
+---
+
+Optional long-form writeup in markdown — renders in the About plate of
+the event page. Without a body the short `description` is shown.
+```
+
+Workflow: drop a file → `node scripts/build.js` → pages and listings
+update automatically, sorted newest first (ties: slug asc). Display codes
+(ART.xx / EVENT.xx) are assigned after sorting, so .01 is always the most
+recent. Deleting a `.md` removes its page on the next build (the build
+wipes `public/` wholesale). Drafts are dropped before anything runs.
+Blog images can live anywhere under `static/` — e.g. `static/img/blog/`
+served at `/img/blog/…` — and should be referenced with absolute URLs so
+they resolve from nested `/blog/<slug>/` pages.
+
+Dependencies added for this: `marked` (Markdown→HTML) and `js-yaml`
+(frontmatter parsing). Nothing else changed about the pipeline.
+
 ### Data file reference (`src/data/`)
 
 | File | Controls | Consumed by |
@@ -47,8 +116,8 @@ exposes each item's fields as `.field` and computes a few helpers
 | `nav.json` | The single source of truth for navigation. Each item: `label`, `href`, `match` (URL rule used by `navFor()` to compute active state: `/` exact, trailing `*` = prefix, otherwise exact-or-subpage), `code` (the "01"–"10" mono prefix), `group` (`primary` → inline header link, `more` → "More" dropdown; everything appears in the mobile drawer), `cta: true` marks the accent button (Join). | header.html via `navFor()` |
 | `pages.json` | The page registry. One entry per top-level page: which template file renders it (`file`), where it's written (`out`, directory-style), canonical `url`, `<title>`/`desc` meta, display `code` (shown in the footer kicker), `section` label, `horizontal` flag. Order here does not matter for nav (that's nav.json) but documents the sitemap. | build.js `buildPage()` loop |
 | `projects.json` | Project portfolio. Key fields per item: `slug` (→ `/projects/<slug>/` + generated cover art seed), `title`, `tagline`, `status` (active/past…), `year`, `category`, `featured` (home page cards, first 3), `stack[]` (chips), `summary`, `problem`, `approach[]` (numbered at build), `metrics[{k,v}]`, `result`, `notes`, `team[{name,role}]`, `capabilities[]`, `links{github,demo}`. | projects.html, project.html, home featured |
-| `events.json` | Events. Per item: `slug`, `title`, `date` (ISO — formatted by helpers), `status` (`upcoming`/`ongoing`/`past` — converted to booleans at build, driving which section/badge shows), `location`, `duration`, `level`, `subtitle`, `description`, `program[{time,title}]`, `speaker{name,role}`, `resources[]`, `register`. | events.html, event.html, home upcoming list |
-| `posts.json` | Tech journal articles. Per item: `slug`, `title`, `category`, `date`, `author`, `role`, `featured` (home/blog featured), `subtitle`, `tags[]`, and `body[]` — an ordered list of typed blocks (`p`, `h2`, `code`, `quote`, `list` with `items[]`, `note`) that article.html renders sequentially. Reading time is computed from body word count at build. | blog.html, article.html, home journal preview |
+| `events.json` | *(removed)* — events are Markdown files now. See "Markdown blog (`content/blog/`)" below — events use the same pipeline via `content/events/`. | — |
+| `posts.json` | *(removed)* — the Tech Journal is no longer mock JSON. See "Markdown blog (`content/blog/`)" below. | — |
 | `team.json` | Team groups (e.g. Executive Committee, Core). Each group: `name`, `note`, `members[]` with `name`, `role`, `seed` (avatar art key → `/img/gen/av-<seed>.svg`), `note`, `tags[]`. Roles drive the about-page carousel filter (President, VP, General Secretary, Technical Lead). team.html renders one section per group automatically. | team.html, about.html carousel |
 | `achievements.json` | Milestone timeline. Each entry: `year`, `summary`, `items[{title,detail}]`. Rendered twice on achievements.html (vertical timeline + expandable record) and summarized on the home spark section. | achievements.html, home |
 | `resources.json` | Curated knowledge base. Per item: `title`, `category` (must match a CATEGORIES entry in build.js for filtering), `kind` (book/doc/tool…), `level`, `tag`, `featured` (home picks, first 4), `description`, `link`. | resources.html, home |
