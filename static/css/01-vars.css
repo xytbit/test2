@@ -75,8 +75,8 @@
   --bg-elev-2: #161b23; /* higher surface (footer frost top) */
   --bg-tint: rgba(255, 255, 255, 0.015); /* hover wash */
   --ink: #e8ebf0; /* primary text */
-  --ink-dim: #9aa3b1; /* secondary text */
-  --ink-faint: #626c7c; /* meta text / codes */
+  --ink-dim: #b0bac7; /* secondary text */
+  --ink-faint: #88929f; /* meta text / codes */
   --line: rgba(232, 235, 240, 0.09); /* hairline borders */
   --line-strong: rgba(232, 235, 240, 0.18); /* emphasized borders */
   --grid-line: rgba(232, 235, 240, 0.04); /* fixed backdrop grid */
