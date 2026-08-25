@@ -608,7 +608,6 @@ function loadEvents() {
       ...fm,
       slug,
       url: `/events/${slug}/`,
-      cover: `/img/gen/${slug}.svg`, // generated cover plate (collapsing deck)
       contentHtml: body.trim() ? marked.parse(body) : '',
     });
   }
@@ -737,6 +736,57 @@ const featuredPosts = posts.filter((p) => p.featured).slice(0, 3); // home + blo
 const resourceCats = CATEGORIES; // filter buttons
 const featuredResources = resources.filter((r) => r.featured).slice(0, 4); // home picks
 const activeProjectsCount = projects.filter((p) => p.status === 'active').length; // projects intro
+
+/* FUNKYSTUFF — self-contained web toys/games library -----------------
+   <root>/funkystuff/ holds standalone .html files (games, demos, toys).
+   src/data/funkystuff.json is the listing manifest: one entry per file
+   you want on /funkystuff/, with the display fields YOU assign —
+   `file` (required, must exist in the folder), `title`, `dept`
+   (drives the filter chips) and optional `by` (author byline). List
+   order in the JSON = row order on the page. The build still scans
+   the folder itself so every .html gets copied verbatim to
+   public/funkystuff/<file> (opened from a list row in a new tab) and
+   URL-unsafe filenames fail loudly. A scanned file with no manifest
+   entry is copied but not listed (warned); a manifest entry whose
+   file is missing is a hard error. Unique dept values (JSON order)
+   ship as `funkyDepts` for the doc-style filter bar. */
+const FUNKY_DIR = path.join(ROOT, 'funkystuff');
+const funkyFiles = fs.existsSync(FUNKY_DIR)
+  ? fs
+      .readdirSync(FUNKY_DIR)
+      .filter((f) => /\.html?$/i.test(f))
+      .sort((a, b) => a.localeCompare(b))
+  : [];
+for (const f of funkyFiles) {
+  if (!/^[a-z0-9][a-z0-9._-]*$/i.test(f)) {
+    throw new Error(`funkystuff: URL-unsafe filename "${f}" (letters/digits/dash/underscore/dot only)`);
+  }
+}
+const funkyMeta = fs.existsSync(path.join(SRC, 'data', 'funkystuff.json'))
+  ? JSON.parse(read(path.join(SRC, 'data', 'funkystuff.json')))
+  : [];
+const funky = funkyMeta.map((m, i) => {
+  if (!m.file || !funkyFiles.includes(m.file)) {
+    throw new Error(`funkystuff: manifest entry ${i + 1} references "${m.file}" but no such file exists in funkystuff/`);
+  }
+  if (!String(m.title || '').trim() || !String(m.dept || '').trim()) {
+    throw new Error(`funkystuff: "${m.file}" needs non-empty "title" and "dept" in src/data/funkystuff.json`);
+  }
+  return {
+    n: String(i + 1).padStart(2, '0'), // row index for the divided list
+    file: m.file,
+    url: `/funkystuff/${m.file}`,
+    title: m.title,
+    dept: m.dept,
+    by: m.by || '',
+  };
+});
+const funkyDepts = [...new Set(funky.map((f) => f.dept))];
+for (const f of funkyFiles) {
+  if (!funky.some((x) => x.file === f)) {
+    console.warn(`funkystuff: "${f}" is not listed in src/data/funkystuff.json — copied but not carded`);
+  }
+}
 
 /* ------------------------------------------------------------------ */
 /* SVG asset generation                                                */
@@ -1078,6 +1128,8 @@ function buildPage(page) {
     posts,
     team,
     gallery,
+    funky,
+    funkyDepts,
     CATEGORIES,
     activeProjectsCount,
   };
@@ -1110,7 +1162,6 @@ function main() {
   gallery.forEach((g) => seeds.add(g.seed));
   projects.forEach((p) => seeds.add(p.slug));
   posts.forEach((p) => seeds.add(p.slug));
-  events.forEach((e) => seeds.add(e.slug)); // event cover plates (collapsing deck)
   seeds.forEach((s, i) => {
     const v = variants[hashStr(s) % variants.length];
     write(path.join(genDir, `${s}.svg`), genPlate(s, v));
@@ -1130,6 +1181,15 @@ function main() {
   // vendored lib (anime.min.js, used by reveal.js) is copied verbatim —
   // never concatenated, it loads as-is before the bundle.
   fs.cpSync(path.join(STATIC, 'js', 'vendor'), path.join(OUT, 'js', 'vendor'), { recursive: true });
+
+  // 2b. funkystuff library files -------------------------------------
+  // copied verbatim so /funkystuff/<file> URLs work; the launcher page
+  // (/funkystuff/) opens each one in a new tab.
+  console.log('funkystuff');
+  fs.mkdirSync(path.join(OUT, 'funkystuff'), { recursive: true });
+  for (const it of funky) {
+    write(path.join(OUT, 'funkystuff', it.file), read(path.join(FUNKY_DIR, it.file)));
+  }
 
   // 3. top-level pages from src/data/pages.json ---------------------
   // Each def maps a template file → output path + metadata (title,
@@ -1179,6 +1239,8 @@ function main() {
         posts,
         team,
         gallery,
+        funky,
+        funkyDepts,
         CATEGORIES,
         activeProjectsCount,
       };

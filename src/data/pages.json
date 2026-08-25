@@ -100,6 +100,16 @@
     "horizontal": true
   },
   {
+    "file": "funkystuff.html",
+    "out": "funkystuff/index.html",
+    "url": "/funkystuff/",
+    "title": "Funkystuff — Dhaka College IT Club",
+    "code": "FUNKY",
+    "desc": "A library of small interactive toys and games from DCITC. Filter by department; every entry opens in a new tab.",
+    "section": "funkystuff",
+    "horizontal": false
+  },
+  {
     "file": "contact.html",
     "out": "contact/index.html",
     "url": "/contact/",

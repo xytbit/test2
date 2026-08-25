@@ -7,11 +7,12 @@
        scripts/build.js from each event's "status" field):
 
        00 Overview        intro + counts of upcoming/past
-       01 Upcoming        .evx collapsing card deck for the
-                          upcomingEvents subset (one expanded card,
-                          the rest thin strips; hover/click/keyboard
-                          expands — see .evx block in 08-pages.css
-                          and initEventDeck() in pages.js)
+        01 Upcoming        .evx collapsing card deck for the
+                           upcomingEvents subset (one expanded card,
+                           the rest thin strips; hover/click/keyboard
+                           expands — see .evx block in 08-pages.css
+                           and initEventDeck() in pages.js; cards are
+                           plain --bg-elev, no cover imagery)
        02 Ongoing series  .ev-row list — filters pastEvents with
                           `if .ongoing`
        03 Archive         .ev-row list — filters pastEvents with
@@ -199,6 +200,12 @@
         
           
             
+          
+        
+        
+        
+          
+            
             <li>
               <a href="/join/" class="nav-link " >
                 <span class="nav-code">10</span>Join
@@ -282,12 +289,26 @@
             
               
                 
+                <li><a href="/funkystuff/" class="" ><span class="nav-code">11</span>Funkystuff</a></li>
+                
+              
+            
+          
+            
+              
+                
               
             
           
         </ul>
       </div>
       <!-- accent CTA: whichever primary item has cta:true (Join) -->
+      
+        
+          
+            
+          
+        
       
         
           
@@ -426,6 +447,12 @@
       </li>
       
       <li>
+        <a href="/funkystuff/" class="" >
+          <span class="nav-code">11</span>Funkystuff
+        </a>
+      </li>
+      
+      <li>
         <a href="/join/" class="" >
           <span class="nav-code">10</span>Join
         </a>
@@ -473,7 +500,6 @@
               </div>
               <a class="evx-cta" href="/events/build-week/"><span>Open event</span><span aria-hidden="true">→</span></a>
             </div>
-            <img src="/img/gen/build-week.svg" alt="" loading="lazy">
           </article>
         </li>
         
@@ -491,7 +517,6 @@
               </div>
               <a class="evx-cta" href="/events/git-and-open-source/"><span>Open event</span><span aria-hidden="true">→</span></a>
             </div>
-            <img src="/img/gen/git-and-open-source.svg" alt="" loading="lazy">
           </article>
         </li>
         
@@ -509,7 +534,6 @@
               </div>
               <a class="evx-cta" href="/events/linux-fundamentals-workshop/"><span>Open event</span><span aria-hidden="true">→</span></a>
             </div>
-            <img src="/img/gen/linux-fundamentals-workshop.svg" alt="" loading="lazy">
           </article>
         </li>
         

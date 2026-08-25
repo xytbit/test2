@@ -6,8 +6,8 @@
        The journal front page:
 
        00 Masthead        issue count (len of posts) + display title
-       01 Featured        full-width media cards for featuredPosts
-                          (cover from generated SVG plates)
+       01 Featured        2-col grid of compact media cards for
+                           featuredPosts (cover from generated SVG plates)
        02 Archive         3-col grid of every post; each card links to
                           its article page (/blog/<slug>/, rendered
                           from article.html)
@@ -193,6 +193,12 @@
         
           
             
+          
+        
+        
+        
+          
+            
             <li>
               <a href="/join/" class="nav-link " >
                 <span class="nav-code">10</span>Join
@@ -276,12 +282,26 @@
             
               
                 
+                <li><a href="/funkystuff/" class="" ><span class="nav-code">11</span>Funkystuff</a></li>
+                
+              
+            
+          
+            
+              
+                
               
             
           
         </ul>
       </div>
       <!-- accent CTA: whichever primary item has cta:true (Join) -->
+      
+        
+          
+            
+          
+        
       
         
           
@@ -420,6 +440,12 @@
       </li>
       
       <li>
+        <a href="/funkystuff/" class="" >
+          <span class="nav-code">11</span>Funkystuff
+        </a>
+      </li>
+      
+      <li>
         <a href="/join/" class="" >
           <span class="nav-code">10</span>Join
         </a>
@@ -454,39 +480,43 @@
         <p class="kicker">01 — Featured</p>
         <h2 class="h-section">Start here.</h2>
       </div>
-      
-      <a class="card card--media" href="/blog/the-journal-now-runs-on-markdown/" data-reveal="up">
-        <div class="card-thumb"><img src="/img/gen/the-journal-now-runs-on-markdown.svg" alt="" loading="lazy"></div>
-        <div class="card-body">
-          <div class="card-top">
-            <span class="tag tag--accent">Meta</span>
-            <span class="art-date mono">24 Aug 2026 · 1 min read</span>
+      <!-- 2-col grid (same wrapper as the home journal preview); without
+           it each full-width media card stacks ~940px tall -->
+      <div class="jrnl-cards" data-stagger>
+        
+        <a class="card card--media" href="/blog/the-journal-now-runs-on-markdown/" data-reveal="up">
+          <div class="card-thumb"><img src="/img/gen/the-journal-now-runs-on-markdown.svg" alt="" loading="lazy"></div>
+          <div class="card-body">
+            <div class="card-top">
+              <span class="tag tag--accent">Meta</span>
+              <span class="art-date mono">24 Aug 2026 · 1 min read</span>
+            </div>
+            <h3 class="card-title">The Journal Now Runs on Markdown</h3>
+            <p>How the Tech Journal is produced now: drop a .md file in content/blog, run one build command, done.</p>
+            <div class="card-foot">
+              <span class="mono term">DCITC Technical Team — Publications sector</span>
+              <span class="card-arrow" aria-hidden="true">→</span>
+            </div>
           </div>
-          <h3 class="card-title" style="font-size:var(--fs-4)">The Journal Now Runs on Markdown</h3>
-          <p>How the Tech Journal is produced now: drop a .md file in content/blog, run one build command, done.</p>
-          <div class="card-foot">
-            <span class="mono term">DCITC Technical Team — Publications sector</span>
-            <span class="card-arrow" aria-hidden="true">→</span>
+        </a>
+        
+        <a class="card card--media" href="/blog/reading-man-pages/" data-reveal="up">
+          <div class="card-thumb"><img src="/img/gen/reading-man-pages.svg" alt="" loading="lazy"></div>
+          <div class="card-body">
+            <div class="card-top">
+              <span class="tag tag--accent">Linux</span>
+              <span class="art-date mono">20 Aug 2026 · 1 min read</span>
+            </div>
+            <h3 class="card-title">Reading Man Pages Without Fear</h3>
+            <p>The single habit that separates people who use Linux from people who live in it: reading the manual that is already on your machine.</p>
+            <div class="card-foot">
+              <span class="mono term">DCITC Technical Team — Systems sector</span>
+              <span class="card-arrow" aria-hidden="true">→</span>
+            </div>
           </div>
-        </div>
-      </a>
-      
-      <a class="card card--media" href="/blog/reading-man-pages/" data-reveal="up">
-        <div class="card-thumb"><img src="/img/gen/reading-man-pages.svg" alt="" loading="lazy"></div>
-        <div class="card-body">
-          <div class="card-top">
-            <span class="tag tag--accent">Linux</span>
-            <span class="art-date mono">20 Aug 2026 · 1 min read</span>
-          </div>
-          <h3 class="card-title" style="font-size:var(--fs-4)">Reading Man Pages Without Fear</h3>
-          <p>The single habit that separates people who use Linux from people who live in it: reading the manual that is already on your machine.</p>
-          <div class="card-foot">
-            <span class="mono term">DCITC Technical Team — Systems sector</span>
-            <span class="card-arrow" aria-hidden="true">→</span>
-          </div>
-        </div>
-      </a>
-      
+        </a>
+        
+      </div>
     </div>
   </section>
 

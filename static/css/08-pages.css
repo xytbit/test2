@@ -390,6 +390,61 @@ body.is-fluid-grabbing main[data-hx-nodrag] * {
   color: var(--ink-faint);
 }
 
+/* ---------- funkystuff: toy/game library ---------- */
+/* Doc-site-style filter bar + divided list of rows (reuses .do-list/
+   .do-row base from the home department section). Entries come from
+   src/data/funkystuff.json; files are scanned from <root>/funkystuff/
+   (see scripts/build.js). Rows open the game in a new tab. */
+.fs-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+}
+/* Rows are links, so give them the interactive affordance the plain
+   .do-row divs don't need; keep the hairline rhythm identical. */
+.fs-row {
+  grid-template-columns: 3.5rem minmax(0, 1fr) auto auto;
+  color: inherit;
+  text-decoration: none;
+  transition: background var(--t-fast) var(--ease), padding-left var(--t-fast) var(--ease);
+}
+a.fs-row:hover,
+a.fs-row:focus-visible {
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+  padding-left: 0.75rem;
+}
+.fs-row .do-title {
+  transition: color var(--t-fast) var(--ease);
+}
+.fs-row:hover .do-title {
+  color: var(--accent);
+}
+.fs-meta {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.9rem;
+  justify-self: end;
+}
+.fs-dept {
+  font-size: var(--fs-0);
+  letter-spacing: var(--trk-mono);
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.fs-by {
+  font-size: var(--fs-1);
+  color: var(--ink-faint);
+}
+.fs-go {
+  color: var(--ink-faint);
+  transition: color var(--t-fast) var(--ease), transform var(--t-fast) var(--ease);
+}
+.fs-row:hover .fs-go {
+  color: var(--accent);
+  transform: translate(2px, -2px);
+}
+
 /* ---------- about: principles ---------- */
 .prin-grid {
   display: grid;
@@ -421,14 +476,16 @@ body.is-fluid-grabbing main[data-hx-nodrag] * {
 
 /* ---------- events page ---------- */
 /* Collapsing card deck (upcoming events). One card stays expanded
-   (title, description, meta, CTA over a generated cover plate); the
+   (title, description, meta, CTA on a plain --bg-elev surface); the
    others shrink to thin vertical strips with a rotated mono label.
    Activation: hover / click / focus — JS (initEventDeck in pages.js)
    rewrites grid-template-columns as "10fr 1fr 1fr"; the track sizes
    are animatable, which produces the expand/collapse motion. Without
    JS the deck falls back to equal columns with every body visible.
    Theme: everything reads site tokens (--bg-elev/--line/--accent…),
-   so dark/light switching needs no extra rules here. */
+   so dark/light switching needs no extra rules here. (Generated cover
+   plates were removed from these cards — plain bg reads cleaner in
+   light mode.) */
 .evx {
   --gap: 0.6rem;
   --base: clamp(2.6rem, 6cqi, 4rem); /* collapsed strip width */
@@ -465,29 +522,6 @@ html.js .evx {
 .evx-item:focus-within {
   border-color: var(--accent-line);
   box-shadow: var(--glow);
-}
-
-/* cover plate: dim + masked on strips, quietly full-color when active */
-.evx-item img {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  filter: grayscale(1) brightness(0.9);
-  opacity: 0.45;
-  -webkit-mask-image: radial-gradient(120% 120% at 100% 0, #000 30%, transparent 78%);
-  mask-image: radial-gradient(120% 120% at 100% 0, #000 30%, transparent 78%);
-  transition:
-    filter var(--speed) var(--ease),
-    opacity var(--speed) var(--ease);
-  pointer-events: none;
-}
-.evx-item[data-active] img {
-  filter: none;
-  opacity: 0.3;
-  -webkit-mask-image: none;
-  mask-image: none;
 }
 
 /* collapsed strip label — vertical mono title, fades out when active */
@@ -615,6 +649,26 @@ html.js .evx {
   [data-section='Featured projects'] .grid-3 {
     gap: 1rem;
   }
+}
+
+/* blog "Start here." featured cards — extra-compact variant (exact-match
+   attribute selector, does NOT hit "Featured projects"). Cards live in
+   .jrnl-cards (2-col) so the section fits the viewport. */
+[data-section='Featured'] .card-thumb {
+  aspect-ratio: 3 / 1;
+}
+[data-section='Featured'] .card-body {
+  gap: 0.3rem;
+  padding: 0.65rem 0.85rem 0.7rem;
+}
+[data-section='Featured'] .card-body p {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+[data-section='Featured'] .card-foot {
+  padding-top: 0.4rem;
 }
 
 @media (max-width: 700px) {
@@ -1062,7 +1116,7 @@ html.js .evx {
   border: 1px solid var(--accent-line);
   border-radius: var(--r-md);
   background: var(--accent-soft);
-  padding: 1.1rem 1.2rem;
+  padding: 1.4rem 1.6rem;
   color: var(--ink);
   font-size: var(--fs-2);
   line-height: var(--lh-snug);
@@ -1303,6 +1357,19 @@ html.js .evx {
   }
   .do-desc {
     grid-column: 2;
+  }
+  /* funkystuff rows collapse like .do-row; meta + arrow wrap below */
+  .fs-row {
+    grid-template-columns: 2.5rem minmax(0, 1fr) auto;
+    row-gap: 0.3rem;
+  }
+  .fs-meta {
+    grid-column: 2 / -1;
+    justify-self: start;
+    flex-wrap: wrap;
+  }
+  .fs-go {
+    display: none;
   }
   .ev-row {
     grid-template-columns: 1fr auto;

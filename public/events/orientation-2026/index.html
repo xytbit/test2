@@ -9,17 +9,24 @@
        project.html: item, prev, next, page.
 
      SECTION MAP:
-        00 Overview        status badge (upcoming/ongoing/past via the
-                           build-time booleans), title, subtitle, and a
-                           date/location/duration/level meta row
-                           (fmtDateLong helper for the date)
-        01 About           event brief plate — the .md body rendered as
-                           markdown (content/events/<slug>.md), falling
-                           back to the short `description` frontmatter
-        02 Program         .do-list rows from item.program
-       03 Speaker         speaker name/role datum
-       04 Resources       related-track tags + optional register note
-       05 More            prev / all-events / next pager
+         00 Overview        status badge (upcoming/ongoing/past via the
+                            build-time booleans), title, subtitle, and a
+                            date/location/duration/level meta row
+                            (fmtDateLong helper for the date)
+         01 About           event brief plate — the .md body rendered as
+                            markdown (content/events/<slug>.md), falling
+                            back to the short `description` frontmatter
+         02 Program         .do-list rows from item.program
+        03 Speaker         speaker name/role datum
+        04 Resources       related-track tags + optional register note
+        05 More            prev / all-events / next pager
+
+     THE VERTICAL EXCEPTION (mirrors article.html):
+        <body> has NO hx-body class and <main> has NO data-horizontal —
+        this single page reads top-to-bottom instead of riding the
+        horizontal slide deck. body:not(.hx-body) rules in 04-layout.css
+        stack the .secs and horizontal.js falls back to initVertical()
+        (document-scroll progress bar).
      ================================================================== -->
 <html lang="en">
 <!-- ==================================================================
@@ -69,7 +76,7 @@
   </script>
 </head>
 
-<body class="hx-body" data-page="event">
+<body data-page="event">
 <!-- ==================================================================
      DCITC HEADER PARTIAL  —  src/partials/header.html
      ==================================================================
@@ -199,6 +206,12 @@
         
           
             
+          
+        
+        
+        
+          
+            
             <li>
               <a href="/join/" class="nav-link " >
                 <span class="nav-code">10</span>Join
@@ -282,12 +295,26 @@
             
               
                 
+                <li><a href="/funkystuff/" class="" ><span class="nav-code">11</span>Funkystuff</a></li>
+                
+              
+            
+          
+            
+              
+                
               
             
           
         </ul>
       </div>
       <!-- accent CTA: whichever primary item has cta:true (Join) -->
+      
+        
+          
+            
+          
+        
       
         
           
@@ -426,6 +453,12 @@
       </li>
       
       <li>
+        <a href="/funkystuff/" class="" >
+          <span class="nav-code">11</span>Funkystuff
+        </a>
+      </li>
+      
+      <li>
         <a href="/join/" class="" >
           <span class="nav-code">10</span>Join
         </a>
@@ -440,7 +473,7 @@
 
 <div class="progress" aria-hidden="true"><span class="progress-fill"></span></div>
 
-<main id="main" class="hx" data-horizontal>
+<main id="main">
   <!-- SECTION 00 — OVERVIEW -->
   <section class="sec sec--full sec--intro scan" data-section="Overview" data-code="00" data-label="Overview">
     <div class="single-in">

@@ -9,6 +9,7 @@
     { "label": "Journal", "href": "/blog/", "match": "/blog", "code": "07", "group": "primary" },
     { "label": "Team", "href": "/team/", "match": "/team", "code": "08", "group": "more" },
     { "label": "Contact", "href": "/contact/", "match": "/contact", "code": "09", "group": "more" },
+    { "label": "Funkystuff", "href": "/funkystuff/", "match": "/funkystuff", "code": "11", "group": "more" },
     { "label": "Join", "href": "/join/", "match": "/join", "code": "10", "group": "primary", "cta": true }
   ]
 }

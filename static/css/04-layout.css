@@ -2,13 +2,14 @@
    LAYOUT SYSTEM  —  static/css/04-layout.css  (bundle file 4/9)
    ==================================================================
    WHAT THIS FILE CONTROLS:
-     The structural skeleton of the whole site:
-       - body.hx-body / main.hx : the horizontal filmstrip container
-         (flex row, overflow-x auto) used by every page except articles
-       - .sec + width variants  : the scroll "slides" (full/wide/fit/
-         narrow/auto) and their padding
-       - vertical fallback      : body:not(.hx-body) rules for article
-         pages and sub-900px viewports
+    The structural skeleton of the whole site:
+      - body.hx-body / main.hx : the horizontal filmstrip container
+        (flex row, overflow-x auto) used by every page except the
+        vertical reading pages (articles + event singles)
+      - .sec + width variants  : the scroll "slides" (full/wide/fit/
+        narrow/auto) and their padding
+      - vertical fallback      : body:not(.hx-body) rules for article +
+        event single pages and sub-900px viewports
        - .sec-head/.sec-head-grid, generic .grid-*, .split, .stack,
          .row, margin utilities
        - fixed backdrop layers: .bg-grid (drifting grid), .bg-glow,

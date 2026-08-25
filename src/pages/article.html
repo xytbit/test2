@@ -8,11 +8,12 @@
        makeItem() in scripts/build.js.
 
      THE VERTICAL EXCEPTION:
-       <body> has NO hx-body class and <main> has NO data-horizontal —
-       this is the only fully vertical, reading-optimized page. That
-       triggers body:not(.hx-body) rules in 04-layout.css and makes
-       horizontal.js fall back to initVertical() (document-scroll
-       progress bar). It also intentionally includes NO footer partial.
+        <body> has NO hx-body class and <main> has NO data-horizontal —
+        this is a fully vertical, reading-optimized page (the event
+        single event.html shares this mode). That
+        triggers body:not(.hx-body) rules in 04-layout.css and makes
+        horizontal.js fall back to initVertical() (document-scroll
+        progress bar). It also intentionally includes NO footer partial.
 
       STRUCTURE:
         header section    kicker (category/code/date/readingTime),

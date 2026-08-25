@@ -8,11 +8,12 @@
        makeItem() in scripts/build.js.
 
      THE VERTICAL EXCEPTION:
-       <body> has NO hx-body class and <main> has NO data-horizontal —
-       this is the only fully vertical, reading-optimized page. That
-       triggers body:not(.hx-body) rules in 04-layout.css and makes
-       horizontal.js fall back to initVertical() (document-scroll
-       progress bar). It also intentionally includes NO footer partial.
+        <body> has NO hx-body class and <main> has NO data-horizontal —
+        this is a fully vertical, reading-optimized page (the event
+        single event.html shares this mode). That
+        triggers body:not(.hx-body) rules in 04-layout.css and makes
+        horizontal.js fall back to initVertical() (document-scroll
+        progress bar). It also intentionally includes NO footer partial.
 
       STRUCTURE:
         header section    kicker (category/code/date/readingTime),
@@ -203,6 +204,12 @@
         
           
             
+          
+        
+        
+        
+          
+            
             <li>
               <a href="/join/" class="nav-link " >
                 <span class="nav-code">10</span>Join
@@ -286,12 +293,26 @@
             
               
                 
+                <li><a href="/funkystuff/" class="" ><span class="nav-code">11</span>Funkystuff</a></li>
+                
+              
+            
+          
+            
+              
+                
               
             
           
         </ul>
       </div>
       <!-- accent CTA: whichever primary item has cta:true (Join) -->
+      
+        
+          
+            
+          
+        
       
         
           
@@ -426,6 +447,12 @@
       <li>
         <a href="/contact/" class="" >
           <span class="nav-code">09</span>Contact
+        </a>
+      </li>
+      
+      <li>
+        <a href="/funkystuff/" class="" >
+          <span class="nav-code">11</span>Funkystuff
         </a>
       </li>
       

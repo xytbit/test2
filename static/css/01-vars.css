@@ -51,9 +51,9 @@
   --maxw: 72rem; /* standard content width */
   --maxw-wide: 88rem; /* wide content width (nav, hero) */
   --hx-break: 900px; /* horizontal↔vertical breakpoint — keep in sync with JS! */
-  --r-sm: 6px; /* radii: inputs/tags */
-  --r-md: 10px; /* radii: cards/plates */
-  --r-lg: 16px;
+  --r-sm: 6px; /* radii: inputs/tags/inline code */
+  --r-md: 6px; /* radii: cards/plates — crisp, slightly round */
+  --r-lg: 10px; /* radii: large surfaces */
 
   /* motion — shared easings + durations used by all transitions */
   --ease: cubic-bezier(0.33, 1, 0.5, 1);

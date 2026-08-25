@@ -108,6 +108,32 @@ they resolve from nested `/blog/<slug>/` pages.
 Dependencies added for this: `marked` (Markdown→HTML) and `js-yaml`
 (frontmatter parsing). Nothing else changed about the pipeline.
 
+### Funkystuff game library (`funkystuff/`)
+
+The project-root `funkystuff/` folder holds standalone `.html` files
+(games, demos, toys). `src/data/funkystuff.json` is the listing
+manifest — one entry per item you want on `/funkystuff/`, a vertical
+library page with doc-style department filters and a divided list.
+Each entry assigns the display fields yourself:
+
+```json
+{ "file": "line-runner.html", "title": "Line Runner",
+  "dept": "Games", "by": "Tahmid Ahmed Shofol" }
+```
+
+- `file` (required) must exist in the folder; the build throws if not
+- `title` and `dept` are required (`dept` drives the filter chips)
+- optional `by` renders the author byline
+- JSON order = list order
+
+Every `.html` in the folder is copied verbatim to
+`public/funkystuff/<file>` regardless of listing, so rows can open
+games in a new tab. Unlisted files are copied but not shown (the build
+warns); filenames must be URL-safe. Games are standalone pages outside
+the template engine — edit them directly; site-owned assets they may
+use are the vendored `/js/vendor/three.min.js` and
+`/js/vendor/anime.min.js`.
+
 ### Data file reference (`src/data/`)
 
 | File | Controls | Consumed by |
@@ -122,6 +148,7 @@ Dependencies added for this: `marked` (Markdown→HTML) and `js-yaml`
 | `achievements.json` | Milestone timeline. Each entry: `year`, `summary`, `items[{title,detail}]`. Rendered twice on achievements.html (vertical timeline + expandable record) and summarized on the home spark section. | achievements.html, home |
 | `resources.json` | Curated knowledge base. Per item: `title`, `category` (must match a CATEGORIES entry in build.js for filtering), `kind` (book/doc/tool…), `level`, `tag`, `featured` (home picks, first 4), `description`, `link`. | resources.html, home |
 | `gallery.json` | Gallery plates. Per item: `seed` (deterministic SVG art key), `caption`, `category` (filter chips), `aspect`, `featured` (reel strip). | gallery.html |
+| `funkystuff.json` | Toy/game library manifest (see "Funkystuff game library" above). Per entry: `file` (must exist in `<root>/funkystuff/`), `title`, `dept` (filter chips), optional `by`; JSON order = list order. | funkystuff.html |
 
 To swap the logo: put a file in `static/img/` and set `site.logo.path`.
 

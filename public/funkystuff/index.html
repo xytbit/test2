@@ -1,32 +1,32 @@
 <!DOCTYPE html>
 <!-- ==================================================================
-     EVENT SINGLE (template)  —  src/pages/event.html
-     →  public/events/<slug>/index.html  (one per event)
+     FUNKYSTUFF PAGE (library)  —  src/pages/funkystuff.html
+                              →  public/funkystuff/index.html
      ==================================================================
      WHAT THIS FILE CONTROLS:
-       The detail page rendered once per item of events.json by
-       makeItem() in scripts/build.js. Template scope mirrors
-       project.html: item, prev, next, page.
+       The club's toy library: standalone web things (games, demos,
+       toys), presented as a doc-site-style filterable divided list.
+
+     VERTICAL PAGE:
+       <body> has NO hx-body class and <main> has NO data-horizontal —
+       same pattern as article/event singles. horizontal.js falls back
+       to initVertical(); body:not(.hx-body) rules in 04-layout.css
+       stack sections normally.
+
+     DATA:
+       src/data/funkystuff.json is the manifest — one entry per game
+       with the fields YOU assign: file (must exist in <root>/funky-
+       stuff/), title, dept (drives the chips below) and optional by.
+       scripts/build.js validates entries, numbers rows (n) and copies
+       every folder .html verbatim to public/funkystuff/<file>. Rows
+       link out with target="_blank"; the game runs as-is in a new tab.
 
      SECTION MAP:
-         00 Overview        status badge (upcoming/ongoing/past via the
-                            build-time booleans), title, subtitle, and a
-                            date/location/duration/level meta row
-                            (fmtDateLong helper for the date)
-         01 About           event brief plate — the .md body rendered as
-                            markdown (content/events/<slug>.md), falling
-                            back to the short `description` frontmatter
-         02 Program         .do-list rows from item.program
-        03 Speaker         speaker name/role datum
-        04 Resources       related-track tags + optional register note
-        05 More            prev / all-events / next pager
+        00 Library   fs-toolbar (dept chips, data-filter-group) +
+                     .do-list.fs-list of .fs-row links
 
-     THE VERTICAL EXCEPTION (mirrors article.html):
-        <body> has NO hx-body class and <main> has NO data-horizontal —
-        this single page reads top-to-bottom instead of riding the
-        horizontal slide deck. body:not(.hx-body) rules in 04-layout.css
-        stack the .secs and horizontal.js falls back to initVertical()
-        (document-scroll progress bar).
+     Styling mirrors the home "What we do" department rows (.do-list/
+     .do-row base in 08-pages.css); .fs-* additions live next to them.
      ================================================================== -->
 <html lang="en">
 <!-- ==================================================================
@@ -50,12 +50,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Build Week — First Hackathon</title>
-  <meta name="description" content="48 hours, one real problem, real tools. The goal is shipped, not slides.">
+  <title>Funkystuff — Dhaka College IT Club</title>
+  <meta name="description" content="A library of small interactive toys and games from DCITC. Filter by department; every entry opens in a new tab.">
   <meta name="generator" content="DCITC site builder">
   <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
-  <meta property="og:title" content="Build Week — First Hackathon">
-  <meta property="og:description" content="48 hours, one real problem, real tools. The goal is shipped, not slides.">
+  <meta property="og:title" content="Funkystuff — Dhaka College IT Club">
+  <meta property="og:description" content="A library of small interactive toys and games from DCITC. Filter by department; every entry opens in a new tab.">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Dhaka College IT Club">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -76,7 +76,7 @@
   </script>
 </head>
 
-<body data-page="event">
+<body data-page="funkystuff">
 <!-- ==================================================================
      DCITC HEADER PARTIAL  —  src/partials/header.html
      ==================================================================
@@ -135,7 +135,7 @@
           
             
             <li>
-              <a href="/events/" class="nav-link is-active" aria-current="page">
+              <a href="/events/" class="nav-link " >
                 <span class="nav-code">02</span>Events
               </a>
             </li>
@@ -295,7 +295,7 @@
             
               
                 
-                <li><a href="/funkystuff/" class="" ><span class="nav-code">11</span>Funkystuff</a></li>
+                <li><a href="/funkystuff/" class="is-active" aria-current="page"><span class="nav-code">11</span>Funkystuff</a></li>
                 
               
             
@@ -405,7 +405,7 @@
       </li>
       
       <li>
-        <a href="/events/" class="is-active" aria-current="page">
+        <a href="/events/" class="" >
           <span class="nav-code">02</span>Events
         </a>
       </li>
@@ -453,7 +453,7 @@
       </li>
       
       <li>
-        <a href="/funkystuff/" class="" >
+        <a href="/funkystuff/" class="is-active" aria-current="page">
           <span class="nav-code">11</span>Funkystuff
         </a>
       </li>
@@ -474,135 +474,35 @@
 <div class="progress" aria-hidden="true"><span class="progress-fill"></span></div>
 
 <main id="main">
-  <!-- SECTION 00 — OVERVIEW -->
-  <section class="sec sec--full sec--intro scan" data-section="Overview" data-code="00" data-label="Overview">
-    <div class="single-in">
-      <p class="kicker" data-reveal="fade">
-        EVENT.01 — <span class="status status--upcoming">upcoming</span>
-      </p>
-      <h1 class="single-title mt-2" data-reveal="up">Build Week — First Hackathon</h1>
-      <p class="lead mt-3" data-reveal style="--d:160ms">48 hours, one real problem, real tools. The goal is shipped, not slides.</p>
-      <div class="single-meta mt-4" data-reveal style="--d:240ms">
-        <div class="datum">
-          <span class="datum-k">Date</span>
-          <span class="term">November 20, 2026</span>
-        </div>
-        <div class="datum">
-          <span class="datum-k">Location</span>
-          <span class="term">DCITC Lab & online</span>
-        </div>
-        <div class="datum">
-          <span class="datum-k">Duration</span>
-          <span class="term">48 hours</span>
-        </div>
-        <div class="datum">
-          <span class="datum-k">Level</span>
-          <span class="term">All levels</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECTION 01 — ABOUT -->
-  <section class="sec sec--fit" data-section="About" data-code="01" data-label="About">
+  <!-- SECTION 00 — LIBRARY -->
+  <section class="sec sec--wide" data-section="Library" data-code="00" data-label="Library">
     <div class="sec-in">
-      <div class="sec-head" data-reveal>
-        <p class="kicker">01 — About</p>
-        <h2 class="h-section">What this is.</h2>
-      </div>
-      <div class="plate" data-reveal>
-        <span class="plate-label">Event brief</span>
-        
-        <!-- fallback: frontmatter description only -->
-        <p class="prose" style="font-size:var(--fs-3);color:var(--ink);line-height:var(--lh-snug)">Our first 48-hour build event. Teams pick a problem from a provided list (or their own), use the club's stack guides, and must deliver something runnable by Sunday noon. Mentors from all study groups float between teams. Judging is 40% working software, 40% engineering judgment, 20% documentation.</p>
-        
-      </div>
-    </div>
-  </section>
+      <p class="kicker" data-reveal="fade">Funkystuff — interactive library</p>
 
-  <!-- SECTION 02 — PROGRAM -->
-  <section class="sec sec--fit" data-section="Program" data-code="02" data-label="Program">
-    <div class="sec-in">
-      <div class="sec-head" data-reveal>
-        <p class="kicker">02 — Program</p>
-        <h2 class="h-section">The plan.</h2>
+      
+      <div class="fs-toolbar" data-reveal>
+        <div class="gal-filters" data-filter-group=".fs-list" aria-label="Filter library by department">
+          <button type="button" class="tag is-on" data-filter="*">All</button>
+          
+          <button type="button" class="tag" data-filter="Games">Games</button>
+          
+        </div>
       </div>
-      <div class="do-list" data-stagger>
-        
-        <div class="do-row">
-          <span class="do-code mono">Fri 09:00</span>
-          <span class="do-title">Problem drop + team formation</span>
-          <span class="do-desc">—</span>
-        </div>
-        
-        <div class="do-row">
-          <span class="do-code mono">Fri 18:00</span>
-          <span class="do-title">Mid-point check-in</span>
-          <span class="do-desc">—</span>
-        </div>
-        
-        <div class="do-row">
-          <span class="do-code mono">Sat 21:00</span>
-          <span class="do-title">Feature freeze</span>
-          <span class="do-desc">—</span>
-        </div>
-        
-        <div class="do-row">
-          <span class="do-code mono">Sun 12:00</span>
-          <span class="do-title">Demos + judging</span>
-          <span class="do-desc">—</span>
-        </div>
-        
-      </div>
-    </div>
-  </section>
 
-  <!-- SECTION 03 — SPEAKER -->
-  <section class="sec sec--fit" data-section="Speaker" data-code="03" data-label="Speaker">
-    <div class="sec-in">
-      <div class="sec-head" data-reveal>
-        <p class="kicker">03 — Speaker</p>
-        <h2 class="h-section">Who is running it.</h2>
-      </div>
-      <div class="datum" data-reveal>
-        <span class="datum-v" style="font-size:var(--fs-4)">Mentor pool</span>
-        <span class="datum-k">All study group leads</span>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECTION 04 — RESOURCES & REGISTER -->
-  <section class="sec sec--fit" data-section="Resources" data-code="04" data-label="Resources">
-    <div class="sec-in">
-      <div class="sec-head" data-reveal>
-        <p class="kicker">04 — Resources & participation</p>
-        <h2 class="h-section">Related tracks and how to turn up.</h2>
-      </div>
-      <div class="row" data-reveal>
+      <div class="do-list fs-list mt-4" data-stagger>
         
-        <span class="tag tag--accent">Programming</span>
-        
-        <span class="tag tag--accent">Web</span>
-        
-        <span class="tag tag--accent">Dev Tools</span>
+        <a class="do-row fs-row" href="/funkystuff/line-runner.html" target="_blank" rel="noopener" data-filter="Games" aria-label="Line Runner — opens in a new tab">
+          <span class="do-code mono">01</span>
+          <span class="do-title">Line Runner</span>
+          <span class="fs-meta">
+            <span class="mono fs-dept">Games</span>
+            <span class="fs-by">by Tahmid Ahmed Shofol</span>
+          </span>
+          <span class="fs-go mono" aria-hidden="true">↗</span>
+        </a>
         
       </div>
       
-      <div class="article-note mt-4" data-reveal>
-        <span class="mono term accent">REGISTER — </span>Team signup opens 2026-11-01.
-      </div>
-      
-    </div>
-  </section>
-
-  <!-- SECTION 05 — PAGER -->
-  <section class="sec sec--fit" data-section="More" data-code="05" data-label="More">
-    <div class="sec-in">
-      <div class="pager">
-        <a href="/events/orientation-2026/"><span aria-hidden="true">←</span> Orientation — Semester Opening</a>
-        <a href="/events/" class="mono">ALL EVENTS</a>
-        <a href="/events/git-and-open-source/">Intro to Git & Open Source <span aria-hidden="true">→</span></a>
-      </div>
     </div>
   </section>
 
@@ -635,7 +535,7 @@
 <footer class="sec-footer" data-section="colophon">
   <div class="foot-top">
     <div class="foot-id">
-      <p class="foot-kicker mono">DCITC // EVENT.01</p>
+      <p class="foot-kicker mono">DCITC // FUNKY</p>
       <p class="foot-statement">DCITC is not chasing technology. DCITC studies it.</p>
     </div>
     <div class="foot-cols">

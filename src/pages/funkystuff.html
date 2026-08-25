@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<!-- ==================================================================
+     FUNKYSTUFF PAGE (library)  —  src/pages/funkystuff.html
+                              →  public/funkystuff/index.html
+     ==================================================================
+     WHAT THIS FILE CONTROLS:
+       The club's toy library: standalone web things (games, demos,
+       toys), presented as a doc-site-style filterable divided list.
+
+     VERTICAL PAGE:
+       <body> has NO hx-body class and <main> has NO data-horizontal —
+       same pattern as article/event singles. horizontal.js falls back
+       to initVertical(); body:not(.hx-body) rules in 04-layout.css
+       stack sections normally.
+
+     DATA:
+       src/data/funkystuff.json is the manifest — one entry per game
+       with the fields YOU assign: file (must exist in <root>/funky-
+       stuff/), title, dept (drives the chips below) and optional by.
+       scripts/build.js validates entries, numbers rows (n) and copies
+       every folder .html verbatim to public/funkystuff/<file>. Rows
+       link out with target="_blank"; the game runs as-is in a new tab.
+
+     SECTION MAP:
+        00 Library   fs-toolbar (dept chips, data-filter-group) +
+                     .do-list.fs-list of .fs-row links
+
+     Styling mirrors the home "What we do" department rows (.do-list/
+     .do-row base in 08-pages.css); .fs-* additions live next to them.
+     ================================================================== -->
+<html lang="{{ .site.meta.language }}">
+{{ include "partials/head.html" }}
+<body data-page="funkystuff">
+{{ include "partials/header.html" }}
+<div class="progress" aria-hidden="true"><span class="progress-fill"></span></div>
+
+<main id="main">
+  <!-- SECTION 00 — LIBRARY -->
+  <section class="sec sec--wide" data-section="Library" data-code="00" data-label="Library">
+    <div class="sec-in">
+      <p class="kicker" data-reveal="fade">Funkystuff — interactive library</p>
+
+      {{ if .funky }}
+      <div class="fs-toolbar" data-reveal>
+        <div class="gal-filters" data-filter-group=".fs-list" aria-label="Filter library by department">
+          <button type="button" class="tag is-on" data-filter="*">All</button>
+          {{ each .funkyDepts }}
+          <button type="button" class="tag" data-filter="{{ . }}">{{ . }}</button>
+          {{ end }}
+        </div>
+      </div>
+
+      <div class="do-list fs-list mt-4" data-stagger>
+        {{ each .funky }}
+        <a class="do-row fs-row" href="{{ .url }}" target="_blank" rel="noopener" data-filter="{{ .dept }}" aria-label="{{ .title }} — opens in a new tab">
+          <span class="do-code mono">{{ .n }}</span>
+          <span class="do-title">{{ .title }}</span>
+          <span class="fs-meta">
+            <span class="mono fs-dept">{{ .dept }}</span>
+            {{ if .by }}<span class="fs-by">by {{ .by }}</span>{{ end }}
+          </span>
+          <span class="fs-go mono" aria-hidden="true">↗</span>
+        </a>
+        {{ end }}
+      </div>
+      {{ else }}
+      <p class="lead mt-4" data-reveal>The shelf is empty — drop an .html file into funkystuff/ and list it in src/data/funkystuff.json.</p>
+      {{ end }}
+    </div>
+  </section>
+
+  {{ include "partials/footer.html" }}
+</main>
+
+<div class="bg-grid" aria-hidden="true"></div>
+<div class="bg-glow" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+{{ include "partials/scripts.html" }}
+</body>
+</html>
