@@ -3,18 +3,14 @@
      GALLERY PAGE  —  src/pages/gallery.html  →  public/gallery/index.html
      ==================================================================
      WHAT THIS FILE CONTROLS:
-       The photo gallery (images are generated SVG plates keyed by
-       each item's seed — see genPlate in scripts/build.js):
+       The photo gallery. Images are loaded dynamically from
+       gallery/gallery.json by gallery.js (in static/js/gallery.js),
+       which fetches the JSON and renders items into .gallery-track.
 
-       00 Overview        intro + frame count
-       01 Reel            .strip horizontal snap carousel of gallery
-                          items where featured is true
-       02 Grid            filter chips (data-filter-group=".masonry",
-                          one per category) + .masonry of ALL items;
-                          both the buttons and figures carry
-                          data-filter so pages.js initFilters works
+       00 Overview        intro headline
+       01 Gallery         horizontal scroll track with scattered images
 
-     Data source: src/data/gallery.json.
+     Data source: gallery/gallery.json (fetched client-side).
      ================================================================== -->
 <html lang="en">
 <!-- ==================================================================
@@ -471,275 +467,10 @@
     </div>
   </section>
 
-  <!-- SECTION 01 — CINEMATIC STRIP -->
-  <section class="sec sec--wide" data-section="Reel" data-code="01" data-label="Reel">
-    <div class="sec-in">
-      <div class="sec-head" data-reveal>
-        <p class="kicker">01 — Reel</p>
-        <h2 class="h-section">A horizontal pass through the club.</h2>
-      </div>
-      <div class="strip" data-reveal>
-        
-          
-          <figure class="strip-fig">
-            <img src="/img/gen/workshop-01.svg" alt="Linux workshop, session one — nobody is lost, everybody has a terminal." loading="lazy">
-            <figcaption class="strip-cap">
-              <span class="mono">GAL.01 / Workshop</span><br>
-              Linux workshop, session one — nobody is lost, everybody has a terminal.
-            </figcaption>
-          </figure>
-          
-        
-          
-        
-          
-          <figure class="strip-fig">
-            <img src="/img/gen/workshop-03.svg" alt="Git & Open Source — first pull request queue on the projector." loading="lazy">
-            <figcaption class="strip-cap">
-              <span class="mono">GAL.03 / Workshop</span><br>
-              Git & Open Source — first pull request queue on the projector.
-            </figcaption>
-          </figure>
-          
-        
-          
-          <figure class="strip-fig">
-            <img src="/img/gen/hackathon-01.svg" alt="Build Week hour 30. The lab is quiet; the commits are not." loading="lazy">
-            <figcaption class="strip-cap">
-              <span class="mono">GAL.04 / Hackathon</span><br>
-              Build Week hour 30. The lab is quiet; the commits are not.
-            </figcaption>
-          </figure>
-          
-        
-          
-        
-          
-        
-          
-        
-          
-          <figure class="strip-fig">
-            <img src="/img/gen/study-03.svg" alt="AI reading group walks through a backpropagation example by hand." loading="lazy">
-            <figcaption class="strip-cap">
-              <span class="mono">GAL.08 / Study Group</span><br>
-              AI reading group walks through a backpropagation example by hand.
-            </figcaption>
-          </figure>
-          
-        
-          
-          <figure class="strip-fig">
-            <img src="/img/gen/lab-01.svg" alt="VoltLab on the physics bench — the ADC's first honest curve." loading="lazy">
-            <figcaption class="strip-cap">
-              <span class="mono">GAL.09 / Lab</span><br>
-              VoltLab on the physics bench — the ADC's first honest curve.
-            </figcaption>
-          </figure>
-          
-        
-          
-        
-          
-        
-          
-        
-          
-          <figure class="strip-fig">
-            <img src="/img/gen/outreach-02.svg" alt="First Code Night: no talks, no schedule, just commits." loading="lazy">
-            <figcaption class="strip-cap">
-              <span class="mono">GAL.13 / Outreach</span><br>
-              First Code Night: no talks, no schedule, just commits.
-            </figcaption>
-          </figure>
-          
-        
-          
-        
-          
-        
-          
-        
-      </div>
-    </div>
-  </section>
-
-  <!-- SECTION 02 — GRID -->
-  <section class="sec sec--wide" data-section="Grid" data-code="02" data-label="Grid">
-    <div class="sec-in">
-      <div class="sec-head sec-head-grid" data-reveal>
-        <div>
-          <p class="kicker">02 — Grid</p>
-          <h2 class="h-section">Everything, filterable.</h2>
-        </div>
-      </div>
-      <div class="gal-filters" data-filter-group=".masonry" data-reveal>
-        <button type="button" class="tag is-on" data-filter="*">All</button>
-        
-          <button type="button" class="tag" data-filter="Workshop">Workshop</button>
-        
-          <button type="button" class="tag" data-filter="Workshop">Workshop</button>
-        
-          <button type="button" class="tag" data-filter="Workshop">Workshop</button>
-        
-          <button type="button" class="tag" data-filter="Hackathon">Hackathon</button>
-        
-          <button type="button" class="tag" data-filter="Hackathon">Hackathon</button>
-        
-          <button type="button" class="tag" data-filter="Study Group">Study Group</button>
-        
-          <button type="button" class="tag" data-filter="Study Group">Study Group</button>
-        
-          <button type="button" class="tag" data-filter="Study Group">Study Group</button>
-        
-          <button type="button" class="tag" data-filter="Lab">Lab</button>
-        
-          <button type="button" class="tag" data-filter="Lab">Lab</button>
-        
-          <button type="button" class="tag" data-filter="Lab">Lab</button>
-        
-          <button type="button" class="tag" data-filter="Outreach">Outreach</button>
-        
-          <button type="button" class="tag" data-filter="Outreach">Outreach</button>
-        
-          <button type="button" class="tag" data-filter="Infrastructure">Infrastructure</button>
-        
-          <button type="button" class="tag" data-filter="Infrastructure">Infrastructure</button>
-        
-          <button type="button" class="tag" data-filter="Workshop">Workshop</button>
-        
-      </div>
-      <div class="masonry mt-4" data-stagger>
-        
-        <figure class="masonry-item" data-filter="Workshop">
-          <img src="/img/gen/workshop-01.svg" alt="Linux workshop, session one — nobody is lost, everybody has a terminal." loading="lazy">
-          <figcaption class="masonry-cap">
-            <span class="mono">GAL.01 / Workshop</span><br>
-            Linux workshop, session one — nobody is lost, everybody has a terminal.
-          </figcaption>
-        </figure>
-        
-        <figure class="masonry-item" data-filter="Workshop">
-          <img src="/img/gen/workshop-02.svg" alt="The fix-the-broken-box challenge from the Linux fundamentals session." loading="lazy">
-          <figcaption class="masonry-cap">
-            <span class="mono">GAL.02 / Workshop</span><br>
-            The fix-the-broken-box challenge from the Linux fundamentals session.
-          </figcaption>
-        </figure>
-        
-        <figure class="masonry-item" data-filter="Workshop">
-          <img src="/img/gen/workshop-03.svg" alt="Git & Open Source — first pull request queue on the projector." loading="lazy">
-          <figcaption class="masonry-cap">
-            <span class="mono">GAL.03 / Workshop</span><br>
-            Git & Open Source — first pull request queue on the projector.
-          </figcaption>
-        </figure>
-        
-        <figure class="masonry-item" data-filter="Hackathon">
-          <img src="/img/gen/hackathon-01.svg" alt="Build Week hour 30. The lab is quiet; the commits are not." loading="lazy">
-          <figcaption class="masonry-cap">
-            <span class="mono">GAL.04 / Hackathon</span><br>
-            Build Week hour 30. The lab is quiet; the commits are not.
-          </figcaption>
-        </figure>
-        
-        <figure class="masonry-item" data-filter="Hackathon">
-          <img src="/img/gen/hackathon-02.svg" alt="Judging: 40% working software, 40% engineering judgment, 20% docs." loading="lazy">
-          <figcaption class="masonry-cap">
-            <span class="mono">GAL.05 / Hackathon</span><br>
-            Judging: 40% working software, 40% engineering judgment, 20% docs.
-          </figcaption>
-        </figure>
-        
-        <figure class="masonry-item" data-filter="Study Group">
-          <img src="/img/gen/study-01.svg" alt="Systems study group — tracing a packet on the whiteboard before the wireshark." loading="lazy">
-          <figcaption class="masonry-cap">
-            <span class="mono">GAL.06 / Study Group</span><br>
-            Systems study group — tracing a packet on the whiteboard before the wireshark.
-          </figcaption>
-        </figure>
-        
-        <figure class="masonry-item" data-filter="Study Group">
-          <img src="/img/gen/study-02.svg" alt="Algorithms reading group, Tuesday session on AlgoPlay." loading="lazy">
-          <figcaption class="masonry-cap">
-            <span class="mono">GAL.07 / Study Group</span><br>
-            Algorithms reading group, Tuesday session on AlgoPlay.
-          </figcaption>
-        </figure>
-        
-        <figure class="masonry-item" data-filter="Study Group">
-          <img src="/img/gen/study-03.svg" alt="AI reading group walks through a backpropagation example by hand." loading="lazy">
-          <figcaption class="masonry-cap">
-            <span class="mono">GAL.08 / Study Group</span><br>
-            AI reading group walks through a backpropagation example by hand.
-          </figcaption>
-        </figure>
-        
-        <figure class="masonry-item" data-filter="Lab">
-          <img src="/img/gen/lab-01.svg" alt="VoltLab on the physics bench — the ADC's first honest curve." loading="lazy">
-          <figcaption class="masonry-cap">
-            <span class="mono">GAL.09 / Lab</span><br>
-            VoltLab on the physics bench — the ADC's first honest curve.
-          </figcaption>
-        </figure>
-        
-        <figure class="masonry-item" data-filter="Lab">
-          <img src="/img/gen/lab-02.svg" alt="CampusMesh node in the lecture hall rack." loading="lazy">
-          <figcaption class="masonry-cap">
-            <span class="mono">GAL.10 / Lab</span><br>
-            CampusMesh node in the lecture hall rack.
-          </figcaption>
-        </figure>
-        
-        <figure class="masonry-item" data-filter="Lab">
-          <img src="/img/gen/lab-03.svg" alt="The electronics group's component wall, one drawer per obsession." loading="lazy">
-          <figcaption class="masonry-cap">
-            <span class="mono">GAL.11 / Lab</span><br>
-            The electronics group's component wall, one drawer per obsession.
-          </figcaption>
-        </figure>
-        
-        <figure class="masonry-item" data-filter="Outreach">
-          <img src="/img/gen/outreach-01.svg" alt="Orientation 2026 — project demos before the speeches." loading="lazy">
-          <figcaption class="masonry-cap">
-            <span class="mono">GAL.12 / Outreach</span><br>
-            Orientation 2026 — project demos before the speeches.
-          </figcaption>
-        </figure>
-        
-        <figure class="masonry-item" data-filter="Outreach">
-          <img src="/img/gen/outreach-02.svg" alt="First Code Night: no talks, no schedule, just commits." loading="lazy">
-          <figcaption class="masonry-cap">
-            <span class="mono">GAL.13 / Outreach</span><br>
-            First Code Night: no talks, no schedule, just commits.
-          </figcaption>
-        </figure>
-        
-        <figure class="masonry-item" data-filter="Infrastructure">
-          <img src="/img/gen/infra-01.svg" alt="The club's self-hosted stack — from patch cables to the journal." loading="lazy">
-          <figcaption class="masonry-cap">
-            <span class="mono">GAL.14 / Infrastructure</span><br>
-            The club's self-hosted stack — from patch cables to the journal.
-          </figcaption>
-        </figure>
-        
-        <figure class="masonry-item" data-filter="Infrastructure">
-          <img src="/img/gen/infra-02.svg" alt="Three Raspberry Pi nodes, a switch, and an honest label maker." loading="lazy">
-          <figcaption class="masonry-cap">
-            <span class="mono">GAL.15 / Infrastructure</span><br>
-            Three Raspberry Pi nodes, a switch, and an honest label maker.
-          </figcaption>
-        </figure>
-        
-        <figure class="masonry-item" data-filter="Workshop">
-          <img src="/img/gen/ctf-01.svg" alt="Beginner Track CTF — the bash puzzle that stumped everyone for an hour." loading="lazy">
-          <figcaption class="masonry-cap">
-            <span class="mono">GAL.16 / Workshop</span><br>
-            Beginner Track CTF — the bash puzzle that stumped everyone for an hour.
-          </figcaption>
-        </figure>
-        
-      </div>
+  <!-- SECTION 01 — GALLERY -->
+  <section class="sec sec--wide gal-sec" data-section="Gallery" data-code="01" data-label="Gallery">
+    <div class="gal-scroll">
+      <div class="gallery-track" data-stagger></div>
     </div>
   </section>
 
@@ -800,7 +531,7 @@
           <li><a href="/events/">Upcoming</a></li>
           <li><a href="/events/">Archive</a></li>
           <li><a href="/gallery/">Gallery</a></li>
-          <li><a href="/events/">Study Groups</a></li>
+           <li><a href="/events/">Departments</a></li>
         </ul>
       </div>
       <div class="foot-col">

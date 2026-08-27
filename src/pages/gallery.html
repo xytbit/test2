@@ -3,18 +3,14 @@
      GALLERY PAGE  —  src/pages/gallery.html  →  public/gallery/index.html
      ==================================================================
      WHAT THIS FILE CONTROLS:
-       The photo gallery (images are generated SVG plates keyed by
-       each item's seed — see genPlate in scripts/build.js):
+       The photo gallery. Images are loaded dynamically from
+       gallery/gallery.json by gallery.js (in static/js/gallery.js),
+       which fetches the JSON and renders items into .gallery-track.
 
-       00 Overview        intro + frame count
-       01 Reel            .strip horizontal snap carousel of gallery
-                          items where featured is true
-       02 Grid            filter chips (data-filter-group=".masonry",
-                          one per category) + .masonry of ALL items;
-                          both the buttons and figures carry
-                          data-filter so pages.js initFilters works
+       00 Overview        intro headline
+       01 Gallery         horizontal scroll track with scattered images
 
-     Data source: src/data/gallery.json.
+     Data source: gallery/gallery.json (fetched client-side).
      ================================================================== -->
 <html lang="{{ .site.meta.language }}">
 {{ include "partials/head.html" }}
@@ -32,55 +28,10 @@
     </div>
   </section>
 
-  <!-- SECTION 01 — CINEMATIC STRIP -->
-  <section class="sec sec--wide" data-section="Reel" data-code="01" data-label="Reel">
-    <div class="sec-in">
-      <div class="sec-head" data-reveal>
-        <p class="kicker">01 — Reel</p>
-        <h2 class="h-section">A horizontal pass through the club.</h2>
-      </div>
-      <div class="strip" data-reveal>
-        {{ each .gallery }}
-          {{ if .featured }}
-          <figure class="strip-fig">
-            <img src="{{ .src }}" alt="{{ .caption }}" loading="lazy">
-            <figcaption class="strip-cap">
-              <span class="mono">{{ .code }} / {{ .category }}</span><br>
-              {{ .caption }}
-            </figcaption>
-          </figure>
-          {{ end }}
-        {{ end }}
-      </div>
-    </div>
-  </section>
-
-  <!-- SECTION 02 — GRID -->
-  <section class="sec sec--wide" data-section="Grid" data-code="02" data-label="Grid">
-    <div class="sec-in">
-      <div class="sec-head sec-head-grid" data-reveal>
-        <div>
-          <p class="kicker">02 — Grid</p>
-          <h2 class="h-section">Everything, filterable.</h2>
-        </div>
-      </div>
-      <div class="gal-filters" data-filter-group=".masonry" data-reveal>
-        <button type="button" class="tag is-on" data-filter="*">All</button>
-        {{ each .gallery }}
-          <button type="button" class="tag" data-filter="{{ .category }}">{{ .category }}</button>
-        {{ end }}
-      </div>
-      <div class="masonry mt-4" data-stagger>
-        {{ each .gallery }}
-        <figure class="masonry-item" data-filter="{{ .category }}">
-          <img src="{{ .src }}" alt="{{ .caption }}" loading="lazy">
-          <figcaption class="masonry-cap">
-            <span class="mono">{{ .code }} / {{ .category }}</span><br>
-            {{ .caption }}
-          </figcaption>
-        </figure>
-        {{ end }}
-      </div>
+  <!-- SECTION 01 — GALLERY -->
+  <section class="sec sec--wide gal-sec" data-section="Gallery" data-code="01" data-label="Gallery">
+    <div class="gal-scroll">
+      <div class="gallery-track" data-stagger></div>
     </div>
   </section>
 

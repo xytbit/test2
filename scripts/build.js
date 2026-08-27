@@ -1080,6 +1080,7 @@ const JS_FILES = [
   'transitions.js',
   'pages.js',
   'fluid-triangle.js',
+  'gallery.js',
   'main.js',
 ];
 
@@ -1189,6 +1190,15 @@ function main() {
   fs.mkdirSync(path.join(OUT, 'funkystuff'), { recursive: true });
   for (const it of funky) {
     write(path.join(OUT, 'funkystuff', it.file), read(path.join(FUNKY_DIR, it.file)));
+  }
+
+  // 2c. gallery assets ------------------------------------------------
+  // gallery/ holds gallery.json (image manifest) and image files.
+  // gallery.js fetches gallery.json client-side and renders dynamically.
+  console.log('gallery');
+  const GALLERY_DIR = path.join(ROOT, 'gallery');
+  if (fs.existsSync(GALLERY_DIR)) {
+    fs.cpSync(GALLERY_DIR, path.join(OUT, 'gallery'), { recursive: true });
   }
 
   // 3. top-level pages from src/data/pages.json ---------------------

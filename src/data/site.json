@@ -4,7 +4,7 @@
   "wordmark": "DHAKA COLLEGE / IT CLUB",
   "tagline": "Curate. Build. Understand.",
   "statement": "DCITC is not chasing technology. DCITC studies it.",
-  "established": "2019",
+  "established": "2025",
   "email": "itclub@dhakacollege.edu.bd",
   "location": "Dhaka College, Mirpur Road, Dhaka 1205, Bangladesh",
   "locationShort": "Dhaka College Campus",
@@ -21,10 +21,10 @@
     "domain": "dcitc.example.edu.bd"
   },
   "facts": [
-    { "k": "EST.", "v": "2019" },
+    { "k": "EST.", "v": "2025" },
     { "k": "MEMBERS", "v": "120+" },
-    { "k": "PROJECTS", "v": "17" },
-    { "k": "WORKSHOPS", "v": "34" },
-    { "k": "STUDY GROUPS", "v": "6" }
+    { "k": "PROJECTS", "v": "4+" },
+    { "k": "WORKSHOPS", "v": "5+" },
+    { "k": "DEPARTMENTS", "v": "5" }
   ]
 }
