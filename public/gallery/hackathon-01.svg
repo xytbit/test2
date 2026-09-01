@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="800" viewBox="0 0 800 800">
+<defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+<stop offset="0" stop-color="#553c9a"/><stop offset="1" stop-color="#f687b3"/>
+</linearGradient></defs>
+<rect width="800" height="800" fill="url(#g)"/>
+<circle cx="124" cy="155" r="186" fill="rgba(255,255,255,0.18)"/>
+<rect x="552" y="62" width="93" height="93" fill="rgba(0,0,0,0.15)" transform="rotate(22 552 62)"/>
+<polygon points="62,614 248,738 434,552" fill="rgba(0,0,0,0.18)"/>
+<text x="93" y="707" font-family="monospace" font-size="68.2" fill="rgba(255,255,255,0.85)">DCITC · hackathon-01</text>
+</svg>

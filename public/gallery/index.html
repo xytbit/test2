@@ -3,14 +3,18 @@
      GALLERY PAGE  —  src/pages/gallery.html  →  public/gallery/index.html
      ==================================================================
      WHAT THIS FILE CONTROLS:
-       The photo gallery. Images are loaded dynamically from
-       gallery/gallery.json by gallery.js (in static/js/gallery.js),
-       which fetches the JSON and renders items into .gallery-track.
+       The photo gallery. Items are PRE-RENDERED at build time from the
+       content/gallery/ folder — drop any image file in there and it
+       becomes a gallery item (no JSON to touch; build auto-assigns the
+       tile size + parallax speed). gallery.js only wires the motion:
+       tile reveal cascade, per-item parallax on the page's horizontal
+       filmstrip, and click-to-zoom.
 
        00 Overview        intro headline
-       01 Gallery         horizontal scroll track with scattered images
+       01 Gallery         wide horizontal strip of scattered images
+                          (rides the page's own horizontal scroller)
 
-     Data source: gallery/gallery.json (fetched client-side).
+     Data source: content/gallery/ (folder scan at build time).
      ================================================================== -->
 <html lang="en">
 <!-- ==================================================================
@@ -396,9 +400,73 @@
   </section>
 
   <!-- SECTION 01 — GALLERY -->
-  <section class="sec sec--wide gal-sec" data-section="Gallery" data-code="01" data-label="Gallery">
-    <div class="gal-scroll">
-      <div class="gallery-track" data-stagger></div>
+  <section class="sec sec--flush gal-sec" data-section="Gallery" data-code="01" data-label="Gallery">
+    <div class="gallery-track" data-gallery>
+      
+      <div class="gal-item -big" data-speed="1">
+        <img src="/gallery/ctf-01.svg" alt="Ctf 01" draggable="false" loading="lazy">
+      </div>
+      
+      <div class="gal-item -normal -horizontal" data-speed="2">
+        <img src="/gallery/hackathon-01.svg" alt="Hackathon 01" draggable="false" loading="lazy">
+      </div>
+      
+      <div class="gal-item -normal" data-speed="3">
+        <img src="/gallery/hackathon-02.svg" alt="Hackathon 02" draggable="false" loading="lazy">
+      </div>
+      
+      <div class="gal-item -small -horizontal" data-speed="4">
+        <img src="/gallery/infra-01.svg" alt="Infra 01" draggable="false" loading="lazy">
+      </div>
+      
+      <div class="gal-item -small" data-speed="1">
+        <img src="/gallery/infra-02.svg" alt="Infra 02" draggable="false" loading="lazy">
+      </div>
+      
+      <div class="gal-item -big -horizontal" data-speed="2">
+        <img src="/gallery/lab-01.svg" alt="Lab 01" draggable="false" loading="lazy">
+      </div>
+      
+      <div class="gal-item -normal" data-speed="3">
+        <img src="/gallery/lab-02.svg" alt="Lab 02" draggable="false" loading="lazy">
+      </div>
+      
+      <div class="gal-item -big" data-speed="4">
+        <img src="/gallery/lab-03.svg" alt="Lab 03" draggable="false" loading="lazy">
+      </div>
+      
+      <div class="gal-item -small -horizontal" data-speed="1">
+        <img src="/gallery/outreach-01.svg" alt="Outreach 01" draggable="false" loading="lazy">
+      </div>
+      
+      <div class="gal-item -small" data-speed="2">
+        <img src="/gallery/outreach-02.svg" alt="Outreach 02" draggable="false" loading="lazy">
+      </div>
+      
+      <div class="gal-item -normal -horizontal" data-speed="3">
+        <img src="/gallery/study-01.svg" alt="Study 01" draggable="false" loading="lazy">
+      </div>
+      
+      <div class="gal-item -big -horizontal" data-speed="4">
+        <img src="/gallery/study-02.svg" alt="Study 02" draggable="false" loading="lazy">
+      </div>
+      
+      <div class="gal-item -normal" data-speed="1">
+        <img src="/gallery/study-03.svg" alt="Study 03" draggable="false" loading="lazy">
+      </div>
+      
+      <div class="gal-item -normal -horizontal" data-speed="2">
+        <img src="/gallery/workshop-01.svg" alt="Workshop 01" draggable="false" loading="lazy">
+      </div>
+      
+      <div class="gal-item -small" data-speed="3">
+        <img src="/gallery/workshop-02.svg" alt="Workshop 02" draggable="false" loading="lazy">
+      </div>
+      
+      <div class="gal-item -big" data-speed="4">
+        <img src="/gallery/workshop-03.svg" alt="Workshop 03" draggable="false" loading="lazy">
+      </div>
+      
     </div>
   </section>
 

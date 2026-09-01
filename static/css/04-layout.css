@@ -97,6 +97,18 @@ body:not(.hx-body) main {
   display: block;
 }
 
+/* the vertical reading pages (article + event singles) scroll the
+   document natively; hide the native side scrollbar so only the
+   progress indicator communicates scroll position. It's still
+   scrollable — just no visible thumb/track. The document scroller is
+   the <html> element, so hide it there (not on <body>). */
+html:not(:has(body.hx-body)) {
+  scrollbar-width: none;
+}
+html:not(:has(body.hx-body))::-webkit-scrollbar {
+  display: none;
+}
+
 /* section header block */
 .sec-head {
   margin-bottom: clamp(1.5rem, 4vh, 3rem);

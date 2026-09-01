@@ -108,6 +108,32 @@ they resolve from nested `/blog/<slug>/` pages.
 Dependencies added for this: `marked` (Markdown→HTML) and `js-yaml`
 (frontmatter parsing). Nothing else changed about the pipeline.
 
+### Gallery (`content/gallery/`)
+
+The gallery page is a photo strip driven entirely by folders — **no JSON
+to touch**. Drop any image file (`.jpg`, `.jpeg`, `.png`, `.webp`, `.gif`,
+`.svg`) into `content/gallery/` and rebuild; it becomes a gallery tile
+automatically and is served from `/gallery/<filename>`.
+
+- **Layout is auto-assigned.** The build cycles tiles through a fixed
+  mixed-size pattern (big / normal / small × orientation) and assigns each
+  a parallax `data-speed` of 1–3, so the strip keeps its scattered,
+  layered look no matter how many (or few) images exist.
+- **Captions** default to the filename with `-`/`_` → spaces, title-cased
+  (`my-session.svg` → "My Session"). To override, add an optional
+  `content/gallery/captions.json` mapping `{ "<filename>": "caption" }`
+  (it's not copied to `public/`).
+- **URL-unsafe filenames** (anything but letters/digits/`-`/`_`/`.`) fail
+  the build loudly, since the filename becomes the served path and alt text.
+- **Deleting** an image removes its tile on the next build (the build
+  wipes `public/` wholesale).
+
+Behavior: on desktop (≥900px) the gallery is a wide filmstrip section that
+scrolls with the page's own horizontal scroller; tiles reveal in a cascade,
+drift at their own parallax speed while panning, and click-to-zoom briefly
+scales a tile 5× then re-cascades. No grayscale (user preference). Below
+900px the strip becomes a self-contained touch-scrollable row.
+
 ### Funkystuff game library (`funkystuff/`)
 
 The project-root `funkystuff/` folder holds standalone `.html` files
@@ -147,7 +173,7 @@ use are the vendored `/js/vendor/three.min.js` and
 | `team.json` | Team groups (e.g. Executive Committee, Core). Each group: `name`, `note`, `members[]` with `name`, `role`, `seed` (avatar art key → `/img/gen/av-<seed>.svg`), `note`, `tags[]`. Roles drive the about-page carousel filter (President, VP, General Secretary, Technical Lead). team.html renders one section per group automatically. | team.html, about.html carousel |
 | `achievements.json` | Milestone timeline. Each entry: `year`, `summary`, `items[{title,detail}]`. Rendered twice on achievements.html (vertical timeline + expandable record) and summarized on the home spark section. | achievements.html, home |
 | `resources.json` | Curated knowledge base. Per item: `title`, `category` (must match a CATEGORIES entry in build.js for filtering), `kind` (book/doc/tool…), `level`, `tag`, `featured` (home picks, first 4), `description`, `link`. | resources.html, home |
-| `gallery.json` | Gallery plates. Per item: `seed` (deterministic SVG art key), `caption`, `category` (filter chips), `aspect`, `featured` (reel strip). | gallery.html |
+| `gallery.json` | *(removed)* — the gallery is no longer JSON-driven. See "Gallery (`content/gallery/`)" below. | — |
 | `funkystuff.json` | Toy/game library manifest (see "Funkystuff game library" above). Per entry: `file` (must exist in `<root>/funkystuff/`), `title`, `dept` (filter chips), optional `by`; JSON order = list order. | funkystuff.html |
 
 To swap the logo: put a file in `static/img/` and set `site.logo.path`.

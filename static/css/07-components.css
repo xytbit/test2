@@ -527,7 +527,9 @@
   line-height: var(--lh-snug);
 }
 
-/* terminal snippet — used sparingly */
+/* terminal snippet — used sparingly (also as the small mono "label"
+   pills like "A / LEARN", "B / DEPTH" across about/contact/blog/etc.)
+   Horizontal padding keeps the text off the box edges. */
 .term {
   border: 1px solid var(--line-strong);
   border-radius: var(--r-md);
@@ -537,6 +539,7 @@
   font-family: var(--font-mono);
   font-size: var(--fs-1);
   line-height: 1.7;
+  padding: 0.3em 0.75em;
 }
 /* code blocks in articles */
 pre.code {

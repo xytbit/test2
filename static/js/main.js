@@ -11,6 +11,7 @@
         reveal.js          → DCITC.reveal         (scroll-in animations)
         transitions.js     → DCITC.transitions    (page-exit fade)
         pages.js           → DCITC.pages          (menu, filters, search)
+        gallery.js         → DCITC.gallery        (photo gallery reveal/zoom)
         fluid-triangle.js  → DCITC.fluidTriangle  (page ASCII fluid)
         main.js            → calls each .init() in the order above
 
@@ -26,6 +27,7 @@
     if (window.DCITC.reveal) window.DCITC.reveal.init();
     if (window.DCITC.transitions) window.DCITC.transitions.init();
     if (window.DCITC.pages) window.DCITC.pages.init();
+    if (window.DCITC.gallery) window.DCITC.gallery.init();
     if (window.DCITC.fluidTriangle) window.DCITC.fluidTriangle.init();
   }
 

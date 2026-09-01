@@ -487,7 +487,6 @@ let projects = readJSON(path.join(SRC, 'data', 'projects.json'));
 let achievements = readJSON(path.join(SRC, 'data', 'achievements.json'));
 let resources = readJSON(path.join(SRC, 'data', 'resources.json'));
 let team = readJSON(path.join(SRC, 'data', 'team.json'));
-let gallery = readJSON(path.join(SRC, 'data', 'gallery.json'));
 
 // Resource filter chips (resources page "Browse" section). Order here
 // is the order the buttons render in.
@@ -721,11 +720,94 @@ team = team.map((g, i) => ({
   code: `TEAM.${String(i + 1).padStart(2, '0')}`,
 }));
 
-gallery = gallery.map((g, i) => ({
-  ...g,
-  code: `GAL.${String(i + 1).padStart(2, '0')}`,
-  src: `/img/gen/${g.seed}.svg`, // generated photo-plate
-}));
+/* GALLERY — photo strip driven by <root>/content/gallery/ -----------------
+   EASY ADDING: drop any image (jpg/jpeg/png/webp/gif/svg — case-insensitive)
+   into content/gallery/ and rebuild. Every file becomes an item with NO
+   JSON to touch. Layout metadata (tile size class + parallax speed) is
+   auto-assigned from a deterministic repeating pattern so the scattered,
+   mixed-size strip always holds no matter how many images.
+   - Optional content/gallery/captions.json = { "<filename>": "caption" }
+     overrides the default caption (filename with -/_→space, title case);
+     unknown keys warn; missing files in it warn too.
+   - Optional per-image "cover.jpg" convention not needed — filename IS the id.
+   URL-unsafe filenames fail loudly (they become the served path + alt text). */
+const GALLERY_DIR = path.join(ROOT, 'content', 'gallery');
+const GALLERY_IMAGE_RE = /\.(jpe?g|png|webp|gif|svg)$/i;
+
+// deterministic size/speed layout: indexes cycle big/normal/small × orientation
+const GALLERY_LAYOUT = [
+  ['big', false],
+  ['normal', true],
+  ['normal', false],
+  ['small', true],
+  ['small', false],
+  ['big', true],
+  ['normal', false],
+  ['big', false],
+  ['small', true],
+  ['small', false],
+  ['normal', true],
+  ['big', true],
+  ['normal', false],
+  ['normal', true],
+  ['small', false],
+  ['big', false],
+  ['small', true],
+  ['normal', false],
+];
+const GALLERY_SPEEDS = [1, 2, 3, 4];
+
+function humanizeCaption(name) {
+  return name
+    .replace(/\.(jpe?g|png|webp|gif|svg)$/i, '')
+    .replace(/[-_]+/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function loadGallery() {
+  if (!fs.existsSync(GALLERY_DIR)) {
+    throw new Error(
+      `content/gallery/ does not exist. Create it and drop image files in — they become gallery items.`,
+    );
+  }
+  const files = fs.readdirSync(GALLERY_DIR).filter((f) => GALLERY_IMAGE_RE.test(f));
+
+  // optional captions sidecar
+  let captions = {};
+  const capPath = path.join(GALLERY_DIR, 'captions.json');
+  if (fs.existsSync(capPath)) {
+    captions = JSON.parse(fs.readFileSync(capPath, 'utf8'));
+    for (const k of Object.keys(captions)) {
+      if (!files.includes(k)) console.warn(`captions.json references "${k}" but that file is not in content/gallery/`);
+    }
+  }
+
+  if (!files.length) {
+    console.warn(`content/gallery/ is empty — the gallery page will show no images. Drop image files in.`);
+    return [];
+  }
+
+  files.sort((a, b) => a.localeCompare(b));
+  return files.map((f, i) => {
+    if (!/^[a-zA-Z0-9][a-zA-Z0-9._-]*$/.test(f)) {
+      throw new Error(`gallery filename "${f}" is not URL-safe (keep letters/digits/-/_)`);
+    }
+    const [size, horiz] = GALLERY_LAYOUT[i % GALLERY_LAYOUT.length];
+    return {
+      file: f,
+      src: `/gallery/${f}`,
+      // srcset with a 2x retina variant reusing the same file on modern
+      // browsers isn't worth it here — keep serving the original at 1x.
+      caption: captions[f] || humanizeCaption(f),
+      code: `GAL.${String(i + 1).padStart(2, '0')}`,
+      size, // 'big' | 'normal' | 'small'
+      horizontal: horiz, // true = wider-than-tall tile
+      speed: GALLERY_SPEEDS[i % GALLERY_SPEEDS.length], // parallax 1–3
+    };
+  });
+}
+
+let gallery = loadGallery();
 
 // Pre-computed subsets & counts consumed by page templates:
 const upcomingEvents = events.filter((e) => e.upcoming); // home + events page
@@ -1160,7 +1242,6 @@ function main() {
   fs.mkdirSync(genDir, { recursive: true });
   const variants = ['grid', 'rings', 'bars', 'lines', 'dots', 'circuit', 'plot'];
   const seeds = new Set();
-  gallery.forEach((g) => seeds.add(g.seed));
   projects.forEach((p) => seeds.add(p.slug));
   posts.forEach((p) => seeds.add(p.slug));
   seeds.forEach((s, i) => {
@@ -1193,12 +1274,18 @@ function main() {
   }
 
   // 2c. gallery assets ------------------------------------------------
-  // gallery/ holds gallery.json (image manifest) and image files.
-  // gallery.js fetches gallery.json client-side and renders dynamically.
+  // Copy every image from content/gallery/ to public/gallery/ verbatim.
+  // (captions.json is metadata only — never copied.) Items are already
+  // pre-rendered into the page; this just makes the files servable.
   console.log('gallery');
-  const GALLERY_DIR = path.join(ROOT, 'gallery');
   if (fs.existsSync(GALLERY_DIR)) {
-    fs.cpSync(GALLERY_DIR, path.join(OUT, 'gallery'), { recursive: true });
+    const gdir = path.join(OUT, 'gallery');
+    fs.mkdirSync(gdir, { recursive: true });
+    const files = fs.readdirSync(GALLERY_DIR).filter((f) => GALLERY_IMAGE_RE.test(f));
+    for (const f of files) {
+      const data = fs.readFileSync(path.join(GALLERY_DIR, f));
+      write(path.join(gdir, f), data);
+    }
   }
 
   // 3. top-level pages from src/data/pages.json ---------------------

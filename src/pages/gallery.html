@@ -3,14 +3,18 @@
      GALLERY PAGE  —  src/pages/gallery.html  →  public/gallery/index.html
      ==================================================================
      WHAT THIS FILE CONTROLS:
-       The photo gallery. Images are loaded dynamically from
-       gallery/gallery.json by gallery.js (in static/js/gallery.js),
-       which fetches the JSON and renders items into .gallery-track.
+       The photo gallery. Items are PRE-RENDERED at build time from the
+       content/gallery/ folder — drop any image file in there and it
+       becomes a gallery item (no JSON to touch; build auto-assigns the
+       tile size + parallax speed). gallery.js only wires the motion:
+       tile reveal cascade, per-item parallax on the page's horizontal
+       filmstrip, and click-to-zoom.
 
        00 Overview        intro headline
-       01 Gallery         horizontal scroll track with scattered images
+       01 Gallery         wide horizontal strip of scattered images
+                          (rides the page's own horizontal scroller)
 
-     Data source: gallery/gallery.json (fetched client-side).
+     Data source: content/gallery/ (folder scan at build time).
      ================================================================== -->
 <html lang="{{ .site.meta.language }}">
 {{ include "partials/head.html" }}
@@ -29,9 +33,13 @@
   </section>
 
   <!-- SECTION 01 — GALLERY -->
-  <section class="sec sec--wide gal-sec" data-section="Gallery" data-code="01" data-label="Gallery">
-    <div class="gal-scroll">
-      <div class="gallery-track" data-stagger></div>
+  <section class="sec sec--flush gal-sec" data-section="Gallery" data-code="01" data-label="Gallery">
+    <div class="gallery-track" data-gallery>
+      {{ each .gallery }}
+      <div class="gal-item -{{ .size }}{{ if .horizontal }} -horizontal{{ end }}" data-speed="{{ .speed }}">
+        <img src="{{ .src }}" alt="{{ .caption }}" draggable="false" loading="lazy">
+      </div>
+      {{ end }}
     </div>
   </section>
 

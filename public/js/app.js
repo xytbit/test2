@@ -731,6 +731,70 @@
     activate(start === -1 ? 0 : start);
   }
 
+  /* 6 ─ home department detail modal ----------------------------------- */
+  // Each .do-dept row opens a dialog with the department's richer info.
+  // Markup (index.html): a .dept-modal[data-dept-modal] holder whose
+  // body is filled at runtime from the matching <template data-dept-body
+  // ="...">; the row's data-dept key selects it. The dialog is kept
+  // aria-hidden until opened. Clicking backdrop, the close button, or
+  // pressing Escape closes it; the previously focused row gets focus
+  // back. While open, body scroll is locked.
+  function initDeptModal() {
+    var modal = document.querySelector('[data-dept-modal]');
+    if (!modal) return;
+    var rows = document.querySelectorAll('.do-dept');
+    if (!rows.length) return;
+
+    var dialog = modal.querySelector('.dept-modal-dialog');
+    var bodyEl = modal.querySelector('.dept-modal-body');
+    var titleEl = modal.querySelector('.dept-modal-title');
+    var lastFocus = null;
+
+    function populate(deptKey) {
+      var tpl = document.querySelector('[data-dept-body="' + deptKey + '"]');
+      if (!tpl) return;
+      bodyEl.innerHTML = '';
+      bodyEl.appendChild(tpl.content.cloneNode(true));
+    }
+
+    function open(row) {
+      lastFocus = row;
+      var deptKey = row.getAttribute('data-dept');
+      var title = row.getAttribute('data-dept-title');
+      titleEl.textContent = title;
+      populate(deptKey);
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      var closeBtn = modal.querySelector('[data-dept-close]');
+      try {
+        closeBtn.focus();
+      } catch (err) {}
+    }
+
+    function close() {
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+      if (lastFocus) {
+        try {
+          lastFocus.focus();
+        } catch (err) {}
+      }
+      lastFocus = null;
+    }
+
+    rows.forEach(function (row) {
+      row.addEventListener('click', function () {
+        open(row);
+      });
+    });
+    modal.querySelectorAll('[data-dept-close]').forEach(function (el) {
+      el.addEventListener('click', close);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && modal.classList.contains('is-open')) close();
+    });
+  }
+
   // register on the shared namespace consumed by main.js
   window.DCITC = window.DCITC || {};
   window.DCITC.pages = {
@@ -740,6 +804,7 @@
       initFilters();
       initSearch();
       initEventDeck();
+      initDeptModal();
     },
   };
 })();
@@ -1729,98 +1794,160 @@
    GALLERY MODULE  —  static/js/gallery.js
    ==================================================================
    WHAT THIS FILE CONTROLS:
-     Fetches gallery/gallery.json, dynamically renders gallery items
-     into .gallery-track, handles scroll-reveal animations and
-     click-to-zoom interactions. Self-contained; only activates when
-     .gallery-track exists on the page.
+     The photo gallery on /gallery/. Items are PRE-RENDERED at build
+     time from the content/gallery/ folder (see build.js `loadGallery`),
+     so this module does NOT fetch or render anything. It only wires the
+     three motion behaviours that CSS alone can't fully drive:
 
-   Adding a new image:
-     1. Put the file in gallery/
-     2. Add an entry to gallery/gallery.json
-     3. Rebuild — no code changes needed.
+       1. Reveal cascade   images fade/scale in one after another with a
+                           small stagger (the "showImages" feel from the
+                           reference strip).
+       2. Parallax         while the page's horizontal filmstrip scrolls,
+                           each tile translates at its own data-speed
+                           (1–4) so higher-speed tiles overtake the rail
+                           (speed 1) — layered depth like the reference.
+       3. Click-to-zoom    clicking a tile briefly scales its image 5×
+                           then re-runs the reveal cascade (.-clicked).
+
+   PARALLAX DESIGN (important — do not regress):
+     - It is driven by its OWN requestAnimationFrame loop that reads the
+       active scroller's scroll position every frame, so it stays in sync
+       with horizontal.js's eased "drive" mode (an event-driven scroll
+       listener lags a frame and feels rubbery). On mobile the strip is
+       its own scroller — same loop reads track.scrollLeft instead.
+     - It translates the whole .gal-item tile, never the inner <img>.
+       Translating the img slides the photo out of its frame and exposes
+       the background (visible gaps). Translating the tile keeps the
+       image filling it — tiles just overlap more, which is the point.
+     - Centre is measured per frame from the LIVE tile rect MINUS the
+       offset we already applied (so the measurement never reads our own
+       transform back — feedback drift). We still cache nothing: reading
+       ~5-8 visible tiles' rects per frame is cheap and lets the SAME code
+       drive both the page filmstrip (main.scrollLeft) and the mobile
+       strip (track.scrollLeft) with zero breakpoint bookkeeping.
+     - Rez = screen position = centre + off, with off = centre*(speed-1)*K
+       (K = PAR_F). A tile right of viewport centre (centre>0) gets pulled
+       further right (off>0); left of centre pulled further left. Net
+       result: screen speed = scroll speed × (1 + K*(speed-1)) — high
+       speeds OVERTAKE the rail (speed 1) and visibly shoot past it, low
+       speeds lag behind: the classic foreground/background depth cue that
+       data-scroll-speed implies. this.offset is clamped so tiles never
+       wander off the strip.
+     - RUNS on desktop AND the mobile strip so parallax "works" on both.
+       prefers-reduced-motion disables it entirely.
+
+   NOTES:
+     - The gallery's <main> is the drag surface; horizontal.js calls
+       main.setPointerCapture() on pointerdown, which redirects click
+       targets to <main>. So click-zoom listens on the document root and
+       resolves the element under the cursor via elementFromPoint(),
+       which ignores pointer capture.
    ================================================================== */
 (function () {
   'use strict';
 
-  const SPEEDS = [2, 1, 4, 3, 2, 4, 2, 1, 3, 1, 2, 1, 4, 3, 2, 4, 2, 1, 3, 1];
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var mqDesktop = window.matchMedia('(min-width: 900px)');
+
+  var PAR_F = 0.12; // overtake factor per (speed-1): screen x (1 + F*(speed-1))
+  var PAR_MAX = 260; // hard clamp so tiles never wander off the strip
 
   function init() {
-    const track = document.querySelector('.gallery-track');
+    var track = document.querySelector('[data-gallery]');
     if (!track) return;
+    var items = Array.prototype.slice.call(track.querySelectorAll('.gal-item'));
+    if (!items.length) return;
 
-    loadGallery(track);
-  }
+    var main = document.querySelector('main[data-horizontal]');
+    var imgs = items.map(function (it) { return it.querySelector('img'); });
+    var speeds = items.map(function (it) { return parseFloat(it.getAttribute('data-speed')) || 1; });
+    var clicked = false;
+    var running = false;
+    var raf = null;
 
-  function loadGallery(track) {
-    fetch('/gallery/gallery.json')
-      .then(function (res) {
-        if (!res.ok) throw new Error('Failed to load gallery');
-        return res.json();
-      })
-      .then(function (items) { renderItems(track, items); })
-      .catch(function () {
-        track.innerHTML =
-          '<p style="text-align:center;padding:2rem;color:var(--ink-dim);font-family:var(--font-mono);font-size:var(--fs-1)">' +
-          'Gallery unavailable — failed to load image data.</p>';
+    // --- reveal cascade -------------------------------------------------
+    function reveal() {
+      imgs.forEach(function (img, i) {
+        img.style.transitionDelay = reduced ? '0s' : (i % 4) * 0.06 + 's';
+        img.classList.add('-active');
       });
-  }
+    }
 
-  function renderItems(track, items) {
-    var fragment = document.createDocumentFragment();
-
-    items.forEach(function (item, i) {
-      var div = document.createElement('div');
-      div.className = 'gal-item' + (item.size || '');
-      div.setAttribute('data-speed', SPEEDS[i % SPEEDS.length]);
-
-      var img = document.createElement('img');
-      img.src = '/gallery/' + item.image;
-      img.alt = item.title || '';
-      img.loading = 'lazy';
-      img.draggable = false;
-
-      img.addEventListener('error', function () {
-        img.style.background = 'var(--bg-elev)';
-        img.style.minHeight = '120px';
-      });
-
-      img.addEventListener('click', function () {
+    // --- click-to-zoom --------------------------------------------------
+    // Listen on document (see header note) and resolve the image under
+    // the cursor, so the pointer-captured <main> can't absorb the click.
+    function wireClick() {
+      document.addEventListener('click', function (e) {
+        if (!mqDesktop.matches) return;
+        var hit = document.elementFromPoint(e.clientX, e.clientY);
+        var img = hit && hit.closest('.gal-item img');
+        if (!img) return;
+        clicked = true;
         img.classList.add('-clicked');
-        setTimeout(function () { img.classList.remove('-clicked'); }, 1200);
+        setTimeout(function () {
+          img.classList.remove('-clicked');
+          // re-run the cascade: fade everything out, then back in
+          imgs.forEach(function (im) { im.classList.remove('-active'); });
+          setTimeout(function () {
+            reveal();
+            clicked = false; // resume parallax after the re-cascade
+          }, 120);
+        }, 1200);
       });
+    }
 
-      div.appendChild(img);
-      fragment.appendChild(div);
-    });
-
-    track.appendChild(fragment);
-    setupObserver(track);
-  }
-
-  function setupObserver(track) {
-    var images = track.querySelectorAll('.gal-item img');
-    var observer = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('-active');
+    // --- parallax -------------------------------------------------------
+    // offset_i = centre_i * (speed_i - 1) * PAR_F, applied to the TILE.
+    // centre is measured live but always MINUS what we already applied,
+    // so no feedback. Runs on desktop (page scroller) and mobile (strip
+    // scroller) with the same code.
+    var offs = new Array(items.length).fill(0);
+    function tick() {
+      raf = null;
+      if (!running) return;
+      var half = window.innerWidth / 2;
+      for (var i = 0; i < items.length; i++) {
+        var it = items[i];
+        var r = it.getBoundingClientRect();
+        var centre = r.left + r.width / 2 - offs[i] - half; // subtract our own shift
+        var target = centre * (speeds[i] - 1) * PAR_F;
+        if (target > PAR_MAX) target = PAR_MAX;
+        else if (target < -PAR_MAX) target = -PAR_MAX;
+        // low-pass toward target: no pops when a tile first enters the
+        // window, and the motion reads as silk instead of quantised jumps
+        var off = offs[i] + (target - offs[i]) * 0.18;
+        if (Math.abs(off - offs[i]) > 0.05) {
+          offs[i] = off;
+          it.style.transform = 'translateX(' + off.toFixed(1) + 'px)';
         }
+      }
+      raf = requestAnimationFrame(tick);
+    }
+
+    function resetTiles() {
+      items.forEach(function (it, i) {
+        it.style.transform = '';
+        offs[i] = 0;
       });
-    }, { root: track.closest('.gal-scroll'), threshold: 0.05 });
+    }
 
-    images.forEach(function (img, i) {
-      img.style.transitionDelay = (i % 4) * 0.05 + 's';
-      observer.observe(img);
-    });
+    // Parallax runs on desktop (page filmstrip) AND the mobile strip —
+    // the loop reads live rects, so whichever scroller moves the tiles is
+    // picked up. Reduced motion keeps it off.
+    if (!reduced) {
+      running = true;
+      if (!raf) raf = requestAnimationFrame(tick);
+    } else {
+      resetTiles();
+    }
 
-    setTimeout(function () {
-      images.forEach(function (img) { img.classList.add('-active'); });
-    }, 600);
+    reveal();
+    wireClick();
   }
 
   window.DCITC = window.DCITC || {};
   window.DCITC.gallery = { init: init };
 })();
-
 /* ==================================================================
    DCITC BOOT  —  static/js/main.js
    ==================================================================
@@ -1834,6 +1961,7 @@
         reveal.js          → DCITC.reveal         (scroll-in animations)
         transitions.js     → DCITC.transitions    (page-exit fade)
         pages.js           → DCITC.pages          (menu, filters, search)
+        gallery.js         → DCITC.gallery        (photo gallery reveal/zoom)
         fluid-triangle.js  → DCITC.fluidTriangle  (page ASCII fluid)
         main.js            → calls each .init() in the order above
 
@@ -1849,6 +1977,7 @@
     if (window.DCITC.reveal) window.DCITC.reveal.init();
     if (window.DCITC.transitions) window.DCITC.transitions.init();
     if (window.DCITC.pages) window.DCITC.pages.init();
+    if (window.DCITC.gallery) window.DCITC.gallery.init();
     if (window.DCITC.fluidTriangle) window.DCITC.fluidTriangle.init();
   }
 

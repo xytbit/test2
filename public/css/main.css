@@ -468,6 +468,18 @@ body:not(.hx-body) main {
   display: block;
 }
 
+/* the vertical reading pages (article + event singles) scroll the
+   document natively; hide the native side scrollbar so only the
+   progress indicator communicates scroll position. It's still
+   scrollable — just no visible thumb/track. The document scroller is
+   the <html> element, so hide it there (not on <body>). */
+html:not(:has(body.hx-body)) {
+  scrollbar-width: none;
+}
+html:not(:has(body.hx-body))::-webkit-scrollbar {
+  display: none;
+}
+
 /* section header block */
 .sec-head {
   margin-bottom: clamp(1.5rem, 4vh, 3rem);
@@ -1614,7 +1626,9 @@ main.hx::-webkit-scrollbar {
   line-height: var(--lh-snug);
 }
 
-/* terminal snippet — used sparingly */
+/* terminal snippet — used sparingly (also as the small mono "label"
+   pills like "A / LEARN", "B / DEPTH" across about/contact/blog/etc.)
+   Horizontal padding keeps the text off the box edges. */
 .term {
   border: 1px solid var(--line-strong);
   border-radius: var(--r-md);
@@ -1624,6 +1638,7 @@ main.hx::-webkit-scrollbar {
   font-family: var(--font-mono);
   font-size: var(--fs-1);
   line-height: 1.7;
+  padding: 0.3em 0.75em;
 }
 /* code blocks in articles */
 pre.code {
@@ -2265,6 +2280,179 @@ body.is-fluid-grabbing main[data-hx-nodrag] * {
   line-height: var(--lh-snug);
 }
 
+/* home "what we do" — clickable department rows with stroke icons.
+   Rows are <button>.do-dept that open a detail modal (see .dept-modal
+   below). The icon lives in the first grid column in place of the old
+   number code; hover nudges the icon (and recolours the title) to hint
+   that the row is interactive. */
+.do-dept {
+  width: 100%;
+  text-align: left;
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  align-items: center;
+  transition:
+    background var(--t-fast) var(--ease),
+    padding-left var(--t-fast) var(--ease);
+}
+.do-dept:first-child {
+  border-top: 1px solid var(--line);
+}
+.do-dept:hover,
+.do-dept:focus-visible {
+  background: var(--bg-tint);
+  padding-left: 0.7rem;
+  outline: none;
+}
+.do-dept .do-title {
+  transition: color var(--t-fast) var(--ease);
+}
+.do-dept:hover .do-title,
+.do-dept:focus-visible .do-title {
+  color: var(--accent);
+}
+.do-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink-faint);
+  transition:
+    color var(--t-fast) var(--ease),
+    transform var(--t-fast) var(--ease);
+}
+/* subtle per-icon hover motion (respects prefers-reduced-motion via the
+   global disable in 09-anim.css) */
+.do-dept:hover .do-icon,
+.do-dept:focus-visible .do-icon {
+  color: var(--accent);
+  transform: translateY(-2px) scale(1.08);
+}
+
+/* ---------- home department detail modal ---------- */
+/* Full-viewport overlay + centered dialog. Reuses the z-index ladder
+   above the nav/menu so it sits over the sticky header and the progress
+   line. Visibility is class-toggled (.is-open); the JS sets aria-hidden
+   to keep it out of the a11y tree until shown. */
+.dept-modal {
+  position: fixed;
+  inset: 0;
+  z-index: calc(var(--z-menu) + 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  visibility: hidden;
+  opacity: 0;
+  transition:
+    opacity var(--t-med) var(--ease),
+    visibility var(--t-med);
+}
+.dept-modal.is-open {
+  visibility: visible;
+  opacity: 1;
+}
+.dept-modal-scrim {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--bg) 70%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.dept-modal-dialog {
+  position: relative;
+  width: min(40rem, 100%);
+  max-height: min(80vh, 40rem);
+  overflow-y: auto;
+  padding: clamp(1.4rem, 3vw, 2.25rem);
+  background: var(--bg-elev);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow);
+  transform: translateY(12px) scale(0.98);
+  transition: transform var(--t-med) var(--ease);
+}
+.dept-modal.is-open .dept-modal-dialog {
+  transform: translateY(0) scale(1);
+}
+.dept-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.2rem;
+  height: 2.2rem;
+  color: var(--ink-dim);
+  background: none;
+  border: 1px solid transparent;
+  border-radius: var(--r-sm);
+  cursor: pointer;
+  transition:
+    color var(--t-fast) var(--ease),
+    background var(--t-fast) var(--ease),
+    border-color var(--t-fast) var(--ease);
+}
+.dept-modal-close:hover,
+.dept-modal-close:focus-visible {
+  color: var(--ink);
+  background: var(--bg-tint);
+  border-color: var(--line-strong);
+  outline: none;
+}
+.dept-modal-kicker {
+  margin-bottom: 0.4rem;
+  padding-right: 2.5rem;
+}
+.dept-modal-title {
+  margin-bottom: 1.1rem;
+  padding-right: 2.5rem;
+  font-size: clamp(1.5rem, 3vw, 2.1rem);
+}
+.dept-modal-body {
+  color: var(--ink-dim);
+}
+.dept-modal-body p {
+  font-size: var(--fs-2);
+  line-height: var(--lh-body);
+  margin-bottom: 0.9rem;
+}
+.dept-modal-body p:last-of-type {
+  margin-bottom: 0;
+}
+.dept-sub {
+  font-family: var(--font-mono);
+  font-size: var(--fs-0);
+  letter-spacing: var(--trk-mono);
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 1.3rem 0 0.6rem;
+}
+.dept-list {
+  list-style: none;
+  display: grid;
+  gap: 0.45rem;
+}
+.dept-list li {
+  display: flex;
+  align-items: baseline;
+  gap: 0.6em;
+  font-size: var(--fs-2);
+}
+.dept-list li::before {
+  content: '';
+  flex: 0 0 auto;
+  width: 6px;
+  height: 6px;
+  translate: 0 -0.1em;
+  border-radius: 50%;
+  background: var(--accent-line);
+}
+
 /* ---------- home: events list ---------- */
 .ev-list {
   display: flex;
@@ -2677,37 +2865,26 @@ html.js .evx {
 }
 
 /* ---------- gallery ---------- */
+/* The gallery is a WIDE filmstrip child of <main data-horizontal>. It has
+   no fixed viewport width: .gallery-track (min-width:max-content) makes the
+   whole section as wide as all its scattered images, and the page's own
+   smooth horizontal scroller pans through them (the "film strip" feel).
+   Add images by dropping files into content/gallery/ — the build assigns
+   each a size class + parallax speed. */
 .gal-sec {
-  height: 100vh;
-  padding: 0;
-}
-.gal-scroll {
-  width: 100%;
-  height: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  scrollbar-width: none;
-}
-.gal-scroll::-webkit-scrollbar {
-  display: none;
+  width: auto; /* grow beyond 100vw to fit the full strip */
+  padding-inline: 6vw;
 }
 .gallery-track {
   display: flex;
   align-items: center;
-  gap: 2.5vw;
-  padding: 0 8vw;
-  height: 100%;
   min-width: max-content;
+  padding-right: 8vw; /* room after the last tile so it ends flush */
 }
 .gal-item {
   position: relative;
   flex: 0 0 auto;
-}
-.gal-item::before {
-  content: '';
-  display: inline-block;
-  vertical-align: middle;
-  height: 100%;
+  margin: 0 -4vw 0 2vw; /* layered, overlapping like the reference */
 }
 .gal-item > img {
   display: block;
@@ -2717,78 +2894,78 @@ html.js .evx {
   top: 0;
   left: 0;
   object-fit: cover;
-  border-radius: var(--r-md);
-  filter: grayscale(1);
+  border-radius: 4px; /* barely-rounded — matches the site's quiet radius */
+  filter: none; /* no grayscale — user preference */
   opacity: 0;
   pointer-events: none;
   transform: scale(0.8);
-  transition: filter 0.4s ease, opacity 1s ease, transform 1s ease;
+  transition: opacity 1s ease, transform 1s ease;
 }
-.gal-item:nth-child(4n) > img {
-  transform: translateX(-15px) translateY(-15px) scale(0.8);
+/* staggered start positions — each 4th tile enters from a different corner */
+.gal-item:nth-of-type(4n) > img {
+  transform: translateX(-3vw) translateY(-3vw) scale(0.8);
 }
-.gal-item:nth-child(4n+1) > img {
-  transform: translateX(15px) translateY(15px) scale(0.8);
+.gal-item:nth-of-type(4n+1) > img {
+  transform: translateX(3vw) translateY(3vw) scale(0.8);
 }
-.gal-item:nth-child(4n+2) > img {
-  transform: translateX(-15px) translateY(15px) scale(0.8);
+.gal-item:nth-of-type(4n+2) > img {
+  transform: translateX(-3vw) translateY(3vw) scale(0.8);
 }
-.gal-item:nth-child(4n+3) > img {
-  transform: translateX(-15px) translateY(-15px) scale(0.8);
+.gal-item:nth-of-type(4n+3) > img {
+  transform: translateX(3vw) translateY(-3vw) scale(0.8);
 }
 .gal-item > img.-active {
   transform: translateX(0) translateY(0) scale(1);
-  opacity: 0.85;
+  opacity: 1;
   pointer-events: auto;
-  transition: filter 0.4s ease, opacity 1s ease, transform 1s ease;
+  transition: opacity 1s ease, transform 1s ease;
 }
 .gal-item > img.-clicked {
   transform: translateX(0) translateY(0) scale(5) !important;
   opacity: 0 !important;
   pointer-events: auto;
-  transition: filter 0.4s ease, opacity 1s ease, transform 1s ease;
+  transition: opacity 1s ease, transform 1s ease;
 }
 .gal-item > img.-active:hover {
-  filter: grayscale(0);
   opacity: 1;
   cursor: pointer;
 }
-/* size variants */
+/* tile sizes (viewport-height relative, like the reference) */
 .gal-item.-big {
-  height: 70vh;
-  width: 52vh;
+  height: 72vh;
+  width: 54vh;
 }
 .gal-item.-big.-horizontal {
-  height: 52vh;
-  width: 70vh;
+  height: 54vh;
+  width: 72vh;
 }
 .gal-item.-normal {
-  height: 52vh;
-  width: 39vh;
+  height: 54vh;
+  width: 40vh;
 }
 .gal-item.-normal.-horizontal {
-  height: 39vh;
-  width: 52vh;
+  height: 40vh;
+  width: 54vh;
 }
 .gal-item.-small {
-  height: 35vh;
-  width: 26vh;
+  height: 36vh;
+  width: 27vh;
 }
 .gal-item.-small.-horizontal {
-  height: 26vh;
-  width: 35vh;
+  height: 27vh;
+  width: 36vh;
 }
-/* scattered vertical offsets */
-.gal-item.-normal:nth-child(3n) {
+/* scattered vertical drift so tiles don't line up in straight rows */
+.gal-item.-normal:nth-of-type(3n) {
   margin-top: 4vh;
 }
-.gal-item.-normal:nth-child(4n) {
+.gal-item.-normal:nth-of-type(4n) {
   margin-top: -4vh;
 }
-.gal-item.-small:nth-child(3n) {
+.gal-item.-small:nth-of-type(3n) {
   margin-top: 11vh;
 }
-.gal-item.-small:nth-child(4n) {
+.gal-item.-small:nth-of-type(4n) {
   margin-top: -11vh;
 }
 
@@ -3388,8 +3565,28 @@ html.js .evx {
     width: 28vh;
   }
   .gallery-track {
-    gap: 1.5vw;
-    padding: 0 5vw;
+    gap: 0;
+    padding-right: 5vw;
+  }
+  .gal-sec {
+    padding-inline: 5vw;
+  }
+  /* below 900px the page stacks vertically, so the photo strip becomes a
+     self-contained touch-scrollable row (no whole-page horizontal scroll) */
+  .gal-sec {
+    width: 100%;
+    padding-inline: 0;
+  }
+  .gallery-track {
+    min-width: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 1.5vh 4vw;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .gallery-track::-webkit-scrollbar {
+    display: none;
   }
   .foot-cols {
     grid-template-columns: 1fr 1fr;
@@ -3435,8 +3632,11 @@ html.js .evx {
     width: 22vh;
   }
   .gallery-track {
-    gap: 1vw;
-    padding: 0 3vw;
+    gap: 0;
+    padding-right: 3vw;
+  }
+  .gal-sec {
+    padding-inline: 3vw;
   }
 }
 
