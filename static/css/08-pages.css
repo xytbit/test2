@@ -133,10 +133,10 @@ html[data-theme='light'] .page-fluid {
 /* The whole home page is the drag surface: <main data-hx-nodrag> keeps
    horizontal.js mouse-drag panning out of the way while a drag stirs
    the fluid (wheel, keys and touch still operate the filmstrip).
-   While dragging, the module toggles .is-fluid-grabbing on <body>. */
-main[data-hx-nodrag] {
-  cursor: grab;
-}
+   While dragging, the module toggles .is-fluid-grabbing on <body>.
+   NOTE: no cursor rule here — the page keeps the normal pointer so it
+   doesn't look draggable; the fluid triangle still reacts to drags.
+   While a fluid drag is active we show the grabbing hand. */
 body.is-fluid-grabbing {
   user-select: none;
 }

@@ -40,15 +40,13 @@
     <nav class="nav-links" aria-label="Primary">
       <ul>
         {{ each .nav }}
-        {{ if .group }}
-          {{ if .group }}
-            {{ if eq .group "primary" }}
-            <li>
-              <a href="{{ .href }}" class="nav-link {{ if .isActive }}is-active{{ end }}" {{ if .isActive }}aria-current="page"{{ end }}>
-                <span class="nav-code">{{ .code }}</span>{{ .label }}
-              </a>
-            </li>
-            {{ end }}
+        {{ if eq .group "primary" }}
+          {{ if not .cta }}
+          <li>
+            <a href="{{ .href }}" class="nav-link {{ if .isActive }}is-active{{ end }}" {{ if .isActive }}aria-current="page"{{ end }}>
+              <span class="nav-code">{{ .code }}</span>{{ .label }}
+            </a>
+          </li>
           {{ end }}
         {{ end }}
         {{ end }}
@@ -61,11 +59,9 @@
         </button>
         <ul class="nav-more-menu" data-more-menu>
           {{ each .nav }}
-            {{ if .group }}
-              {{ if .group }}
-                {{ if eq .group "more" }}
-                <li><a href="{{ .href }}" class="{{ if .isActive }}is-active{{ end }}" {{ if .isActive }}aria-current="page"{{ end }}><span class="nav-code">{{ .code }}</span>{{ .label }}</a></li>
-                {{ end }}
+            {{ if eq .group "more" }}
+              {{ if not .cta }}
+              <li><a href="{{ .href }}" class="{{ if .isActive }}is-active{{ end }}" {{ if .isActive }}aria-current="page"{{ end }}><span class="nav-code">{{ .code }}</span>{{ .label }}</a></li>
               {{ end }}
             {{ end }}
           {{ end }}
@@ -75,7 +71,7 @@
       {{ each .nav }}
         {{ if .group }}
           {{ if .group }}
-            {{ if and (eq .group "primary") .cta }}
+            {{ if .cta }}
             <a href="{{ .href }}" class="nav-cta {{ if .isActive }}is-active{{ end }}">{{ .label }}<span aria-hidden="true">→</span></a>
             {{ end }}
           {{ end }}

@@ -671,7 +671,9 @@ body:not(.hx-body) main {
   top: 0;
   height: var(--nav-h);
   flex: 0 0 auto;
-  z-index: var(--z-nav);
+  /* one step above the .progress indicator (--z-nav) so the "More"
+     dropdown paints over it instead of being overlapped by it */
+  z-index: calc(var(--z-nav) + 1);
   border-bottom: 1px solid var(--line);
   background: color-mix(in srgb, var(--bg) 82%, transparent);
   backdrop-filter: blur(12px);
@@ -2094,10 +2096,10 @@ html[data-theme='light'] .page-fluid {
 /* The whole home page is the drag surface: <main data-hx-nodrag> keeps
    horizontal.js mouse-drag panning out of the way while a drag stirs
    the fluid (wheel, keys and touch still operate the filmstrip).
-   While dragging, the module toggles .is-fluid-grabbing on <body>. */
-main[data-hx-nodrag] {
-  cursor: grab;
-}
+   While dragging, the module toggles .is-fluid-grabbing on <body>.
+   NOTE: no cursor rule here — the page keeps the normal pointer so it
+   doesn't look draggable; the fluid triangle still reacts to drags.
+   While a fluid drag is active we show the grabbing hand. */
 body.is-fluid-grabbing {
   user-select: none;
 }

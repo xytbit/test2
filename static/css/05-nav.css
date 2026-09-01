@@ -30,7 +30,9 @@
   top: 0;
   height: var(--nav-h);
   flex: 0 0 auto;
-  z-index: var(--z-nav);
+  /* one step above the .progress indicator (--z-nav) so the "More"
+     dropdown paints over it instead of being overlapped by it */
+  z-index: calc(var(--z-nav) + 1);
   border-bottom: 1px solid var(--line);
   background: color-mix(in srgb, var(--bg) 82%, transparent);
   backdrop-filter: blur(12px);
