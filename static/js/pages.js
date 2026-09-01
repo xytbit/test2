@@ -175,6 +175,70 @@
     activate(start === -1 ? 0 : start);
   }
 
+  /* 6 ─ home department detail modal ----------------------------------- */
+  // Each .do-dept row opens a dialog with the department's richer info.
+  // Markup (index.html): a .dept-modal[data-dept-modal] holder whose
+  // body is filled at runtime from the matching <template data-dept-body
+  // ="...">; the row's data-dept key selects it. The dialog is kept
+  // aria-hidden until opened. Clicking backdrop, the close button, or
+  // pressing Escape closes it; the previously focused row gets focus
+  // back. While open, body scroll is locked.
+  function initDeptModal() {
+    var modal = document.querySelector('[data-dept-modal]');
+    if (!modal) return;
+    var rows = document.querySelectorAll('.do-dept');
+    if (!rows.length) return;
+
+    var dialog = modal.querySelector('.dept-modal-dialog');
+    var bodyEl = modal.querySelector('.dept-modal-body');
+    var titleEl = modal.querySelector('.dept-modal-title');
+    var lastFocus = null;
+
+    function populate(deptKey) {
+      var tpl = document.querySelector('[data-dept-body="' + deptKey + '"]');
+      if (!tpl) return;
+      bodyEl.innerHTML = '';
+      bodyEl.appendChild(tpl.content.cloneNode(true));
+    }
+
+    function open(row) {
+      lastFocus = row;
+      var deptKey = row.getAttribute('data-dept');
+      var title = row.getAttribute('data-dept-title');
+      titleEl.textContent = title;
+      populate(deptKey);
+      modal.classList.add('is-open');
+      modal.setAttribute('aria-hidden', 'false');
+      var closeBtn = modal.querySelector('[data-dept-close]');
+      try {
+        closeBtn.focus();
+      } catch (err) {}
+    }
+
+    function close() {
+      modal.classList.remove('is-open');
+      modal.setAttribute('aria-hidden', 'true');
+      if (lastFocus) {
+        try {
+          lastFocus.focus();
+        } catch (err) {}
+      }
+      lastFocus = null;
+    }
+
+    rows.forEach(function (row) {
+      row.addEventListener('click', function () {
+        open(row);
+      });
+    });
+    modal.querySelectorAll('[data-dept-close]').forEach(function (el) {
+      el.addEventListener('click', close);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && modal.classList.contains('is-open')) close();
+    });
+  }
+
   // register on the shared namespace consumed by main.js
   window.DCITC = window.DCITC || {};
   window.DCITC.pages = {
@@ -184,6 +248,7 @@
       initFilters();
       initSearch();
       initEventDeck();
+      initDeptModal();
     },
   };
 })();

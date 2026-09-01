@@ -142,30 +142,126 @@
         <h2 class="h-section">Explore Our Departments.</h2>
       </div>
       <div class="do-list" data-stagger>
-        <div class="do-row">
-          <span class="do-code mono">01</span>
+        <button type="button" class="do-row do-dept" data-dept="administration" data-dept-title="Administration" aria-haspopup="dialog">
+          <span class="do-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="5" y="3.5" width="14" height="17" rx="2"/>
+              <path d="M9 3.5V6h6V3.5"/>
+              <path d="M9 9l1.6 1.6L13.8 7.4"/>
+              <path d="M9.2 14h5.6M9.2 17h5.6"/>
+            </svg>
+          </span>
           <span class="do-title">Administration</span>
           <span class="do-desc">Coordinates the club's operations, events, and internal organization.</span>
-        </div>
-        <div class="do-row">
-          <span class="do-code mono">02</span>
+        </button>
+        <button type="button" class="do-row do-dept" data-dept="publications" data-dept-title="Publications" aria-haspopup="dialog">
+          <span class="do-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 3.5h8l4 4v13H6z"/>
+              <path d="M14 3.5v4h4"/>
+              <path d="M9 12h6M9 15h6M9 18h4"/>
+            </svg>
+          </span>
           <span class="do-title">Publications</span>
           <span class="do-desc">Produces the club's articles, newsletters, and written records.</span>
-        </div>
-        <div class="do-row">
-          <span class="do-code mono">03</span>
+        </button>
+        <button type="button" class="do-row do-dept" data-dept="programming" data-dept-title="Programming and Robotics" aria-haspopup="dialog">
+          <span class="do-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M8 7l-5 5 5 5"/>
+              <path d="M16 7l5 5-5 5"/>
+              <path d="M13.5 5l-3 14"/>
+            </svg>
+          </span>
           <span class="do-title">Programming and Robotics</span>
           <span class="do-desc">Builds software and robotics projects, from code to hardware.</span>
-        </div>
-        <div class="do-row">
-          <span class="do-code mono">04</span>
+        </button>
+        <button type="button" class="do-row do-dept" data-dept="websec" data-dept-title="Web Development and Cyber Security" aria-haspopup="dialog">
+          <span class="do-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 3l7 2.6v5.2c0 3.9-2.9 7.6-7 9.2-4.1-1.6-7-5.3-7-9.2V5.6z"/>
+              <path d="M9 11.6l2.2 2.2 3.8-4"/>
+            </svg>
+          </span>
           <span class="do-title">Web Development and Cyber Security</span>
           <span class="do-desc">Builds web systems while studying how to secure them.</span>
-        </div>
-        <div class="do-row">
-          <span class="do-code mono">05</span>
+        </button>
+        <button type="button" class="do-row do-dept" data-dept="media" data-dept-title="Interactive Media and Automation" aria-haspopup="dialog">
+          <span class="do-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7.5 4.5v15M7.5 12L19 6v12z"/>
+              <path d="M19 6v12L7.5 12z"/>
+            </svg>
+          </span>
           <span class="do-title">Interactive Media and Automation</span>
           <span class="do-desc">Creates interactive experiences and automated tools, and Games!!!</span>
+        </button>
+      </div>
+
+      <!-- Department detail modal — opened by clicking a .do-dept row.
+           Each <template data-dept-body="…"> holds the richer info the
+           row's short description can't fit. pages.js initDeptModal()
+           copies the matching template into .dept-modal-body. -->
+      <template data-dept-body="administration">
+        <p>The administrative core keeps the club moving — the paperwork, the calendar, and the people who make sure things actually happen.</p>
+        <p class="dept-sub">Inside this department</p>
+        <ul class="dept-list">
+          <li>Event planning and scheduling</li>
+          <li>Membership and records</li>
+          <li>Internal communication</li>
+          <li>Department coordination</li>
+        </ul>
+      </template>
+      <template data-dept-body="publications">
+        <p>Every word the club puts out — the journal, newsletters, and the permanent record of what we build and learn.</p>
+        <p class="dept-sub">Inside this department</p>
+        <ul class="dept-list">
+          <li>Tech Journal articles</li>
+          <li>Newsletters and announcements</li>
+          <li>Documentation and meeting notes</li>
+          <li>Editing and review</li>
+        </ul>
+      </template>
+      <template data-dept-body="programming">
+        <p>From clean, working code to hardware that moves — this is where software and engineering collide.</p>
+        <p class="dept-sub">Inside this department</p>
+        <ul class="dept-list">
+          <li>Project development and code review</li>
+          <li>Competitive programming</li>
+          <li>Robotics and electronics</li>
+          <li>Study groups and workshops</li>
+        </ul>
+      </template>
+      <template data-dept-body="websec">
+        <p>We ship web systems and learn to break and defend them — the same skills from both sides of the wire.</p>
+        <p class="dept-sub">Inside this department</p>
+        <ul class="dept-list">
+          <li>Web application development</li>
+          <li>Security fundamentals and CTF</li>
+          <li>Capture-the-flag practice</li>
+          <li>Deployment and infrastructure</li>
+        </ul>
+      </template>
+      <template data-dept-body="media">
+        <p>Interactive experiences, tools that work for people, and the games we make along the way.</p>
+        <p class="dept-sub">Inside this department</p>
+        <ul class="dept-list">
+          <li>Interactive media and visual design</li>
+          <li>Automation tooling</li>
+          <li>Game design and development</li>
+          <li>Creative coding experiments</li>
+        </ul>
+      </template>
+
+      <div class="dept-modal" data-dept-modal aria-hidden="true">
+        <div class="dept-modal-scrim" data-dept-close></div>
+        <div class="dept-modal-dialog" role="dialog" aria-modal="true" aria-labelledby="dept-modal-title">
+          <button type="button" class="dept-modal-close" data-dept-close aria-label="Close">
+            <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6l12 12M18 6L6 18"/></svg>
+          </button>
+          <p class="kicker dept-modal-kicker">Department</p>
+          <h3 class="h-section dept-modal-title" id="dept-modal-title"></h3>
+          <div class="dept-modal-body"></div>
         </div>
       </div>
     </div>
