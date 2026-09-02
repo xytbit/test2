@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 480" width="480" height="480">
+  <rect width="480" height="480" fill="#17332b"/>
+  <g opacity="0.35">
+    <path d="M0 240 H480" stroke="#d7dce3" stroke-width="1"/>
+    <path d="M240 0 V480" stroke="#d7dce3" stroke-width="1"/>
+    <circle cx="240" cy="240" r="150" fill="none" stroke="#4fd1a5" stroke-width="1" opacity="0.5"/>
+  </g>
+  <text x="240" y="248" text-anchor="middle" font-family="sans-serif" font-size="150" font-weight="600" fill="#d7dce3" letter-spacing="4">OF</text>
+  <text x="26" y="458" font-family="monospace" font-size="15" fill="#3a4655">ID: omar</text>
+  </svg>

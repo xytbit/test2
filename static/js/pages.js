@@ -239,6 +239,131 @@
     });
   }
 
+  /* 7 ─ achievements expanded record → tabs (desktop) ──────────────── */
+  // On desktop (≥900px hx mode), the details.fold accordions become
+  // horizontal tabs: a row of buttons + one visible panel. On mobile
+  // the native <details> accordion is left untouched.
+  function initAchTabs() {
+    var container = document.querySelector('.stack--lg[data-stagger]');
+    if (!container) return;
+    var folds = Array.prototype.slice.call(container.querySelectorAll('details.fold'));
+    if (folds.length < 2) return;
+
+    var mql = window.matchMedia('(min-width: 900px)');
+    var tabsEl = null;
+    var panelsEl = null;
+    var panels = [];
+    var btns = [];
+    var active = 0;
+    var built = false;
+
+    function build() {
+      if (built) return;
+      built = true;
+
+      // create tab bar
+      tabsEl = document.createElement('div');
+      tabsEl.className = 'ach-tabs';
+      tabsEl.setAttribute('role', 'tablist');
+
+      // create panel container
+      panelsEl = document.createElement('div');
+
+      folds.forEach(function (fold, i) {
+        var summary = fold.querySelector('summary');
+        var body = fold.querySelector('.fold-body');
+        if (!summary || !body) return;
+
+        // tab button
+        var btn = document.createElement('button');
+        btn.className = 'ach-tab-btn';
+        btn.setAttribute('role', 'tab');
+        btn.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
+        btn.textContent = summary.querySelector('.mono')
+          ? summary.querySelector('.mono').textContent
+          : summary.textContent;
+        btn.addEventListener('click', function () { activate(i); });
+        btns.push(btn);
+        tabsEl.appendChild(btn);
+
+        // panel
+        var panel = document.createElement('div');
+        panel.className = 'ach-tab-panel';
+        panel.setAttribute('role', 'tabpanel');
+        panel.innerHTML = body.innerHTML;
+        panels.push(panel);
+        panelsEl.appendChild(panel);
+
+        // hide native details
+        fold.style.display = 'none';
+      });
+
+      container.insertBefore(tabsEl, container.firstChild);
+      container.appendChild(panelsEl);
+      activate(0);
+    }
+
+    function destroy() {
+      if (!built) return;
+      tabsEl.remove();
+      panelsEl.remove();
+      folds.forEach(function (fold) { fold.style.display = ''; });
+      built = false;
+      btns = [];
+      panels = [];
+    }
+
+    function activate(i) {
+      active = i;
+      btns.forEach(function (b, j) {
+        b.classList.toggle('is-active', j === i);
+        b.setAttribute('aria-selected', j === i ? 'true' : 'false');
+      });
+      panels.forEach(function (p, j) {
+        p.classList.toggle('is-active', j === i);
+      });
+    }
+
+    function onBreakpoint() {
+      if (mql.matches) { build(); } else { destroy(); }
+    }
+
+    mql.addEventListener('change', onBreakpoint);
+    onBreakpoint();
+  }
+
+  /* 7 ─ team floating batch switcher ---------------------------------- */
+  // A bottom-right floating button on the team page opens a menu of
+  // batch links (team/<id>/). Clicking outside or pressing Escape
+  // closes it; the active batch is highlighted.
+  function initBatchSwitch() {
+    var wrap = document.querySelector('[data-batch-switch]');
+    if (!wrap) return;
+    var btn = wrap.querySelector('[data-batch-toggle]');
+    var menu = wrap.querySelector('[data-batch-menu]');
+    if (!btn || !menu) return;
+
+    function open() {
+      menu.classList.add('is-open');
+      btn.setAttribute('aria-expanded', 'true');
+    }
+    function close() {
+      menu.classList.remove('is-open');
+      btn.setAttribute('aria-expanded', 'false');
+    }
+
+    btn.addEventListener('click', function (e) {
+      e.stopPropagation();
+      menu.classList.contains('is-open') ? close() : open();
+    });
+    document.addEventListener('click', function (e) {
+      if (!wrap.contains(e.target)) close();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') close();
+    });
+  }
+
   // register on the shared namespace consumed by main.js
   window.DCITC = window.DCITC || {};
   window.DCITC.pages = {
@@ -249,6 +374,8 @@
       initSearch();
       initEventDeck();
       initDeptModal();
+      initAchTabs();
+      initBatchSwitch();
     },
   };
 })();

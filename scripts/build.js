@@ -196,7 +196,7 @@ function resolve(expr, scope, root) {
   if (p === '.') return scope;
   if (p.startsWith('$.')) {
     scope = root;
-    p = p.slice(1);
+    p = p.slice(2); // drop '$.' → "activeBatchId"
   } else if (p.startsWith('.')) p = p.slice(1);
   else if (p.startsWith('$')) {
     scope = root;
@@ -715,9 +715,52 @@ resources = resources.map((r, i) => ({
   code: `RES.${String(i + 1).padStart(2, '0')}`,
 }));
 
-team = team.map((g, i) => ({
-  ...g,
-  code: `TEAM.${String(i + 1).padStart(2, '0')}`,
+/* TEAM — batch-aware structure --------------------------------------------
+   team.json format: { current: "27", batches: { "27": { label, groups }, ... } }
+   Each group gets a code (TEAM.01, TEAM.02, ...) within its batch.
+   teamBatches = { "27": [...groups], "26": [...groups], ... } (all batches, coded)
+   team        = current batch's groups (for about page backward compat)
+
+   REAL PHOTOS (replacing the mock SVGs): drop a photo named
+   `content/team/<batch>/<seed>.<ext>` (jpg/jpeg/png/webp) where <seed>
+   matches a member's seed in team.json. The build auto-detects it and
+   the avatar <img> uses /content/team/<batch>/<seed>.<ext> instead of the
+   generated SVG. No team.json edit needed — just the file + seed match. */
+const TEAM_PHOTO_DIR = path.join(ROOT, 'content', 'team');
+const TEAM_PHOTO_RE = /\.(jpe?g|png|webp)$/i;
+// map batchId -> { seed: "filename.ext" } for members that have a real photo
+function scanTeamPhotos(batchId) {
+  const dir = path.join(TEAM_PHOTO_DIR, batchId);
+  const map = {};
+  if (fs.existsSync(dir)) {
+    for (const f of fs.readdirSync(dir)) {
+      if (TEAM_PHOTO_RE.test(f)) {
+        const seed = f.replace(TEAM_PHOTO_RE, '');
+        map[seed] = f;
+      }
+    }
+  }
+  return map;
+}
+const teamRaw = team; // { current, batches }
+const teamBatches = {};
+for (const [batchId, batch] of Object.entries(teamRaw.batches)) {
+  const photos = scanTeamPhotos(batchId);
+  teamBatches[batchId] = batch.groups.map((g, i) => ({
+    ...g,
+    code: `TEAM.${String(i + 1).padStart(2, '0')}`,
+    many: (g.members || []).length > 4,
+    members: (g.members || []).map((m) => {
+      const photo = photos[m.seed];
+      return photo ? { ...m, photo } : m;
+    }),
+  }));
+}
+const currentBatchId = teamRaw.current;
+team = teamBatches[currentBatchId] || []; // backward compat: about page uses {{ .team }}
+const teamBatchesList = Object.entries(teamRaw.batches).map(([id, b]) => ({
+  id,
+  label: b.label,
 }));
 
 /* GALLERY — photo strip driven by <root>/content/gallery/ -----------------
@@ -1210,6 +1253,10 @@ function buildPage(page) {
     resourceCats,
     posts,
     team,
+    teamBatches,
+    currentBatchId,
+    batchesList: teamBatchesList,
+    activeBatchId: currentBatchId,
     gallery,
     funky,
     funkyDepts,
@@ -1255,6 +1302,14 @@ function main() {
       write(path.join(genDir, `av-${m.seed}.svg`), genAvatar(m.seed, m.name));
     }),
   );
+  // also generate avatars for non-current batches
+  for (const groups of Object.values(teamBatches)) {
+    groups.forEach((g) =>
+      g.members.forEach((m) => {
+        write(path.join(genDir, `av-${m.seed}.svg`), genAvatar(m.seed, m.name));
+      }),
+    );
+  }
 
   // 2. CSS / JS bundles (see CSS_FILES/JS_FILES for order rules) ----
   console.log('bundles');
@@ -1273,7 +1328,24 @@ function main() {
     write(path.join(OUT, 'funkystuff', it.file), read(path.join(FUNKY_DIR, it.file)));
   }
 
-  // 2c. gallery assets ------------------------------------------------
+  // 2c. team photos ---------------------------------------------------
+  // Copies content/team/<batch>/<seed>.<ext> → public/content/team/<batch>/
+  // verbatim so real member photos (referenced by the avatar img) are served.
+  if (fs.existsSync(TEAM_PHOTO_DIR)) {
+    for (const batchId of Object.keys(teamRaw.batches)) {
+      const srcDir = path.join(TEAM_PHOTO_DIR, batchId);
+      if (!fs.existsSync(srcDir)) continue;
+      const outDir = path.join(OUT, 'content', 'team', batchId);
+      fs.mkdirSync(outDir, { recursive: true });
+      for (const f of fs.readdirSync(srcDir)) {
+        if (TEAM_PHOTO_RE.test(f)) {
+          write(path.join(outDir, f), fs.readFileSync(path.join(srcDir, f)));
+        }
+      }
+    }
+  }
+
+  // 2d. gallery assets ------------------------------------------------
   // Copy every image from content/gallery/ to public/gallery/ verbatim.
   // (captions.json is metadata only — never copied.) Items are already
   // pre-rendered into the page; this just makes the files servable.
@@ -1295,6 +1367,48 @@ function main() {
   const pageDefs = JSON.parse(read(path.join(SRC, 'data', 'pages.json')));
   for (const p of pageDefs) {
     buildPage({ ...p, url: p.url || `/${p.out}` });
+  }
+
+  // 3b. team batch pages (team/<batch>/index.html) -------------------
+  // One page per batch in team.json. Each is the SAME team template
+  // rendered with `team` = that batch's groups, so the layout is
+  // identical and adding a batch is purely a team.json edit.
+  const teamPageDef = pageDefs.find((p) => p.file === 'team.html');
+  if (teamPageDef) {
+    for (const batchId of Object.keys(teamBatches)) {
+      const batch = teamRaw.batches[batchId];
+      const scope = {
+        site,
+        page: { ...teamPageDef, url: `/team/${batchId}/` },
+        nav: navFor({ url: `/team/${batchId}/` }),
+        team: teamBatches[batchId],
+        activeBatchId: batchId,
+        teamBatches,
+        currentBatchId,
+        batchesList: teamBatchesList,
+        projects,
+        events,
+        upcomingEvents,
+        pastEvents,
+        featuredProjects,
+        featuredPosts,
+        featuredResources,
+        achievements,
+        resources,
+        resourceCats,
+        posts,
+        gallery,
+        funky,
+        funkyDepts,
+        CATEGORIES,
+        activeProjectsCount,
+      };
+      write(
+        path.join(OUT, 'team', batchId, 'index.html'),
+        renderTemplate(read(path.join(SRC, 'pages', 'team.html')), scope, scope),
+      );
+      console.log(`  ✓ team/${batchId}/index.html`);
+    }
   }
 
   // 4. per-item pages (project/event/article singles) ---------------
@@ -1335,6 +1449,10 @@ function main() {
         resourceCats,
         posts,
         team,
+        teamBatches,
+        currentBatchId,
+        batchesList: teamBatchesList,
+        activeBatchId: currentBatchId,
         gallery,
         funky,
         funkyDepts,

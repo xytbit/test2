@@ -1171,7 +1171,7 @@ html.js .evx {
   display: flex;
   align-items: baseline;
   gap: 1rem;
-  margin-bottom: 1.4rem;
+  margin-bottom: 1.2rem;
 }
 .group-head h2 {
   font-family: var(--font-disp);
@@ -1185,7 +1185,153 @@ html.js .evx {
 .team-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 1rem;
+  gap: 0.8rem;
+}
+
+/* large groups (one Executive Committee holding every member) render ALL
+   their cards as ONE long row. Cards keep a stable width (no shrinking to
+   fit the viewport). The SECTION itself grows to fit the whole row (like
+   the gallery filmstrip — `.sec:has(… many) { width: auto }`), so the row
+   is fully contained: the WHOLE PAGE pans horizontally through the cards
+   and the following sections (Members/footer) come after the row's end —
+   the cards never spill "under" them. No nested scrollbar; the site
+   scrolls. Desktop-only — below 900px the page is vertical and the normal
+   responsive grid applies. */
+@media (min-width: 900px) {
+  /* grow the section to contain the whole single row */
+  body.hx-body .sec:has(> .sec-in > .team-grid--many) {
+    width: auto;
+    min-width: 100vw;
+  }
+  body.hx-body .sec:has(> .sec-in > .team-grid--many) .sec-in {
+    max-width: none; /* let the row's full width dictate the section */
+    width: max-content;
+  }
+  body.hx-body .team-grid--many {
+    grid-auto-flow: column;
+    grid-auto-columns: 17.5rem;
+    grid-template-columns: none;
+    justify-content: start;
+    width: max-content; /* natural single row, never reflowed to fit */
+  }
+  /* the row is one continuous card line — the vertical stagger reveal
+     (translateY(18px) + opacity 0 until scrolled in view) makes no sense
+     stretched across a whole long row. Keep cards permanently visible;
+     no height shaving, the page pan gives the motion. */
+  body.hx-body .team-grid--many > * {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
+
+/* batch legend plate (team page) */
+.sec--batch .sec-head {
+  margin-bottom: 1.2rem;
+}
+.batch-note {
+  max-width: 640px;
+}
+
+/* floating batch switcher (team page, bottom-right) --------------------- */
+.batch-switch {
+  position: fixed;
+  right: 1.4rem;
+  bottom: 1.4rem;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.6rem;
+}
+.batch-switch-toggle {
+  width: 3.4rem;
+  height: 3.4rem;
+  border-radius: var(--r-md);
+  border: 1px solid var(--line-strong);
+  background: var(--bg-elev);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: var(--fs-2);
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  box-shadow: var(--shadow);
+  transition:
+    border-color var(--t-fast) var(--ease),
+    transform var(--t-fast) var(--ease),
+    color var(--t-fast) var(--ease);
+}
+.batch-switch-toggle:hover,
+.batch-switch-toggle[aria-expanded='true'] {
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-2px);
+}
+.batch-switch-menu {
+  display: none;
+  flex-direction: column;
+  min-width: 12.5rem;
+  background: var(--bg-elev);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.batch-switch-menu.is-open {
+  display: flex;
+}
+.batch-switch-label {
+  font-family: var(--font-mono);
+  font-size: var(--fs-0);
+  letter-spacing: var(--trk-mono);
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  padding: 0.6rem 0.9rem 0.35rem;
+}
+.batch-switch-item {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.55rem 0.9rem;
+  color: var(--ink-dim);
+  text-decoration: none;
+  transition: background var(--t-fast) var(--ease), color var(--t-fast) var(--ease);
+}
+.batch-switch-item:hover,
+.batch-switch-item:focus-visible {
+  background: color-mix(in srgb, var(--accent) 8%, transparent);
+  color: var(--ink);
+}
+.batch-switch-item .batch-switch-year {
+  font-size: var(--fs-1);
+}
+.batch-switch-item .batch-switch-current {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: var(--fs-0);
+  letter-spacing: var(--trk-mono);
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.batch-switch-item.is-active {
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 7%, transparent);
+}
+@media (prefers-reduced-motion: no-preference) {
+  .batch-switch-menu {
+    animation: bwIn 0.18s var(--ease-out);
+  }
+}
+@keyframes bwIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 
 /* leadership — cards render as a plain inline row (carousel removed);
@@ -1621,6 +1767,14 @@ html.js .evx {
   }
   .sec-leadership {
     grid-template-columns: 1fr 1fr;
+  }
+  .batch-switch {
+    right: 1rem;
+    bottom: 1rem;
+  }
+  .batch-switch-toggle {
+    width: 3rem;
+    height: 3rem;
   }
   .single-title,
   .art-title {

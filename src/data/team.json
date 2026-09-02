@@ -1,48 +1,59 @@
-[
-  {
-    "name": "Executive Committee",
-    "code": "EXEC",
-    "note": "Runs the club, defends its culture, and keeps every meeting short.",
-    "members": [
-      { "name": "MD. Tanvir Ahmed", "role": "President", "seed": "tanvir", "note": "Final year, CSE. Reads RFCs for fun and starts every meeting with a project demo.", "tags": ["networking", "systems"] },
-      { "name": "Farzana Yasmin", "role": "Vice President", "seed": "farzana", "note": "Leads the algorithms study group and the club's competitive programming practice.", "tags": ["algorithms", "cp"] },
-      { "name": "Abdullah Al Mamun", "role": "General Secretary", "seed": "abdullah", "note": "The club's institutional memory. Maintains the journal archive and meeting notes.", "tags": ["documentation"] },
-      { "name": "Rima Sultana", "role": "Treasurer", "seed": "rima", "note": "Keeps the budget honest enough to fund lab equipment. Also runs the media team's budget.", "tags": ["operations"] }
-    ]
-  },
-  {
-    "name": "Technical Team",
-    "code": "TECH",
-    "note": "Owns the projects, the study groups, and the club's actual infrastructure.",
-    "members": [
-      { "name": "Arif Chowdhury", "role": "Technical Lead", "seed": "arif", "note": "Lead on CampusMesh. Believes every problem is a systems problem until proven otherwise.", "tags": ["linux", "systems"] },
-      { "name": "Sadia Akter", "role": "AI / ML Lead", "seed": "sadia", "note": "Lead on Nodhini. Runs the AI reading group and the journal's NLP track.", "tags": ["nlp", "ml"] },
-      { "name": "Sabbir Rahman", "role": "Systems Engineer", "seed": "sabbir", "note": "PadChat author. Maintains the club's self-hosted services and the lab's LAN.", "tags": ["go", "sysadmin"] },
-      { "name": "Meherun Nesa", "role": "Networking Lead", "seed": "meherun", "note": "Runs the Networking Deep Dive series and keeps the mesh honest.", "tags": ["networking", "linux"] },
-      { "name": "Tasnim Anjum", "role": "Electronics Lead", "seed": "tasnim", "note": "VoltLab lead. Believes in measuring everything twice, including the multimeter.", "tags": ["esp32", "electronics"] },
-      { "name": "Rakib Hossain", "role": "Security Lead", "seed": "rakib", "note": "Runs the CTF team and the security study group. Built last year's beginner CTF.", "tags": ["security", "ctf"] },
-      { "name": "Priya Das", "role": "Web Engineer", "seed": "priya", "note": "Frontend of VoltLab's dashboard. Cares about accessibility and says so loudly.", "tags": ["web", "a11y"] },
-      { "name": "Mubashir Hasan", "role": "Algorithms Engineer", "seed": "mubashir", "note": "AlgoPlay engine author. Turns blackboard algorithms into stepping visualizations.", "tags": ["algorithms", "ts"] }
-    ]
-  },
-  {
-    "name": "Creative & Media",
-    "code": "MEDIA",
-    "note": "Turns the club's work into photographs, posters, and captions worth reading.",
-    "members": [
-      { "name": "Mahin Khan", "role": "Creative Lead", "seed": "mahin", "note": "Designs the study group note templates and every poster the club prints.", "tags": ["design"] },
-      { "name": "Nusrat Jahan", "role": "Photography", "seed": "nusrat", "note": "Shot the gallery's workshop series and maintains the club photo archive.", "tags": ["photography"] },
-      { "name": "Sadman Sakib", "role": "Video & Editing", "seed": "sadman", "note": "Produces the short 'how we work' videos from every Build Week.", "tags": ["video"] }
-    ]
-  },
-  {
-    "name": "Organizing Team",
-    "code": "OPS",
-    "note": "Runs events like operations, not like parties: schedules, venues, and backups.",
-    "members": [
-      { "name": "Tanzir Islam", "role": "Events Lead", "seed": "tanzir", "note": "Runs the workshop pipeline from planning sheet to attendance list.", "tags": ["events"] },
-      { "name": "Ibrahim Sarker", "role": "Ops & Logistics", "seed": "ibrahim", "note": "Built the equipment checkout system the electronics group depends on.", "tags": ["ops"] },
-      { "name": "Jannatul Ferdous", "role": "Outreach", "seed": "jannatul", "note": "Coordinates with other departments and the national student tech community.", "tags": ["outreach"] }
-    ]
+{
+  "current": "27",
+  "batches": {
+    "27": {
+      "label": "2027",
+      "groups": [
+        {
+          "name": "Executive Committee",
+          "code": "EXEC",
+          "note": "The core team running the club, defending its culture, and keeping every meeting short.",
+          "members": [
+            { "name": "MD. Tanvir Ahmed", "role": "President", "seed": "tanvir", "note": "Final year, CSE. Reads RFCs for fun and starts every meeting with a project demo.", "tags": ["networking", "systems"] },
+            { "name": "Farzana Yasmin", "role": "Vice President", "seed": "farzana", "note": "Leads the algorithms study group and the club's competitive programming practice.", "tags": ["algorithms", "cp"] },
+            { "name": "Abdullah Al Mamun", "role": "General Secretary", "seed": "abdullah", "note": "The club's institutional memory. Maintains the journal archive and meeting notes.", "tags": ["documentation"] },
+            { "name": "Rima Sultana", "role": "Treasurer", "seed": "rima", "note": "Keeps the budget honest enough to fund lab equipment. Also runs the media team's budget.", "tags": ["operations"] },
+            { "name": "Arif Chowdhury", "role": "Technical Lead", "seed": "arif", "note": "Lead on CampusMesh. Believes every problem is a systems problem until proven otherwise.", "tags": ["linux", "systems"] },
+            { "name": "Sadia Akter", "role": "AI / ML Lead", "seed": "sadia", "note": "Lead on Nodhini. Runs the AI reading group and the journal's NLP track.", "tags": ["nlp", "ml"] },
+            { "name": "Sabbir Rahman", "role": "Systems Engineer", "seed": "sabbir", "note": "PadChat author. Maintains the club's self-hosted services and the lab's LAN.", "tags": ["go", "sysadmin"] },
+            { "name": "Meherun Nesa", "role": "Networking Lead", "seed": "meherun", "note": "Runs the Networking Deep Dive series and keeps the mesh honest.", "tags": ["networking", "linux"] },
+            { "name": "Tasnim Anjum", "role": "Electronics Lead", "seed": "tasnim", "note": "VoltLab lead. Believes in measuring everything twice, including the multimeter.", "tags": ["esp32", "electronics"] },
+            { "name": "Rakib Hossain", "role": "Security Lead", "seed": "rakib", "note": "Runs the CTF team and the security study group. Built last year's beginner CTF.", "tags": ["security", "ctf"] },
+            { "name": "Priya Das", "role": "Web Engineer", "seed": "priya", "note": "Frontend of VoltLab's dashboard. Cares about accessibility and says so loudly.", "tags": ["web", "a11y"] },
+            { "name": "Mubashir Hasan", "role": "Algorithms Engineer", "seed": "mubashir", "note": "AlgoPlay engine author. Turns blackboard algorithms into stepping visualizations.", "tags": ["algorithms", "ts"] },
+            { "name": "Mahin Khan", "role": "Creative Lead", "seed": "mahin", "note": "Designs the study group note templates and every poster the club prints.", "tags": ["design"] },
+            { "name": "Nusrat Jahan", "role": "Photography", "seed": "nusrat", "note": "Shot the gallery's workshop series and maintains the club photo archive.", "tags": ["photography"] },
+            { "name": "Sadman Sakib", "role": "Video & Editing", "seed": "sadman", "note": "Produces the short 'how we work' videos from every Build Week.", "tags": ["video"] },
+            { "name": "Tanzir Islam", "role": "Events Lead", "seed": "tanzir", "note": "Runs the workshop pipeline from planning sheet to attendance list.", "tags": ["events"] },
+            { "name": "Ibrahim Sarker", "role": "Ops & Logistics", "seed": "ibrahim", "note": "Built the equipment checkout system the electronics group depends on.", "tags": ["ops"] },
+            { "name": "Jannatul Ferdous", "role": "Outreach", "seed": "jannatul", "note": "Coordinates with other departments and the national student tech community.", "tags": ["outreach"] }
+          ]
+        }
+      ]
+    },
+    "26": {
+      "label": "2026",
+      "groups": [
+        {
+          "name": "Executive Committee",
+          "code": "EXEC",
+          "note": "The founding committee that rebuilt the club from scratch.",
+          "members": [
+            { "name": "Rafiq Hassan", "role": "President", "seed": "rafiq", "note": "Rebuilt the club's technical infrastructure and launched the first study groups.", "tags": ["systems", "leadership"] },
+            { "name": "Sumaiya Khatun", "role": "Vice President", "seed": "sumaiya", "note": "Started the algorithms study group and organized the first CTF.", "tags": ["algorithms", "ctf"] },
+            { "name": "Imran Ali", "role": "General Secretary", "seed": "imran", "note": "Created the meeting notes system and the club's documentation archive.", "tags": ["documentation"] },
+            { "name": "Fatima Rahman", "role": "Treasurer", "seed": "fatima", "note": "Secured the initial budget for lab equipment and workshop materials.", "tags": ["operations"] },
+            { "name": "Kamal Ahmed", "role": "Technical Lead", "seed": "kamal", "note": "Built the club's first server and self-hosted Git instance.", "tags": ["linux", "sysadmin"] },
+            { "name": "Nadia Begum", "role": "AI / ML Lead", "seed": "nadia", "note": "Started the NLP research track that became the Nodhini project.", "tags": ["nlp", "ml"] },
+            { "name": "Omar Faruk", "role": "Systems Engineer", "seed": "omar", "note": "Designed the original CampusMesh network topology.", "tags": ["networking", "systems"] },
+            { "name": "Rashida Sultana", "role": "Networking Lead", "seed": "rashida", "note": "Built the club's lab network and ran the first Linux workshop.", "tags": ["networking", "linux"] },
+            { "name": "Tanvir Islam", "role": "Creative Lead", "seed": "tanvir-c", "note": "Designed the original DCITC logo, posters, and note templates.", "tags": ["design"] },
+            { "name": "Ayesha Siddiqua", "role": "Photography", "seed": "ayesha", "note": "Shot the first workshop series and built the photo archive.", "tags": ["photography"] },
+            { "name": "Hasan Mahmud", "role": "Events Lead", "seed": "hasan", "note": "Organized the first Build Week and established the workshop format.", "tags": ["events"] },
+            { "name": "Maliha Noor", "role": "Ops & Logistics", "seed": "maliha", "note": "Built the equipment checkout and inventory system.", "tags": ["ops"] }
+          ]
+        }
+      ]
+    }
   }
-]
+}

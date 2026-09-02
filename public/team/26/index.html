@@ -1,24 +1,27 @@
 <!DOCTYPE html>
 <!-- ==================================================================
-     ABOUT PAGE  —  src/pages/about.html  →  public/about/index.html
+     TEAM PAGE  —  src/pages/team.html  →  public/team/<batch>/index.html
      ==================================================================
      WHAT THIS FILE CONTROLS:
-       The club's story in seven horizontal sections:
+       The full team roster for ONE batch. The build renders this same
+       template once per batch in src/data/team.json (team/27/,
+       team/26/, …), so the layout is identical across batches.
 
-       00 Introduction    display headline
-       01 History         .htl horizontal mini-timeline (2019→2026)
-       02 Mission         prose + .blueprint READ/BUILD/TEACH diagram
-       03 Philosophy      three .prin principle cards
-       04 How we work     .flow Study→Build→Publish loop
-       05 Activities      .do-list rows
-       06 Leadership      four profile cards in an inline row
+       00 Overview        intro (batch label)
+       (loop)             ONE SECTION PER GROUP from the current batch —
+                          each renders a .group-head, the group note, and
+                          a .team-grid of .profile cards.
+       FIN Members        closing "the other 100" plate + join CTA
 
-     LEADERSHIP (section 06):
-       .sec-leadership holds the cards. Two filtered loops over the
-       team collection build exactly 4 cards: first the President
-       (eq), then VP / General Secretary / Technical Lead via an `or`
-       group. Cards render as a plain inline row — no carousel, no
-       arrows, no dots, no JS. Styling lives in 08-pages.css.
+     EASY PODCASTING:
+       - Add a batch: drop a "26"/"25"/… key into src/data/team.json's
+         `batches` object (label + groups) and rebuild. A team/<batch>/
+         page appears automatically + a battery-of-the-batch button on
+         the floating switcher.
+       - Replace mock avatars: drop "avatar.jpg" into
+         <root>/content/team/<batch>/<seed>.jpg and set the member's
+         optional "photo": "<seed>.jpg" in team.json. Falls back to the
+         generated SVG (av-<seed>.svg) when no photo is set.
      ================================================================== -->
 <html lang="en">
 <!-- ==================================================================
@@ -42,12 +45,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>About — Dhaka College IT Club</title>
-  <meta name="description" content="What DCITC is, where it came from, what it believes about technology, and how it works.">
+  <title>Team — Dhaka College IT Club</title>
+  <meta name="description" content="The executive committee, technical team, media and organizing teams behind DCITC.">
   <meta name="generator" content="DCITC site builder">
   <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
-  <meta property="og:title" content="About — Dhaka College IT Club">
-  <meta property="og:description" content="What DCITC is, where it came from, what it believes about technology, and how it works.">
+  <meta property="og:title" content="Team — Dhaka College IT Club">
+  <meta property="og:description" content="The executive committee, technical team, media and organizing teams behind DCITC.">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Dhaka College IT Club">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -68,7 +71,7 @@
   </script>
 </head>
 
-<body class="hx-body" data-page="about">
+<body class="hx-body" data-page="team">
 <!-- ==================================================================
      DCITC HEADER PARTIAL  —  src/partials/header.html
      ==================================================================
@@ -114,7 +117,7 @@
         
           
           <li>
-            <a href="/about/" class="nav-link is-active" aria-current="page">
+            <a href="/about/" class="nav-link " >
               <span class="nav-code">01</span>About
             </a>
           </li>
@@ -206,7 +209,7 @@
           
             
               
-              <li><a href="/team/" class="" ><span class="nav-code">08</span>Team</a></li>
+              <li><a href="/team/" class="is-active" aria-current="page"><span class="nav-code">08</span>Team</a></li>
               
             
           
@@ -319,7 +322,7 @@
     <ul>
       
       <li>
-        <a href="/about/" class="is-active" aria-current="page">
+        <a href="/about/" class="" >
           <span class="nav-code">01</span>About
         </a>
       </li>
@@ -361,7 +364,7 @@
       </li>
       
       <li>
-        <a href="/team/" class="" >
+        <a href="/team/" class="is-active" aria-current="page">
           <span class="nav-code">08</span>Team
         </a>
       </li>
@@ -395,318 +398,285 @@
 
 <main id="main" class="hx" data-horizontal>
   <!-- SECTION 00 — INTRO -->
-  <section class="sec sec--full sec--intro scan" data-section="Introduction" data-code="00" data-label="Introduction">
+  <section class="sec sec--full sec--intro scan" data-section="Overview" data-code="00" data-label="Overview">
     <div class="intro-in">
-      <p class="kicker" data-reveal="fade">00 — Introduction</p>
-      <h1 class="h-display intro-title" data-reveal="up">Shaping Tomorrow <br>today</h1>
-      <p class="lead mt-3" data-reveal style="--d:180ms">DCITC is the technology club of Dhaka College. It is a student run organization built around study groups, real projects, and the discipline of understanding systems before shipping them.</p>
+      <p class="kicker" data-reveal="fade">00 — Team</p>
+      <h1 class="h-display intro-title" data-reveal="up">RUN BY MEMBERS, NOT BY TITLE.</h1>
+      <p class="lead mt-3" data-reveal style="--d:180ms">Four teams, one culture. Everyone here leads a study group, ships a project, or keeps something running — usually all three.</p>
     </div>
   </section>
 
-  <!-- SECTION 01 — HISTORY -->
-  <section class="sec sec--wide" data-section="History" data-code="01" data-label="History">
+  <!-- BATCH LEGEND (floating switcher targets) -->
+  <section class="sec sec--fit sec--batch" data-section="Batch" data-code="00A" data-label="Batch" data-batch-legend>
     <div class="sec-in">
       <div class="sec-head" data-reveal>
-        <p class="kicker">01 — History</p>
-        <h2 class="h-section">From a classroom to a Community.</h2>
+        <p class="kicker">Active batch</p>
+        <h2 class="h-section">Class of 26.</h2>
       </div>
-      <div class="htl" data-stagger>
-        <div class="htl-item">
-          <span class="htl-year mono">2024</span>
-          <h3 class="htl-title">The biggining</h3>
-          <p class="htl-detail">A group of students starts meeting weekly to share what they are learning in programming.</p>
-        </div>
-        <div class="htl-item">
-          <span class="htl-year mono">2025</span>
-          <h3 class="htl-title">Founded</h3>
-          <p class="htl-detail">Workshops become structured; the first lab machines arrive; the club grows past fifty members.</p>
-        </div>
-        <div class="htl-item">
-          <span class="htl-year mono">2026</span>
-          <h3 class="htl-title">Rebuilt as a study org</h3>
-          <p class="htl-detail">Study groups are founded; the club re-centers on fundamentals and public notes.</p>
-        </div>
-        <div class="htl-item">
-          <span class="htl-year mono">2025</span>
-          <h3 class="htl-title">First software ships</h3>
-          <p class="htl-detail">PadChat enters the lab, VoltLab is adopted by physics, CampusMesh covers two halls.</p>
-        </div>
-        <div class="htl-item">
-          <span class="htl-year mono">2026</span>
-          <h3 class="htl-title">Open source</h3>
-          <p class="htl-detail">Nodhini releases under MIT; 120+ members; the club runs its own infrastructure.</p>
-        </div>
+      <div class="batch-note plate" data-reveal>
+        <span class="plate-label">Batch 26</span>
+        <p class="prose">Switch batches with the floating button in the corner below. Each batch gets its own page with the same team structure — the current committee on top, then technical, media, and organizing teams.</p>
       </div>
     </div>
   </section>
 
-  <!-- SECTION 02 — MISSION -->
-  <section class="sec sec--fit" data-section="Mission" data-code="02" data-label="Mission">
-    <div class="sec-in">
-      <div class="sec-head" data-reveal>
-        <p class="kicker">02 — Mission</p>
-        <h2 class="h-section">Make fundamentals a habit.</h2>
+  <!-- SECTIONS — TEAMS -->
+  
+  <section class="sec sec--wide" data-section="Executive Committee" data-code="TEAM.01" data-label="Executive Committee">
+    <div class="sec-in" data-team-strip>
+      <div class="group-head" data-reveal>
+        <h2>Executive Committee</h2>
+        <span class="mono term">TEAM.01</span>
       </div>
-      <div class="split">
-        <div data-reveal>
-          <p class="prose" style="font-size:var(--fs-3);color:var(--ink);line-height:var(--lh-snug)">Our mission is to give every member the ability to understand technology deeply enough to build with it — and the documentation skills to keep learning after they leave.</p>
-        </div>
-        <div class="blueprint" data-stagger>
-          <div class="bp-node">01 / STUDY <small>Required Sessions</small></div>
-          <div class="bp-links">
-            <span class="bp-line"><b>▸</b> fundamentals first</span>
-            <span class="bp-line"><b>▸</b> public notes</span>
-            <span class="bp-line"><b>▸</b> verified resources</span>
+      <p class="prose" data-reveal style="--d:80ms">The founding committee that rebuilt the club from scratch.</p>
+      <div class="team-grid team-grid--many mt-4" data-stagger>
+        
+        <div class="profile">
+          <div class="avatar">
+            
+            <img src="/img/gen/av-rafiq.svg" alt="Portrait of Rafiq Hassan" loading="lazy">
+            
           </div>
-          <div class="bp-node">02 / BUILD <small>project teams</small></div>
-          <div class="bp-links">
-            <span class="bp-line"><b>▸</b> real problems</span>
-            <span class="bp-line"><b>▸</b> documented code</span>
-          </div>
-          <div class="bp-node">03 / TEACH <small>everyone</small></div>
-          <div class="bp-links">
-            <span class="bp-line"><b>▸</b> journal posts</span>
-            <span class="bp-line"><b>▸</b> workshops</span>
+          <div class="profile-body">
+            <h3 class="profile-name">Rafiq Hassan</h3>
+            <span class="profile-role">President</span>
+            <p class="profile-note">Rebuilt the club's technical infrastructure and launched the first study groups.</p>
+            <div class="profile-tags tag-row">
+              
+              <span class="tag tag--faint">systems</span>
+              
+              <span class="tag tag--faint">leadership</span>
+              
+            </div>
           </div>
         </div>
+        
+        <div class="profile">
+          <div class="avatar">
+            
+            <img src="/img/gen/av-sumaiya.svg" alt="Portrait of Sumaiya Khatun" loading="lazy">
+            
+          </div>
+          <div class="profile-body">
+            <h3 class="profile-name">Sumaiya Khatun</h3>
+            <span class="profile-role">Vice President</span>
+            <p class="profile-note">Started the algorithms study group and organized the first CTF.</p>
+            <div class="profile-tags tag-row">
+              
+              <span class="tag tag--faint">algorithms</span>
+              
+              <span class="tag tag--faint">ctf</span>
+              
+            </div>
+          </div>
+        </div>
+        
+        <div class="profile">
+          <div class="avatar">
+            
+            <img src="/img/gen/av-imran.svg" alt="Portrait of Imran Ali" loading="lazy">
+            
+          </div>
+          <div class="profile-body">
+            <h3 class="profile-name">Imran Ali</h3>
+            <span class="profile-role">General Secretary</span>
+            <p class="profile-note">Created the meeting notes system and the club's documentation archive.</p>
+            <div class="profile-tags tag-row">
+              
+              <span class="tag tag--faint">documentation</span>
+              
+            </div>
+          </div>
+        </div>
+        
+        <div class="profile">
+          <div class="avatar">
+            
+            <img src="/img/gen/av-fatima.svg" alt="Portrait of Fatima Rahman" loading="lazy">
+            
+          </div>
+          <div class="profile-body">
+            <h3 class="profile-name">Fatima Rahman</h3>
+            <span class="profile-role">Treasurer</span>
+            <p class="profile-note">Secured the initial budget for lab equipment and workshop materials.</p>
+            <div class="profile-tags tag-row">
+              
+              <span class="tag tag--faint">operations</span>
+              
+            </div>
+          </div>
+        </div>
+        
+        <div class="profile">
+          <div class="avatar">
+            
+            <img src="/img/gen/av-kamal.svg" alt="Portrait of Kamal Ahmed" loading="lazy">
+            
+          </div>
+          <div class="profile-body">
+            <h3 class="profile-name">Kamal Ahmed</h3>
+            <span class="profile-role">Technical Lead</span>
+            <p class="profile-note">Built the club's first server and self-hosted Git instance.</p>
+            <div class="profile-tags tag-row">
+              
+              <span class="tag tag--faint">linux</span>
+              
+              <span class="tag tag--faint">sysadmin</span>
+              
+            </div>
+          </div>
+        </div>
+        
+        <div class="profile">
+          <div class="avatar">
+            
+            <img src="/img/gen/av-nadia.svg" alt="Portrait of Nadia Begum" loading="lazy">
+            
+          </div>
+          <div class="profile-body">
+            <h3 class="profile-name">Nadia Begum</h3>
+            <span class="profile-role">AI / ML Lead</span>
+            <p class="profile-note">Started the NLP research track that became the Nodhini project.</p>
+            <div class="profile-tags tag-row">
+              
+              <span class="tag tag--faint">nlp</span>
+              
+              <span class="tag tag--faint">ml</span>
+              
+            </div>
+          </div>
+        </div>
+        
+        <div class="profile">
+          <div class="avatar">
+            
+            <img src="/img/gen/av-omar.svg" alt="Portrait of Omar Faruk" loading="lazy">
+            
+          </div>
+          <div class="profile-body">
+            <h3 class="profile-name">Omar Faruk</h3>
+            <span class="profile-role">Systems Engineer</span>
+            <p class="profile-note">Designed the original CampusMesh network topology.</p>
+            <div class="profile-tags tag-row">
+              
+              <span class="tag tag--faint">networking</span>
+              
+              <span class="tag tag--faint">systems</span>
+              
+            </div>
+          </div>
+        </div>
+        
+        <div class="profile">
+          <div class="avatar">
+            
+            <img src="/img/gen/av-rashida.svg" alt="Portrait of Rashida Sultana" loading="lazy">
+            
+          </div>
+          <div class="profile-body">
+            <h3 class="profile-name">Rashida Sultana</h3>
+            <span class="profile-role">Networking Lead</span>
+            <p class="profile-note">Built the club's lab network and ran the first Linux workshop.</p>
+            <div class="profile-tags tag-row">
+              
+              <span class="tag tag--faint">networking</span>
+              
+              <span class="tag tag--faint">linux</span>
+              
+            </div>
+          </div>
+        </div>
+        
+        <div class="profile">
+          <div class="avatar">
+            
+            <img src="/img/gen/av-tanvir-c.svg" alt="Portrait of Tanvir Islam" loading="lazy">
+            
+          </div>
+          <div class="profile-body">
+            <h3 class="profile-name">Tanvir Islam</h3>
+            <span class="profile-role">Creative Lead</span>
+            <p class="profile-note">Designed the original DCITC logo, posters, and note templates.</p>
+            <div class="profile-tags tag-row">
+              
+              <span class="tag tag--faint">design</span>
+              
+            </div>
+          </div>
+        </div>
+        
+        <div class="profile">
+          <div class="avatar">
+            
+            <img src="/img/gen/av-ayesha.svg" alt="Portrait of Ayesha Siddiqua" loading="lazy">
+            
+          </div>
+          <div class="profile-body">
+            <h3 class="profile-name">Ayesha Siddiqua</h3>
+            <span class="profile-role">Photography</span>
+            <p class="profile-note">Shot the first workshop series and built the photo archive.</p>
+            <div class="profile-tags tag-row">
+              
+              <span class="tag tag--faint">photography</span>
+              
+            </div>
+          </div>
+        </div>
+        
+        <div class="profile">
+          <div class="avatar">
+            
+            <img src="/img/gen/av-hasan.svg" alt="Portrait of Hasan Mahmud" loading="lazy">
+            
+          </div>
+          <div class="profile-body">
+            <h3 class="profile-name">Hasan Mahmud</h3>
+            <span class="profile-role">Events Lead</span>
+            <p class="profile-note">Organized the first Build Week and established the workshop format.</p>
+            <div class="profile-tags tag-row">
+              
+              <span class="tag tag--faint">events</span>
+              
+            </div>
+          </div>
+        </div>
+        
+        <div class="profile">
+          <div class="avatar">
+            
+            <img src="/img/gen/av-maliha.svg" alt="Portrait of Maliha Noor" loading="lazy">
+            
+          </div>
+          <div class="profile-body">
+            <h3 class="profile-name">Maliha Noor</h3>
+            <span class="profile-role">Ops & Logistics</span>
+            <p class="profile-note">Built the equipment checkout and inventory system.</p>
+            <div class="profile-tags tag-row">
+              
+              <span class="tag tag--faint">ops</span>
+              
+            </div>
+          </div>
+        </div>
+        
       </div>
     </div>
   </section>
+  
 
-  <!-- SECTION 03 — PHILOSOPHY -->
-  <section class="sec sec--wide" data-section="Philosophy" data-code="03" data-label="Philosophy">
+  <!-- SECTION — MEMBERS -->
+  <section class="sec sec--fit" data-section="Members" data-code="FIN" data-label="Members">
     <div class="sec-in">
       <div class="sec-head" data-reveal>
-        <p class="kicker">03 — Philosophy</p>
-        <h2 class="h-section">What we believe about technology.</h2>
+        <p class="kicker">Final — Members</p>
+        <h2 class="h-section">The other 100.</h2>
       </div>
-      <div class="prin-grid" data-stagger>
-        <div class="prin">
-          <span class="mono term" style="color:var(--ink-faint)">A / LEARN</span>
-          <h3>Understand before you build</h3>
-          <p>Code written without understanding the system underneath tends to break in ways nobody can explain. Taking the time to understand first means the work holds up under real conditions.</p>
-        </div>
-        <div class="prin">
-          <span class="mono term" style="color:var(--ink-faint)">B / DEPTH</span>
-          <h3>Tools should serve thinking, not replace it</h3>
-          <p>Tools can move fast, but only careful thinking makes their output worth trusting. The goal is to use every tool available while still knowing what it did and why.</p>
-        </div>
-        <div class="prin">
-          <span class="mono term" style="color:var(--ink-faint)">C / DEPTH</span>
-          <h3>Depth matters more than speed</h3>
-          <p>A working demo is not the same as real understanding, and shortcuts taken early tend to resurface as harder problems later. Depth may be slower to build, but it is the only kind of knowledge that lasts.</p>
-        </div>
+      <div class="plate" data-reveal>
+        <span class="plate-label">Membership</span>
+        <p class="prose" style="font-size:var(--fs-3);color:var(--ink);line-height:var(--lh-snug)">Beyond the teams, 120+ members attend study groups, contribute to repos, and staff workshops. The teams exist to serve them, not the other way around.</p>
       </div>
-    </div>
-  </section>
-
-  <!-- SECTION 04 — HOW WE WORK -->
-  <section class="sec sec--fit" data-section="How we work" data-code="04" data-label="How we work">
-    <div class="sec-in">
-      <div class="sec-head" data-reveal>
-        <p class="kicker">04 — How we work</p>
-        <h2 class="h-section">A loop, not an event.</h2>
-      </div>
-      <div class="flow" data-stagger>
-        <div class="flow-step" data-n="01">
-          <h3>Study</h3>
-          <p>A reading group picks one topic and works through it with public notes.</p>
-        </div>
-        <div class="flow-step" data-n="02">
-          <h3>Build</h3>
-          <p>The group proposes a small project that tests what it read.</p>
-        </div>
-        <div class="flow-step" data-n="03">
-          <h3>Publish</h3>
-          <p>Code, measurements and a write-up go to the repo and the journal.</p>
-        </div>
-      </div>
-      <p class="mono mt-4" style="color:var(--ink-faint)" data-reveal>→ the output of one loop becomes the reading of the next.</p>
-    </div>
-  </section>
-
-  <!-- SECTION 05 — ACTIVITIES -->
-  <section class="sec sec--fit" data-section="Activities" data-code="05" data-label="Activities">
-    <div class="sec-in">
-      <div class="sec-head" data-reveal>
-        <p class="kicker">05 — Activities</p>
-        <h2 class="h-section">What actually happens here.</h2>
-      </div>
-      <div class="do-list" data-stagger>
-        <div class="do-row">
-          <span class="do-code mono">ACT.01</span>
-          <span class="do-title">Weekly study groups</span>
-          <span class="do-desc">Six groups, one hour, zero slides. Notes are published after every session.</span>
-        </div>
-        <div class="do-row">
-          <span class="do-code mono">ACT.02</span>
-          <span class="do-title">Project nights</span>
-          <span class="do-desc">Quiet, scheduled work time in the lab with mentors available.</span>
-        </div>
-        <div class="do-row">
-          <span class="do-code mono">ACT.03</span>
-          <span class="do-title">Workshops & talks</span>
-          <span class="do-desc">Short, hands-on, and repeatable — the same material that made us, passed on.</span>
-        </div>
-        <div class="do-row">
-          <span class="do-code mono">ACT.04</span>
-          <span class="do-title">Infra duty</span>
-          <span class="do-desc">Members rotate keeping the club's mirrors, journal and lab machines alive.</span>
-        </div>
-        <div class="do-row">
-          <span class="do-code mono">ACT.05</span>
-          <span class="do-title">Build Week</span>
-          <span class="do-desc">Twice a year, 48 hours, real constraints. The closest thing we have to a tradition.</span>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- SECTION 06 — TEAM PREVIEW -->
-  <section class="sec sec--wide" data-section="Leadership" data-code="06" data-label="Leadership">
-    <div class="sec-in">
-      <div class="sec-head sec-head-grid" data-reveal>
-        <div>
-          <p class="kicker">06 — Leadership</p>
-          <h2 class="h-section">Run by members, not by title.</h2>
-        </div>
-        <a class="u-link mono" href="/team/">FULL TEAM →</a>
-      </div>
-      <div class="sec-leadership">
-        
-          
-            
-              
-              <div class="car-slide" data-leadership-slide>
-                <div class="car-card">
-                  <div class="profile">
-                    <div class="avatar"><img src="/img/gen/av-tanvir.svg" alt="Portrait of MD. Tanvir Ahmed" loading="lazy"></div>
-                    <div class="profile-body">
-                      <h3 class="profile-name">MD. Tanvir Ahmed</h3>
-                      <span class="profile-role">President</span>
-                      <p class="profile-note">Final year, CSE. Reads RFCs for fun and starts every meeting with a project demo.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-            
-              
-            
-              
-            
-              
-            
-              
-            
-              
-            
-              
-            
-              
-            
-              
-            
-              
-            
-              
-            
-              
-            
-              
-            
-              
-            
-              
-            
-              
-            
-              
-            
-              
-            
-          
-        
-        
-          
-            
-              
-            
-              
-              <div class="car-slide" data-leadership-slide>
-                <div class="car-card">
-                  <div class="profile">
-                    <div class="avatar"><img src="/img/gen/av-farzana.svg" alt="Portrait of Farzana Yasmin" loading="lazy"></div>
-                    <div class="profile-body">
-                      <h3 class="profile-name">Farzana Yasmin</h3>
-                      <span class="profile-role">Vice President</span>
-                      <p class="profile-note">Leads the algorithms study group and the club's competitive programming practice.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-            
-              
-              <div class="car-slide" data-leadership-slide>
-                <div class="car-card">
-                  <div class="profile">
-                    <div class="avatar"><img src="/img/gen/av-abdullah.svg" alt="Portrait of Abdullah Al Mamun" loading="lazy"></div>
-                    <div class="profile-body">
-                      <h3 class="profile-name">Abdullah Al Mamun</h3>
-                      <span class="profile-role">General Secretary</span>
-                      <p class="profile-note">The club's institutional memory. Maintains the journal archive and meeting notes.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-            
-              
-            
-              
-              <div class="car-slide" data-leadership-slide>
-                <div class="car-card">
-                  <div class="profile">
-                    <div class="avatar"><img src="/img/gen/av-arif.svg" alt="Portrait of Arif Chowdhury" loading="lazy"></div>
-                    <div class="profile-body">
-                      <h3 class="profile-name">Arif Chowdhury</h3>
-                      <span class="profile-role">Technical Lead</span>
-                      <p class="profile-note">Lead on CampusMesh. Believes every problem is a systems problem until proven otherwise.</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-              
-            
-              
-            
-              
-            
-              
-            
-              
-            
-              
-            
-              
-            
-              
-            
-              
-            
-              
-            
-              
-            
-              
-            
-              
-            
-              
-            
-          
-        
+      <div class="hero-cta mt-4" data-reveal>
+        <a class="btn btn-primary" href="/join/">Become one <span class="arrow">→</span></a>
       </div>
     </div>
   </section>
@@ -740,7 +710,7 @@
 <footer class="sec-footer" data-section="colophon">
   <div class="foot-top">
     <div class="foot-id">
-      <p class="foot-kicker mono">DCITC // ABOUT</p>
+      <p class="foot-kicker mono">DCITC // TEAM</p>
       <p class="foot-statement">DCITC is not chasing technology. DCITC studies it.</p>
     </div>
     <div class="foot-cols">
@@ -799,6 +769,32 @@
 <div class="bg-grid" aria-hidden="true"></div>
 <div class="bg-glow" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
+
+<!-- FLOATING BATCH SWITCHER (bottom-right) -->
+<div class="batch-switch" data-batch-switch aria-label="Switch team batch">
+  <div class="batch-switch-menu" data-batch-menu role="menu">
+    <span class="batch-switch-label">Batch</span>
+    
+    <a class="batch-switch-item is-active" href="/team/26/" role="menuitem" data-batch-link="26">
+      <span class="mono">B26</span>
+      <span class="batch-switch-year">2026</span>
+      
+    </a>
+    
+    <a class="batch-switch-item" href="/team/27/" role="menuitem" data-batch-link="27">
+      <span class="mono">B27</span>
+      <span class="batch-switch-year">2027</span>
+      
+      <span class="batch-switch-current">now</span>
+      
+    </a>
+    
+  </div>
+  <button class="batch-switch-toggle" data-batch-toggle type="button" aria-haspopup="true" aria-expanded="false">
+    <span class="batch-switch-badge">B26</span>
+  </button>
+</div>
+
 <!-- ==================================================================
      DCITC SCRIPTS PARTIAL  —  src/partials/scripts.html
      ==================================================================

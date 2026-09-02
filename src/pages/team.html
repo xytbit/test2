@@ -1,21 +1,27 @@
 <!DOCTYPE html>
 <!-- ==================================================================
-     TEAM PAGE  —  src/pages/team.html  →  public/team/index.html
+     TEAM PAGE  —  src/pages/team.html  →  public/team/<batch>/index.html
      ==================================================================
      WHAT THIS FILE CONTROLS:
-       The full team roster, generated almost entirely from data:
+       The full team roster for ONE batch. The build renders this same
+       template once per batch in src/data/team.json (team/27/,
+       team/26/, …), so the layout is identical across batches.
 
-       00 Overview        intro
-       (loop)             ONE SECTION PER GROUP from the team
-                          collection — each renders a .group-head, the
-                          group note, and a .team-grid of .profile
-                          cards (avatar from /img/gen/av-<seed>.svg,
-                          name, role, note, tag chips). Groups come
-                          from src/data/team.json (Exec / Core / …).
+       00 Overview        intro (batch label)
+       (loop)             ONE SECTION PER GROUP from the current batch —
+                          each renders a .group-head, the group note, and
+                          a .team-grid of .profile cards.
        FIN Members        closing "the other 100" plate + join CTA
 
-     The section count therefore changes automatically when groups are
-     added/removed in team.json — no template edit needed.
+     EASY PODCASTING:
+       - Add a batch: drop a "26"/"25"/… key into src/data/team.json's
+         `batches` object (label + groups) and rebuild. A team/<batch>/
+         page appears automatically + a battery-of-the-batch button on
+         the floating switcher.
+       - Replace mock avatars: drop "avatar.jpg" into
+         <root>/content/team/<batch>/<seed>.jpg and set the member's
+         optional "photo": "<seed>.jpg" in team.json. Falls back to the
+         generated SVG (av-<seed>.svg) when no photo is set.
      ================================================================== -->
 <html lang="{{ .site.meta.language }}">
 {{ include "partials/head.html" }}
@@ -33,19 +39,39 @@
     </div>
   </section>
 
+  <!-- BATCH LEGEND (floating switcher targets) -->
+  <section class="sec sec--fit sec--batch" data-section="Batch" data-code="00A" data-label="Batch" data-batch-legend>
+    <div class="sec-in">
+      <div class="sec-head" data-reveal>
+        <p class="kicker">Active batch</p>
+        <h2 class="h-section">Class of {{ .activeBatchId }}.</h2>
+      </div>
+      <div class="batch-note plate" data-reveal>
+        <span class="plate-label">Batch {{ .activeBatchId }}</span>
+        <p class="prose">Switch batches with the floating button in the corner below. Each batch gets its own page with the same team structure — the current committee on top, then technical, media, and organizing teams.</p>
+      </div>
+    </div>
+  </section>
+
   <!-- SECTIONS — TEAMS -->
   {{ each .team }}
   <section class="sec sec--wide" data-section="{{ .name }}" data-code="{{ .code }}" data-label="{{ .name }}">
-    <div class="sec-in">
+    <div class="sec-in"{{ if .many }} data-team-strip{{ end }}>
       <div class="group-head" data-reveal>
         <h2>{{ .name }}</h2>
         <span class="mono term">{{ .code }}</span>
       </div>
       <p class="prose" data-reveal style="--d:80ms">{{ .note }}</p>
-      <div class="team-grid mt-4" data-stagger>
+      <div class="team-grid{{ if .many }} team-grid--many{{ end }} mt-4" data-stagger>
         {{ each .members }}
         <div class="profile">
-          <div class="avatar"><img src="/img/gen/av-{{ .seed }}.svg" alt="Portrait of {{ .name }}" loading="lazy"></div>
+          <div class="avatar">
+            {{ if .photo }}
+            <img src="/content/team/{{ $.activeBatchId }}/{{ .photo }}" alt="Portrait of {{ .name }}" loading="lazy">
+            {{ else }}
+            <img src="/img/gen/av-{{ .seed }}.svg" alt="Portrait of {{ .name }}" loading="lazy">
+            {{ end }}
+          </div>
           <div class="profile-body">
             <h3 class="profile-name">{{ .name }}</h3>
             <span class="profile-role">{{ .role }}</span>
@@ -86,6 +112,26 @@
 <div class="bg-grid" aria-hidden="true"></div>
 <div class="bg-glow" aria-hidden="true"></div>
 <div class="grain" aria-hidden="true"></div>
+
+<!-- FLOATING BATCH SWITCHER (bottom-right) -->
+<div class="batch-switch" data-batch-switch aria-label="Switch team batch">
+  <div class="batch-switch-menu" data-batch-menu role="menu">
+    <span class="batch-switch-label">Batch</span>
+    {{ each .batchesList }}
+    <a class="batch-switch-item{{ if eq .id $.activeBatchId }} is-active{{ end }}" href="/team/{{ .id }}/" role="menuitem" data-batch-link="{{ .id }}">
+      <span class="mono">B{{ .id }}</span>
+      <span class="batch-switch-year">{{ .label }}</span>
+      {{ if eq .id $.currentBatchId }}
+      <span class="batch-switch-current">now</span>
+      {{ end }}
+    </a>
+    {{ end }}
+  </div>
+  <button class="batch-switch-toggle" data-batch-toggle type="button" aria-haspopup="true" aria-expanded="false">
+    <span class="batch-switch-badge">B{{ activeBatchId }}</span>
+  </button>
+</div>
+
 {{ include "partials/scripts.html" }}
 </body>
 </html>
