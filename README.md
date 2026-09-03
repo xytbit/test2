@@ -12,6 +12,70 @@ scripts in `static/`. The build outputs a fully static site to `public/`.
 | `npm run serve` | Static file server for `public/` (zero-dep, defaults to `http://localhost:8080`) |
 | `npm run dev` | Watch source + rebuild on change (needs `node` >= 18) |
 
+## Centralized content config (`src/config/site.json`)
+
+The site's featured/curated content and its ordering are controlled from
+one file: **`src/config/site.json`**. It only *references* content by
+slug — it never copies content. Each project/event/article/resource
+keeps its single source of truth in its content/data file.
+
+```json
+{
+  "featured": {
+    "projects": ["nodhini", "campusmesh", "voltab"],
+    "posts": ["the-journal-now-runs-on-markdown", "reading-man-pages"],
+    "resources": [
+      "the-c-programming-language",
+      "the-missing-semester-of-your-cs-education",
+      "linux-journey",
+      "operating-systems-three-easy-pieces"
+    ]
+  },
+  "home": {
+    "events": ["build-week", "git-and-open-source", "linux-fundamentals-workshop"]
+  }
+}
+```
+
+**What each key controls:**
+
+| Key | Controls | How items are referenced |
+| --- | --- | --- |
+| `featured.projects` | Home "Featured projects" cards **and** the projects-page "Fresh off the bench" deck (same trio, both pages). | by `slug` (`/projects/<slug>/`) |
+| `featured.posts` | Home "Tech Journal" teaser **and** the blog "Start here." Featured section. | by slug (`/blog/<slug>/`) |
+| `featured.resources` | Home "Curated resources" grid (home-only). | by `slug` in `resources.json` |
+| `home.events` | Home "Upcoming events" list. Curated — the events page keeps showing *all* upcoming events regardless. | by slug (`/events/<slug>/`) |
+
+**How to change featured content / ordering:**
+
+1. Edit an array in `src/config/site.json` — list the slugs (or resource
+   slugs) in the order you want them to appear.
+2. Run `node scripts/build.js` (or `npm run build`).
+
+The array order is the display order, so reordering the list reorders
+the page. Emptying an array hides that section on the relevant page
+without touching any content file.
+
+**Validation:** the build resolves every reference against the actual
+content and **fails loudly** if a slug doesn't exist, printing which
+reference is bad and what slugs *are* available — so a typo or a deleted
+content file is caught at build time, never silently dropped.
+
+**What is NOT in the config:** the actual content and per-item metadata
+stay in `content/` (markdown) and `src/data/` (JSON). Status-derived
+lists (upcoming vs. past events, the active-projects count) are computed
+from each item's `status`/`date` fields, not hardcoded. The `featured`
+boolean that used to live in content files was removed — the config is
+now the single source of truth for featured selection.
+
+### Content references by type
+
+- **Projects** — `src/data/projects.json`, keyed by `slug`.
+- **Blog posts** — `content/blog/*.md`, keyed by filename (minus `.md`).
+- **Events** — `content/events/*.md`, keyed by filename (minus `.md`).
+- **Resources** — `src/data/resources.json`, keyed by `slug` (added
+  alongside each resource's content; unique in the file).
+
 ## Structure
 
 ```
@@ -20,6 +84,7 @@ scripts/
   serve.js     static server with directory-index resolution
   dev.js       watch + rebuild
 src/
+  config/      central content-selection config (featured/ordering)
   data/        content collections (site, nav, projects, events, posts, …)
   pages/       page templates (home, about, projects, blog, …)
   partials/    head, header, footer, scripts
@@ -62,7 +127,6 @@ category: "Linux"              # chip; defaults to first tag
 tags:
   - Linux
   - CLI
-featured: true                 # home teaser + blog Featured (first 3)
 image: /img/blog/photo.png     # cover; default = generated plate /img/gen/<slug>.svg
 draft: true                    # skipped entirely — never published
 ---
@@ -167,12 +231,12 @@ use are the vendored `/js/vendor/three.min.js` and
 | `site.json` | Global identity: name, short name ("DCITC"), wordmark, tagline, statement, founding year, email, locations, logo path/alt, social links (footer EXTERNAL + contact channels), meta (language/domain), and `facts` — the EST./MEMBERS/PROJECTS stat pairs shown on the home hero, about intro and home identity section. | header.html (brand), footer.html (statement/socials/©), head.html (og:site_name), index/about/contact pages |
 | `nav.json` | The single source of truth for navigation. Each item: `label`, `href`, `match` (URL rule used by `navFor()` to compute active state: `/` exact, trailing `*` = prefix, otherwise exact-or-subpage), `code` (the "01"–"10" mono prefix), `group` (`primary` → inline header link, `more` → "More" dropdown; everything appears in the mobile drawer), `cta: true` marks the accent button (Join). | header.html via `navFor()` |
 | `pages.json` | The page registry. One entry per top-level page: which template file renders it (`file`), where it's written (`out`, directory-style), canonical `url`, `<title>`/`desc` meta, display `code` (shown in the footer kicker), `section` label, `horizontal` flag. Order here does not matter for nav (that's nav.json) but documents the sitemap. | build.js `buildPage()` loop |
-| `projects.json` | Project portfolio. Key fields per item: `slug` (→ `/projects/<slug>/` + generated cover art seed), `title`, `tagline`, `status` (active/past…), `year`, `category`, `featured` (home page cards, first 3), `stack[]` (chips), `summary`, `problem`, `approach[]` (numbered at build), `metrics[{k,v}]`, `result`, `notes`, `team[{name,role}]`, `capabilities[]`, `links{github,demo}`. | projects.html, project.html, home featured |
+| `projects.json` | Project portfolio. Key fields per item: `slug` (→ `/projects/<slug>/` + generated cover art seed), `title`, `tagline`, `status` (active/past…), `year`, `category`, `stack[]` (chips), `summary`, `problem`, `approach[]` (numbered at build), `metrics[{k,v}]`, `result`, `notes`, `team[{name,role}]`, `capabilities[]`, `links{github,demo}`. Featured/ordering is set in `src/config/site.json` (`featured.projects`), not here. | projects.html, project.html, home featured |
 | `events.json` | *(removed)* — events are Markdown files now. See "Markdown blog (`content/blog/`)" below — events use the same pipeline via `content/events/`. | — |
 | `posts.json` | *(removed)* — the Tech Journal is no longer mock JSON. See "Markdown blog (`content/blog/`)" below. | — |
 | `team.json` | Team groups (e.g. Executive Committee, Core). Each group: `name`, `note`, `members[]` with `name`, `role`, `seed` (avatar art key → `/img/gen/av-<seed>.svg`), `note`, `tags[]`. Roles drive the about-page carousel filter (President, VP, General Secretary, Technical Lead). team.html renders one section per group automatically. | team.html, about.html carousel |
 | `achievements.json` | Milestone timeline. Each entry: `year`, `summary`, `items[{title,detail}]`. Rendered twice on achievements.html (vertical timeline + expandable record) and summarized on the home spark section. | achievements.html, home |
-| `resources.json` | Curated knowledge base. Per item: `title`, `category` (must match a CATEGORIES entry in build.js for filtering), `kind` (book/doc/tool…), `level`, `tag`, `featured` (home picks, first 4), `description`, `link`. | resources.html, home |
+| `resources.json` | Curated knowledge base. Per item: `slug` (unique key, referenced by the home config), `title`, `category` (must match a CATEGORIES entry in build.js for filtering), `kind` (book/doc/tool…), `level`, `tag`, `description`, `link`. Featured/ordering is set in `src/config/site.json` (`featured.resources`), not here. | resources.html, home |
 | `gallery.json` | *(removed)* — the gallery is no longer JSON-driven. See "Gallery (`content/gallery/`)" below. | — |
 | `funkystuff.json` | Toy/game library manifest (see "Funkystuff game library" above). Per entry: `file` (must exist in `<root>/funkystuff/`), `title`, `dept` (filter chips), optional `by`; JSON order = list order. | funkystuff.html |
 

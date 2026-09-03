@@ -8,7 +8,6 @@ category: "Linux"
 tags:
   - Linux
   - CLI
-featured: true
 ---
 
 Every tool on a Unix system ships with its own documentation, installed before you ever need it and readable without leaving the terminal. Most students never open it because the interface looks hostile. It is not — it is just terse.

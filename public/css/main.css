@@ -3157,8 +3157,8 @@ html.js .evx {
 }
 /* HOME ONLY — curated-resources cards compacted. The resources shelf
    reuses .res-card styles above, so scope by home's data-section label
-   ("Knowledge base" there). Card count hard cap = 4, enforced upstream
-   in build.js (featuredResources slice(0,4)) — never grow this grid. */
+   ("Knowledge base" there). Card count hard cap = 4, enforced by the
+   featured.resources list in src/config/site.json — never grow this grid. */
 [data-section='Resources'] .res-list {
   gap: 0.85rem;
 }

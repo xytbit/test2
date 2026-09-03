@@ -1,0 +1,15 @@
+{
+  "featured": {
+    "projects": ["nodhini", "campusmesh", "voltab"],
+    "posts": ["the-journal-now-runs-on-markdown", "reading-man-pages"],
+    "resources": [
+      "the-c-programming-language",
+      "the-missing-semester-of-your-cs-education",
+      "linux-journey",
+      "operating-systems-three-easy-pieces"
+    ]
+  },
+  "home": {
+    "events": [ "git-and-open-source", "linux-fundamentals-workshop"]
+  }
+}

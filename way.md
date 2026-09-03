@@ -54,7 +54,6 @@ category: "Linux"
 tags:
   - Linux
   - CLI
-featured: true
 draft: false
 ---
 
@@ -105,9 +104,15 @@ Closing paragraph or call to action.
 | `role` | `"Contributor"` | Byline detail after the author ("BY NAME · ROLE"). |
 | `category` | first tag, else `"Journal"` | The accent chip on cards. Keep values short and consistent across posts ("Linux", "Web", "Systems", "Meta"…). |
 | `tags` | `[]` | List of chips rendered at the end of the article. |
-| `featured` | `false` | `true` puts the post in the home-page teaser and the blog Featured row — **only the 3 newest featured posts actually appear** (older featured posts silently rotate out). |
 | `image` | generated plate `/img/gen/<slug>.svg` | Custom cover art. See §5. |
 | `draft` | `false` | `true` = invisible everywhere. See §7. |
+
+> **Featured is config, not a frontmatter field.** Home-page and blog
+> "Featured" selection/ordering is set in `src/config/site.json`
+> (`featured.posts`, list of slugs in display order) — NOT via a
+> `featured` flag in the `.md` file. To feature a post, add its filename
+> slug to that array and rebuild. See README "Centralized content
+> config".
 
 Minimal valid post — this alone builds fine:
 
@@ -278,8 +283,10 @@ Consequences worth knowing:
 
 - Codes are positional. Publishing something newer shifts older items'
   codes — nobody needs to care, nothing links numerically.
-- Featured posts: only the **newest 3** with `featured: true` surface on
-  home/blog. Old featured flags can stay set forever; they just wait.
+- Featured posts: the home teaser and blog Featured row show exactly the
+  slugs listed under `featured.posts` in `src/config/site.json`, in that
+  order. To feature a post, add its slug (filename minus `.md`) there and
+  rebuild. There is **no** per-post `featured` flag anymore.
 - The events deck ships expanded on the **latest-dated** upcoming event
   (upcoming events are ordered newest-first). Set realistic dates and it
   picks right; flip statuses as time passes.

@@ -487,6 +487,13 @@ let projects = readJSON(path.join(SRC, 'data', 'projects.json'));
 let achievements = readJSON(path.join(SRC, 'data', 'achievements.json'));
 let resources = readJSON(path.join(SRC, 'data', 'resources.json'));
 let team = readJSON(path.join(SRC, 'data', 'team.json'));
+// CENTRAL SITE CONFIG — src/config/site.json controls which content is
+// featured/curated and in what ORDER, by referencing each item's slug
+// (or title for resources). Content files stay the single source of
+// truth for the content itself; this config only holds relationships.
+// A reference to a nonexistent item is a hard build error (see the
+// resolveRefs helper in the "selecting featured content" section).
+const config = readJSON(path.join(SRC, 'config', 'site.json'));
 
 // Resource filter chips (resources page "Browse" section). Order here
 // is the order the buttons render in.
@@ -650,11 +657,12 @@ achievements = achievements.map((a, i) => ({
 //   role: "Study group lead"   (byline detail; default "Contributor")
 //   category: "Systems"        (chip; defaults to first tag)
 //   tags: [a, b]               (end-of-article chips)
-//   featured: true             (home teaser + blog Featured section)
 //   image: /img/blog/x.png     (cover; falls back to generated plate)
 //   draft: true                (skipped entirely — never published)
 //   ---
 //
+// (No featured flag — featured selection/order is centralized in
+// src/config/site.json, not per-file. See "central content selection".)
 // The filename (minus .md) IS the slug → /blog/<slug>/. Drafts are
 // dropped before anything downstream runs; the build wipes public/
 // wholesale at start, so deleting a .md removes its page next build.
@@ -852,14 +860,63 @@ function loadGallery() {
 
 let gallery = loadGallery();
 
-// Pre-computed subsets & counts consumed by page templates:
-const upcomingEvents = events.filter((e) => e.upcoming); // home + events page
-const pastEvents = events.filter((e) => e.past || e.ongoing); // events page archive/series
-const featuredProjects = projects.filter((p) => p.featured).slice(0, 3); // home + projects-page deck cards
+/* ------------------------------------------------------------------ */
+/* central content selection (config-driven)                           */
+/* ------------------------------------------------------------------ */
+// resolveRefs(list, coll, label) turns an array of reference keys from
+// src/config/site.json into the underlying content items, preserving
+// the CONFIG order (which is why it also drives ordering). Every key is
+// validated against the collection — a reference that doesn't match any
+// existing slug/title throws a clear build error listing what's valid,
+// so a typo or a deleted file can never silently drop content.
+function resolveRefs(list, coll, label, key) {
+  if (list === undefined) {
+    throw new Error(
+      `config: missing "${label}" list in src/config/site.json — add it to control ${label}`,
+    );
+  }
+  if (!Array.isArray(list)) {
+    throw new Error(`config: "${label}" must be an array of ${key} values`);
+  }
+  const index = new Map(coll.map((it) => [it[key], it]));
+  return list.map((ref) => {
+    const found = index.get(ref);
+    if (!found) {
+      const keys = [...index.keys()].sort().join(', ') || 'none';
+      throw new Error(
+        `config: "${label}" references "${ref}" but no such ${key} exists (available: ${keys})`,
+      );
+    }
+    return found;
+  });
+}
+
+// Select everything the templates consume, straight from config:
+//   featured.projects → home "Featured projects" + projects-page deck
+//   featured.posts    → home "Tech Journal" + blog "Featured"
+//   featured.resources→ home "Curated resources" (home-only, no page copy)
+//   home.events       → home "Upcoming events" (curated; events page keeps
+//                       ALL upcoming via upcomingEvents below)
+// The `featured` boolean previously scattered across content files is
+// gone — this config is now the single source of truth for featured and
+// ordering. Active/past subsets remain status-derived (not config).
+const featuredProjects = resolveRefs(config.featured.projects, projects, 'featured.projects', 'slug');
 if (featuredProjects[0]) featuredProjects[0].first = true; // ships data-active pre-rendered
-const featuredPosts = posts.filter((p) => p.featured).slice(0, 3); // home + blog
+if (featuredProjects.length > 3) {
+  // home cards + deck are tuned for exactly three; fail loudly rather
+  // than silently overflowing the layout
+  throw new Error(
+    `config: "featured.projects" lists ${featuredProjects.length} projects — the home grid + ` +
+      `projects deck are tuned for at most 3. Trim the list in src/config/site.json.`,
+  );
+}
+const featuredPosts = resolveRefs(config.featured.posts, posts, 'featured.posts', 'slug');
+const featuredResources = resolveRefs(config.featured.resources, resources, 'featured.resources', 'slug');
+const homeEvents = resolveRefs(config.home.events, events, 'home.events', 'slug');
+
+const upcomingEvents = events.filter((e) => e.upcoming); // events page deck (all upcoming)
+const pastEvents = events.filter((e) => e.past || e.ongoing); // events page archive/series
 const resourceCats = CATEGORIES; // filter buttons
-const featuredResources = resources.filter((r) => r.featured).slice(0, 4); // home picks
 const activeProjectsCount = projects.filter((p) => p.status === 'active').length; // projects intro
 
 /* FUNKYSTUFF — self-contained web toys/games library -----------------
@@ -1245,6 +1302,7 @@ function buildPage(page) {
     events,
     upcomingEvents,
     pastEvents,
+    homeEvents,
     featuredProjects,
     featuredPosts,
     featuredResources,
@@ -1390,6 +1448,7 @@ function main() {
         events,
         upcomingEvents,
         pastEvents,
+        homeEvents,
         featuredProjects,
         featuredPosts,
         featuredResources,
@@ -1441,6 +1500,7 @@ function main() {
         events,
         upcomingEvents,
         pastEvents,
+        homeEvents,
         featuredProjects,
         featuredPosts,
         featuredResources,

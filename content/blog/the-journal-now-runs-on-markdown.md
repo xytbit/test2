@@ -8,7 +8,6 @@ category: "Meta"
 tags:
   - Meta
   - Writing
-featured: true
 ---
 
 If you can write a README, you can publish here. The journal is no longer a pile of hand-edited HTML — every article is a single Markdown file that the build turns into a page.

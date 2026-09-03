@@ -13,11 +13,14 @@
         02 Philosophy      three .phil-item cards (Curate/Build/Understand)
         03 What we do      .do-list rows of activities
         04 Featured proj.  loops the featuredProjects scope array →
-                           card--media cards
-        05 Upcoming events loops upcomingEvents → .ev-row list
+                            card--media cards (from config featured.projects)
+        05 Upcoming events loops homeEvents → .ev-row list (from config
+                            home.events; the events page keeps all upcoming)
         06 Achievements    loops achievements → .spark timeline
-        07 Resources       loops featuredResources → .res-card
-        08 Tech Journal    loops featuredPosts → article cards
+        07 Resources       loops featuredResources → .res-card (from config
+                           featured.resources)
+        08 Tech Journal    loops featuredPosts → article cards (from config
+                           featured.posts)
         09 Join CTA        full-width closing call to action
 
      PAGE FLUID: the .page-fluid div below hosts a full-viewport ASCII
