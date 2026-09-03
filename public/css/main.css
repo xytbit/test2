@@ -158,6 +158,11 @@ html[data-theme='light'] {
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: auto;
+  /* decorative fixed layers (.bg-glow, .bg-grid, off-canvas .mobile-menu)
+     bleed past the viewport; clip at the root so they never create a
+     horizontal scrollbar. main.hx scrolls horizontally on its own box,
+     so this does not affect the filmstrip panning. */
+  overflow-x: hidden;
 }
 
 body {
@@ -626,7 +631,11 @@ html:not(:has(body.hx-body))::-webkit-scrollbar {
   }
   main.hx {
     display: block;
-    overflow: visible;
+    /* mobile stacks sections vertically and never pans horizontally —
+       clip horizontal bleed (long terminal lines, wide cards) so nothing
+       creates a sideways scroll. Keep y visible for full content flow. */
+    overflow-x: hidden;
+    overflow-y: visible;
     scroll-snap-type: none;
   }
   .sec {
@@ -879,30 +888,55 @@ html:not(:has(body.hx-body))::-webkit-scrollbar {
 
 .theme-toggle {
   position: relative;
-  width: 2.1rem;
-  height: 2.1rem;
+  width: 2.2rem;
+  height: 2.2rem;
   display: grid;
   place-items: center;
+  border: 1px solid var(--line);
   border-radius: var(--r-sm);
   color: var(--ink-dim);
+  background: transparent;
+  cursor: pointer;
   transition:
     color var(--t-fast) var(--ease),
-    background var(--t-fast) var(--ease);
+    background var(--t-fast) var(--ease),
+    border-color var(--t-fast) var(--ease),
+    box-shadow var(--t-fast) var(--ease);
 }
 .theme-toggle:hover {
-  color: var(--ink);
-  background: var(--bg-tint);
+  color: var(--accent);
+  border-color: var(--accent-line);
+  background: var(--accent-soft);
+  box-shadow: var(--glow);
+}
+.theme-toggle:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 .theme-toggle .ico-sun {
   display: none;
+  transition: transform var(--t-slow) var(--ease);
 }
 .theme-toggle .ico-moon {
   display: block;
+  transition: transform var(--t-slow) var(--ease);
 }
 html[data-theme='light'] .theme-toggle .ico-sun {
   display: block;
 }
 html[data-theme='light'] .theme-toggle .ico-moon {
+  display: none;
+}
+.theme-toggle:hover .ico-sun {
+  transform: rotate(90deg);
+}
+.theme-toggle:hover .ico-moon {
+  transform: rotate(-15deg);
+}
+.theme-toggle:active {
+  transform: scale(0.92);
+}
+.theme-toggle-ok {
   display: none;
 }
 
@@ -1828,37 +1862,6 @@ details.fold .fold-body {
   letter-spacing: var(--trk-mono);
   color: var(--ink-faint);
   text-transform: uppercase;
-}
-
-/* forms */
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-.field label {
-  font-family: var(--font-mono);
-  font-size: var(--fs-0);
-  letter-spacing: var(--trk-mono);
-  color: var(--ink-dim);
-  text-transform: uppercase;
-}
-.field input,
-.field textarea,
-.field select {
-  background: var(--bg-elev);
-  border: 1px solid var(--line-strong);
-  border-radius: var(--r-sm);
-  padding: 0.75em 0.9em;
-  color: var(--ink);
-  transition: border-color var(--t-fast) var(--ease);
-}
-.field input:focus,
-.field textarea:focus,
-.field select:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 /* avatar (team) */
@@ -3282,9 +3285,7 @@ html.js .evx {
   font-size: var(--fs-4);
   font-weight: 600;
   letter-spacing: -0.02em;
-}
-.group-head .mono {
-  color: var(--ink-faint);
+  margin: 0;
 }
 .team-grid {
   display: grid;
@@ -3311,6 +3312,14 @@ html.js .evx {
     max-width: none; /* let the row's full width dictate the section */
     width: max-content;
   }
+  /* the section grew to the whole card row — keep the title + note at a
+     readable width so they don't stretch across the entire strip */
+  body.hx-body .sec:has(> .sec-in > .team-grid--many) .group-head {
+    max-width: var(--maxw-wide);
+  }
+  body.hx-body .sec:has(> .sec-in > .team-grid--many) .prose {
+    max-width: 640px;
+  }
   body.hx-body .team-grid--many {
     grid-auto-flow: column;
     grid-auto-columns: 17.5rem;
@@ -3326,14 +3335,6 @@ html.js .evx {
     opacity: 1 !important;
     transform: none !important;
   }
-}
-
-/* batch legend plate (team page) */
-.sec--batch .sec-head {
-  margin-bottom: 1.2rem;
-}
-.batch-note {
-  max-width: 640px;
 }
 
 /* floating batch switcher (team page, bottom-right) --------------------- */
@@ -3765,9 +3766,6 @@ html.js .evx {
 }
 .pager a:hover {
   color: var(--accent);
-}
-.pager .dim {
-  color: var(--ink-faint);
 }
 
 @media (max-width: 899px) {

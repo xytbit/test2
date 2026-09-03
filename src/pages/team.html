@@ -39,29 +39,13 @@
     </div>
   </section>
 
-  <!-- BATCH LEGEND (floating switcher targets) -->
-  <section class="sec sec--fit sec--batch" data-section="Batch" data-code="00A" data-label="Batch" data-batch-legend>
-    <div class="sec-in">
-      <div class="sec-head" data-reveal>
-        <p class="kicker">Active batch</p>
-        <h2 class="h-section">Class of {{ .activeBatchId }}.</h2>
-      </div>
-      <div class="batch-note plate" data-reveal>
-        <span class="plate-label">Batch {{ .activeBatchId }}</span>
-        <p class="prose">Switch batches with the floating button in the corner below. Each batch gets its own page with the same team structure — the current committee on top, then technical, media, and organizing teams.</p>
-      </div>
-    </div>
-  </section>
-
   <!-- SECTIONS — TEAMS -->
   {{ each .team }}
   <section class="sec sec--wide" data-section="{{ .name }}" data-code="{{ .code }}" data-label="{{ .name }}">
     <div class="sec-in"{{ if .many }} data-team-strip{{ end }}>
       <div class="group-head" data-reveal>
         <h2>{{ .name }}</h2>
-        <span class="mono term">{{ .code }}</span>
       </div>
-      <p class="prose" data-reveal style="--d:80ms">{{ .note }}</p>
       <div class="team-grid{{ if .many }} team-grid--many{{ end }} mt-4" data-stagger>
         {{ each .members }}
         <div class="profile">

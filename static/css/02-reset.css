@@ -25,6 +25,11 @@
 html {
   -webkit-text-size-adjust: 100%;
   scroll-behavior: auto;
+  /* decorative fixed layers (.bg-glow, .bg-grid, off-canvas .mobile-menu)
+     bleed past the viewport; clip at the root so they never create a
+     horizontal scrollbar. main.hx scrolls horizontally on its own box,
+     so this does not affect the filmstrip panning. */
+  overflow-x: hidden;
 }
 
 body {

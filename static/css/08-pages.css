@@ -1178,9 +1178,7 @@ html.js .evx {
   font-size: var(--fs-4);
   font-weight: 600;
   letter-spacing: -0.02em;
-}
-.group-head .mono {
-  color: var(--ink-faint);
+  margin: 0;
 }
 .team-grid {
   display: grid;
@@ -1207,6 +1205,14 @@ html.js .evx {
     max-width: none; /* let the row's full width dictate the section */
     width: max-content;
   }
+  /* the section grew to the whole card row — keep the title + note at a
+     readable width so they don't stretch across the entire strip */
+  body.hx-body .sec:has(> .sec-in > .team-grid--many) .group-head {
+    max-width: var(--maxw-wide);
+  }
+  body.hx-body .sec:has(> .sec-in > .team-grid--many) .prose {
+    max-width: 640px;
+  }
   body.hx-body .team-grid--many {
     grid-auto-flow: column;
     grid-auto-columns: 17.5rem;
@@ -1222,14 +1228,6 @@ html.js .evx {
     opacity: 1 !important;
     transform: none !important;
   }
-}
-
-/* batch legend plate (team page) */
-.sec--batch .sec-head {
-  margin-bottom: 1.2rem;
-}
-.batch-note {
-  max-width: 640px;
 }
 
 /* floating batch switcher (team page, bottom-right) --------------------- */
@@ -1661,9 +1659,6 @@ html.js .evx {
 }
 .pager a:hover {
   color: var(--accent);
-}
-.pager .dim {
-  color: var(--ink-faint);
 }
 
 @media (max-width: 899px) {

@@ -731,37 +731,6 @@ details.fold .fold-body {
   text-transform: uppercase;
 }
 
-/* forms */
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: 0.4rem;
-}
-.field label {
-  font-family: var(--font-mono);
-  font-size: var(--fs-0);
-  letter-spacing: var(--trk-mono);
-  color: var(--ink-dim);
-  text-transform: uppercase;
-}
-.field input,
-.field textarea,
-.field select {
-  background: var(--bg-elev);
-  border: 1px solid var(--line-strong);
-  border-radius: var(--r-sm);
-  padding: 0.75em 0.9em;
-  color: var(--ink);
-  transition: border-color var(--t-fast) var(--ease);
-}
-.field input:focus,
-.field textarea:focus,
-.field select:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-soft);
-}
-
 /* avatar (team) */
 .avatar {
   position: relative;

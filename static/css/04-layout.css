@@ -255,7 +255,11 @@ html:not(:has(body.hx-body))::-webkit-scrollbar {
   }
   main.hx {
     display: block;
-    overflow: visible;
+    /* mobile stacks sections vertically and never pans horizontally —
+       clip horizontal bleed (long terminal lines, wide cards) so nothing
+       creates a sideways scroll. Keep y visible for full content flow. */
+    overflow-x: hidden;
+    overflow-y: visible;
     scroll-snap-type: none;
   }
   .sec {
